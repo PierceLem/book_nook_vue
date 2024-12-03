@@ -1,30 +1,48 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view/>
+  <div id="wrapper">
+    <nav class="navbar is-dark">
+      <div class="navbar-brand">
+        <router-link to="/" class="navbar-item"><strong>BookNook</strong></router-link>
+      </div>
+
+      <div class="navbar-menu">
+        <div class="navbar-end">
+          <template v-if="$store.state.isAuthenticated">
+            <router-link to="/discover" class="navbar-item">Discover</router-link>
+          </template>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <section class="section">
+    <router-view/>
+  </section>
+
+  <footer class="footer">
+    <p class="has-text-centered">Copyright (c) 2024</p>
+  </footer>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+  import axios from 'axios'
 
-nav {
-  padding: 30px;
+  export default {
+    name: 'App', 
+    beforeCreate() {
+      this.$store.commit('initializeStore')
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+      const token = this.$store.state.token
 
-    &.router-link-exact-active {
-      color: #42b983;
+      if (token) {
+        axios.defaults.headers.common['Authorization'] = "Token " + token
+      } else {
+        axios.defaults.headers.common['Authorization'] = ""
+      }
     }
   }
-}
+</script>
+
+<style lang="scss">
+@import '../node_modules/bulma';
 </style>
