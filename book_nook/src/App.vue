@@ -9,6 +9,22 @@
         <div class="navbar-end">
           <template v-if="$store.state.isAuthenticated">
             <router-link to="/discover" class="navbar-item">Discover</router-link>
+            <div class="navbar-item">
+              <div class="buttons">
+                <router-link to="/discover/my-account" class="button is-light">My Account</router-link>
+              </div>
+            </div>
+          </template>
+
+          <template v-else>
+            <router-link to="/" class="navbar-item">Home</router-link>
+
+            <div class="navbar-item">
+              <div class="buttons">
+                <router-link to="/sign-up" class="button is-success"><strong>Sign up</strong></router-link>
+                <router-link to="/log-in" class="button is-light">Log In</router-link>
+              </div>
+            </div>
           </template>
         </div>
       </div>
