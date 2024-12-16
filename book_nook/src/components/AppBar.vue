@@ -2,7 +2,7 @@
     <v-app-bar :elevation="0" class="bg-transparent">
         <template v-slot:prepend>
             <v-app-bar-nav-icon @click.prevent="toggleDrawer" color="blue-grey-darken-2"
-                :class="[navDrawer ? 'ml-0' : 'ml-2']"></v-app-bar-nav-icon>
+                :class="[navDrawerState ? 'ml-0' : 'ml-2']"></v-app-bar-nav-icon>
         </template>
 
         <template v-slot:append>
@@ -62,20 +62,23 @@
 import { mapState, mapActions } from "vuex";
 
 export default {
-    data() {
-        return {
-            menu: false,
-            message: false,
-            hints: false,
-        };
-    },
     computed: {
         ...mapState("ui", {
-            navDrawer: (state) => state.navDrawer,
+            navDrawerState: (state) => state.navDrawer,
         }),
     },
     methods: {
-        ...mapActions("ui", ["toggleDrawer"]),
+        ...mapActions("ui", ["setDrawer"]),
+        toggleDrawer() {
+            this.setDrawer(!this.navDrawerState);
+        },
+    },
+    watch: {
+        "$vuetify.breakpoint.smAndDown"(isSmallScreen) {
+            if (isSmallScreen) {
+                this.setDrawer(false);
+            }
+        },
     },
 };
 </script>

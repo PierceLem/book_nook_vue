@@ -41,8 +41,16 @@ import { mapState } from "vuex";
 export default {
     computed: {
         ...mapState("ui", {
-            navDrawer: (state) => state.navDrawer,
+            navDrawerState: (state) => state.navDrawer,
         }),
+        navDrawer: {
+            get() {
+                return this.navDrawerState;
+            },
+            set(value) {
+                this.$store.dispatch("ui/setDrawer", value);
+            },
+        },
     },
 };
 </script>
