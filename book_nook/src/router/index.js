@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Discover from '../views/discover/Discover.vue'
 import MyAccount from '../views/discover/MyAccount.vue'
+import AuthLayout from "../layouts/AuthLayout.vue";
+import DefaultLayout from "../layouts/DefaultLayout.vue";
 import SignUp from '../views/SignUp.vue'
 import LogIn from '../views/LogIn.vue'
 
@@ -8,44 +10,41 @@ import store from '../store'
 
 const routes = [
   {
-    path: '/',
-    name: 'home',
-    component: Discover
+    path: "/auth",
+      component: AuthLayout,
+      children: [
+        {
+          path: 'signup',
+          name: 'SignUp',
+          component: SignUp,
+        },
+        {
+          path: 'login',
+          name: 'LogIn',
+          component: LogIn
+        },
+      ],
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+    path: "/",
+    component: DefaultLayout,
+    children: [
+      {
+        path: '',
+        name: 'Discover',
+        component: Discover,
+      },
+      {
+        path: 'my-account',
+        name: 'MyAccount',
+        component: MyAccount,
+        meta: {
+          requireLogin: true
+        }
+      },
+    ],
   },
-  {
-    path: '/sign-up',
-    name: 'SignUp',
-    component: SignUp
-  },
-  {
-    path: '/log-in',
-    name: 'LogIn',
-    component: LogIn
-  },
-  {
-    path: '/discover',
-    name: 'Discover',
-    component: Discover,
-    meta: {
-      requireLogin: true
-    }
-  },
-  {
-    path: '/discover/my-account',
-    name: 'MyAccount',
-    component: MyAccount,
-    meta: {
-      requireLogin: true
-    }
-  },
+  
 ]
 
 const router = createRouter({
