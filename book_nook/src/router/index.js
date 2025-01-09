@@ -3,6 +3,7 @@ import Discover from '../views/discover/Discover.vue'
 import MyAccount from '../views/discover/MyAccount.vue'
 import AuthLayout from "../layouts/AuthLayout.vue";
 import DefaultLayout from "../layouts/DefaultLayout.vue";
+import WorkShop from "../layouts/WorkShop.vue";
 import SignUp from '../views/SignUp.vue'
 import LogIn from '../views/LogIn.vue'
 
@@ -11,19 +12,19 @@ import store from '../store'
 const routes = [
   {
     path: "/auth",
-      component: AuthLayout,
-      children: [
-        {
-          path: 'signup',
-          name: 'SignUp',
-          component: SignUp,
-        },
-        {
-          path: 'login',
-          name: 'LogIn',
-          component: LogIn
-        },
-      ],
+    component: AuthLayout,
+    children: [
+      {
+        path: 'signup',
+        name: 'SignUp',
+        component: SignUp,
+      },
+      {
+        path: 'login',
+        name: 'LogIn',
+        component: LogIn
+      },
+    ],
   },
   {
     path: "/",
@@ -44,7 +45,11 @@ const routes = [
       },
     ],
   },
-  
+  {
+    path: "/workshop",
+    name: 'WorkShop',
+    component: WorkShop,
+  },
 ]
 
 const router = createRouter({

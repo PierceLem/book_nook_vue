@@ -1,13 +1,14 @@
 <template>
-    <div class="columns is-multiline">
-        <div class="column is-12">
-            <h1 class="title">Discover</h1>
-        </div>
-    </div>
+  <BookCard></BookCard>
 </template>
 
 <script>
+import BookCard from "@/components/BookCard.vue";
+
 export default {
-    name: 'Discover'
-}
+  name: "Discover",
+  components: {
+    BookCard,
+  },
+};
 </script>
