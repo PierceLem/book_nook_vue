@@ -1,17 +1,14 @@
 <template>
   <div class="workshop">
-    <v-card max-width="400" max-height="200" elevation="3" class="d-flex">
+    <v-card max-width="600" max-height="200" elevation="3" class="d-flex ma-8">
       <v-row no-gutters class="d-flex flex-nowrap">
         <!-- Left: Image -->
-        <v-col cols="4" class="d-flex align-stretch">
-          <v-img
-            src="@/assets/book-cover.jpg"
-            cover=""
-          ></v-img>
-        </v-col>
+        <div class="image-container">
+          <img :src="require('@/assets/book-cover.jpg')" alt="Book Cover" class="cover-img">
+        </div>
 
         <!-- Right: Text Content -->
-        <v-col cols="8" class="d-flex flex-column overflow-hidden">
+        <div class="d-flex flex-column overflow-hidden">
           <v-card-text class="card-text">
             <h3 class="book-title mb-2">{{ book.title }}</h3>
             <h5 class="author">{{ book.author }}</h5>
@@ -22,7 +19,7 @@
               {{ book.description }}
             </p>
           </v-card-text>
-        </v-col>
+        </div>
       </v-row>
     </v-card>
   </div>
@@ -57,5 +54,16 @@ export default {
   flex-grow: 1;
   overflow-y: auto;
   scrollbar-width: thin;
+}
+
+.image-container {
+  height: 200px;
+  width: 125px;
+}
+
+.cover-img {
+  height: 200px;
+  width: 125px;
+  object-fit: fill;
 }
 </style>

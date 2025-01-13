@@ -1,6 +1,7 @@
 <template>
   <v-navigation-drawer
     floating
+    :mobile-breakpoint="1100"
     v-model="navDrawer"
     class="rounded-lg ma-4 custom-sidebar"
   >

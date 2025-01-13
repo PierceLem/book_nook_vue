@@ -1,13 +1,21 @@
 <template>
-  <v-layout class="rounded rounded-md">
+  <v-app>
+    <!-- Navigation Drawer -->
     <NavDrawer />
+
+    <!-- AppBar -->
     <AppBar />
-    <v-main class="main" :style="mainPadding">
+
+    <!-- Main Content -->
+    <v-main 
+      class="main" 
+      :style="{ paddingLeft: mainPadding }"
+    >
       <v-container class="main-container">
         <router-view />
       </v-container>
     </v-main>
-  </v-layout>
+  </v-app>
 </template>
 
 <script>
@@ -20,14 +28,19 @@ export default {
     NavDrawer,
     AppBar,
   },
+
   computed: {
     ...mapState("ui", {
       isNavDrawerOpen: (state) => state.navDrawer,
     }),
+    isMobileView() {
+      return this.$vuetify.display.width < 1100;
+    },
     mainPadding() {
-      return {
-        paddingLeft: this.isNavDrawerOpen ? "260px" : "16px",
-      };
+      if (!this.isMobileView && this.isNavDrawerOpen) {
+        return "260px";
+      }
+      return "16px";
     },
   },
 };
@@ -41,8 +54,6 @@ export default {
   padding-right: 16px;
 }
 .main-container {
-  background-color: #ECEFF1;
-  border-radius: 8px;
   min-height: 100%;
   min-width: 100%;
 }

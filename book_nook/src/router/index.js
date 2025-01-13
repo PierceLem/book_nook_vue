@@ -1,8 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Discover from '../views/discover/Discover.vue'
 import MyAccount from '../views/discover/MyAccount.vue'
-import AuthLayout from "../layouts/AuthLayout.vue";
-import DefaultLayout from "../layouts/DefaultLayout.vue";
 import WorkShop from "../layouts/WorkShop.vue";
 import SignUp from '../views/SignUp.vue'
 import LogIn from '../views/LogIn.vue'
@@ -11,44 +9,49 @@ import store from '../store'
 
 const routes = [
   {
-    path: "/auth",
-    component: AuthLayout,
-    children: [
-      {
-        path: 'signup',
-        name: 'SignUp',
-        component: SignUp,
-      },
-      {
-        path: 'login',
-        name: 'LogIn',
-        component: LogIn
-      },
-    ],
+    path: '/signup',
+    name: 'SignUp',
+    component: SignUp,
+    meta: {
+      layout: 'AuthLayout',
+    },
   },
+
   {
-    path: "/",
-    component: DefaultLayout,
-    children: [
-      {
-        path: '',
-        name: 'Discover',
-        component: Discover,
-      },
-      {
-        path: 'my-account',
-        name: 'MyAccount',
-        component: MyAccount,
-        meta: {
-          requireLogin: true
-        }
-      },
-    ],
+    path: '/login',
+    name: 'LogIn',
+    component: LogIn,
+    meta: {
+      layout: 'AuthLayout',
+    },
   },
+
+  {
+    path: '/',
+    name: 'Discover',
+    component: Discover,
+    meta: {
+      layout: 'DefaultLayout',
+    },
+  },
+  
+  {
+    path: '/my-account',
+    name: 'MyAccount',
+    component: MyAccount,
+    meta: {
+      requireLogin: true,
+      layout: 'DefaultLayout',
+    }
+  },
+
   {
     path: "/workshop",
     name: 'WorkShop',
     component: WorkShop,
+    meta: {
+      layout: 'WorkShop',
+    },
   },
 ]
 

@@ -1,16 +1,13 @@
 <template>
-  <v-card max-width="400" max-height="200" elevation="3" class="d-flex">
+  <v-card max-width="600" max-height="200" elevation="3" class="d-flex ma-2">
     <v-row no-gutters class="d-flex flex-nowrap">
       <!-- Left: Image -->
-      <v-col cols="4" class="d-flex align-stretch">
-        <v-img
-          src="@/assets/book-cover.jpg"
-          cover=""
-        ></v-img>
-      </v-col>
+      <div class="image-container">
+        <img :src="require('@/assets/book-cover.jpg')" alt="Book Cover" class="cover-img">
+      </div>
 
       <!-- Right: Text Content -->
-      <v-col cols="8" class="d-flex flex-column overflow-hidden">
+      <div class="d-flex flex-column overflow-hidden">
         <v-card-text class="card-text">
           <h3 class="book-title mb-2">{{ book.title }}</h3>
           <h5 class="author">{{ book.author }}</h5>
@@ -21,7 +18,7 @@
             {{ book.description }}
           </p>
         </v-card-text>
-      </v-col>
+      </div>
     </v-row>
   </v-card>
 </template>
@@ -45,8 +42,46 @@ export default {
 
 <style scoped>
 .card-text {
+  padding-right: 16px;
+  padding-left: 16px;
+  padding-top: 16px;
+  padding-bottom: 16px;
   flex-grow: 1;
   overflow-y: auto;
-  scrollbar-width: thin;
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar for IE */
+}
+
+.card-text::-webkit-scrollbar {
+  width: 0; /* Hide scrollbar for Chrome, Edge, Safari */
+}
+
+.card-text:hover {
+  scrollbar-width: thin; /* Show thin scrollbar for Firefox on hover */
+  padding-right: 6px;
+}
+
+.card-text:hover::-webkit-scrollbar {
+  width: 8px; /* Show scrollbar width on hover */
+}
+
+.card-text:hover::-webkit-scrollbar-thumb {
+  background-color: #42a5f5; /* Scrollbar thumb color */
+  border-radius: 4px; /* Rounded edges */
+}
+
+.card-text:hover::-webkit-scrollbar-track {
+  background-color: #f5f5f5; /* Scrollbar track color */
+}
+
+.image-container {
+  height: 200px;
+  width: 125px;
+}
+
+.cover-img {
+  height: 200px;
+  width: 125px;
+  object-fit: fill;
 }
 </style>
