@@ -1,28 +1,93 @@
 <template>
-  <div class="workshop">
-    <v-card max-width="600" max-height="200" elevation="3" class="d-flex ma-8">
-      <v-row no-gutters class="d-flex flex-nowrap">
-        <!-- Left: Image -->
-        <div class="image-container">
-          <img :src="require('@/assets/book-cover.jpg')" alt="Book Cover" class="cover-img">
-        </div>
+  <v-app>
+    <v-navigation-drawer
+      :mobile-breakpoint="1100"
+      color="blue-grey-darken-4"
+      elevation="4"
+      width="224"
+      v-model="navDrawer"
+      class="nav-drawer"
+    >
+      <v-sheet class="ma-0 py-0 d-flex flex-row align-center bg-blue-grey-darken-3" elevation="4">
+        <v-col>
+          <v-img src="@/assets/logo-ct.png" height="80px" width="80px"></v-img>
+        </v-col>
+        
+        <v-col class="ma-0 pa-0 d-flex flex-column">
+          <h2>BOOK</h2>
+          <h2>NOOK</h2>
+        </v-col>
+        
+      </v-sheet>
 
-        <!-- Right: Text Content -->
-        <div class="d-flex flex-column overflow-hidden">
-          <v-card-text class="card-text">
-            <h3 class="book-title mb-2">{{ book.title }}</h3>
-            <h5 class="author">{{ book.author }}</h5>
+      <v-list nav>
+        <v-container class="pa-0 my-2 d-flex flex-row align-center justify-space-between">
+          <v-divider></v-divider>
+          <span class="drawer-subtitle">books</span>
+          <v-divider></v-divider>
+        </v-container>
 
-            <v-divider class="my-2"></v-divider>
+        <v-list-item
+          prepend-icon="mdi-book-search"
+          title="Discover"
+          value="Discover"
+        >
+        </v-list-item>
+        <v-list-item
+          prepend-icon="mdi-bookshelf"
+          title="Bookshelf"
+          value="Bookshelf"
+        >
+        </v-list-item>
 
-            <p class="book-description">
-              {{ book.description }}
-            </p>
-          </v-card-text>
-        </div>
-      </v-row>
-    </v-card>
-  </div>
+        <v-container class="pa-0 my-2 d-flex flex-row align-center justify-space-between">
+          <v-divider></v-divider>
+          <span class="drawer-subtitle">users</span>
+          <v-divider></v-divider>
+        </v-container>
+
+        <v-list-item
+          prepend-icon="mdi-account-circle"
+          title="Profile"
+          value="Profile"
+        >
+        </v-list-item>
+
+        <v-list-item
+          prepend-icon="mdi-message-text"
+          title="Messages"
+          value="Messages"
+        >
+        </v-list-item>
+      </v-list>
+
+      <v-spacer></v-spacer>
+
+      <v-divider></v-divider>
+
+      <v-list nav class="pa-3">
+        <v-list-item
+          prepend-avatar="https://randomuser.me/api/portraits/women/85.jpg"
+          title="Username"
+          subtitle="E-mail"
+          class="bg-blue-grey-darken-3 px-1"
+          elevation="3"
+        >
+          <template v-slot:append>
+            <v-btn 
+              size="small" 
+              variant="plain" 
+              icon
+              class="account-logout"
+              @click="logout"
+            >
+              <v-icon>mdi-logout</v-icon>
+            </v-btn>
+          </template>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+  </v-app>
 </template>
 
 <script>
@@ -30,13 +95,7 @@ export default {
   name: "WorkShop",
   data() {
     return {
-      book: {
-        title: "The Great Gatsby",
-        author: "J.K. Rowling",
-        description:
-          "A novel by F. Scott Fitzgerald, set in the Jazz Age on Long Island, near New York City, in the summer of 1922. It tells the story of the enigmatic millionaire Jay Gatsby as he pursues his unrequited love, Daisy Buchanan.",
-        image: "@/assets/book-cover.jpg",
-      },
+      navDrawer: true,
     };
   },
 };
@@ -50,20 +109,20 @@ export default {
   min-height: 100vh;
 }
 
-.card-text {
-  flex-grow: 1;
-  overflow-y: auto;
-  scrollbar-width: thin;
+.nav-drawer::v-deep(.v-navigation-drawer__content) {
+  display: flex !important;
+  flex-direction: column !important;
 }
 
-.image-container {
-  height: 200px;
-  width: 125px;
+.drawer-subtitle {
+  font-size: x-small;
+  font-weight: 300;
+  padding-inline: 5px;
 }
 
-.cover-img {
-  height: 200px;
-  width: 125px;
-  object-fit: fill;
+.account-logout:hover {
+  transition: none !important;
+  background-color: transparent !important;
 }
 </style>
+

@@ -7,11 +7,8 @@
     <AppBar />
 
     <!-- Main Content -->
-    <v-main 
-      class="main" 
-      :style="{ paddingLeft: mainPadding }"
-    >
-      <v-container class="main-container">
+    <v-main>
+      <v-container class="pa-0">
         <router-view />
       </v-container>
     </v-main>
@@ -33,28 +30,9 @@ export default {
     ...mapState("ui", {
       isNavDrawerOpen: (state) => state.navDrawer,
     }),
-    isMobileView() {
-      return this.$vuetify.display.width < 1100;
-    },
-    mainPadding() {
-      if (!this.isMobileView && this.isNavDrawerOpen) {
-        return "260px";
-      }
-      return "16px";
-    },
   },
 };
 </script>
 
 <style scoped>
-.main {
-  min-height: 100vh;
-  min-width: 100%;
-  padding-bottom: 16px;
-  padding-right: 16px;
-}
-.main-container {
-  min-height: 100%;
-  min-width: 100%;
-}
 </style>

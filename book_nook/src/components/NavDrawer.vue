@@ -1,69 +1,101 @@
 <template>
   <v-navigation-drawer
-    floating
     :mobile-breakpoint="1100"
+    color="blue-grey-darken-4"
+    elevation="4"
+    width="224"
     v-model="navDrawer"
-    class="rounded-lg ma-4 custom-sidebar"
+    app
   >
-    <v-container class="pa-5 bg-transparent">
-      <v-row
-        align="center"
-        class="bg-blue-grey-darken-3 rounded-lg elevation-6"
-      >
-        <v-col cols="auto" class="pr-1">
-          <v-img src="@/assets/logo-ct.png" height="48" width="48"></v-img>
-        </v-col>
-        <v-col class="pl-1">
-          <span class="text-h5 font-weight-bold font-family-serif"
-            >Book Nook</span
-          >
-        </v-col>
-      </v-row>
-    </v-container>
+    <v-sheet class="ma-0 py-0 d-flex flex-row align-center bg-blue-grey-darken-3" elevation="4">
+      <v-col cols="6" class="d-flex flex-row align-right pr-0">
+        <v-img src="@/assets/logo-ct.png" height="80px" width="80px"></v-img>
+      </v-col>
+      
+      <v-col cols="6" class="ma-0 pa-0 d-flex flex-column">
+        <h2>BOOK</h2>
+        <h2>NOOK</h2>
+      </v-col>
+      
+    </v-sheet>
 
-    <v-list nav>
+    <v-list dense nav>
+      <v-container class="py-0 my-2 d-flex flex-row align-center justify-space-between">
+        <v-divider></v-divider>
+        <span class="custom-subtitle px-2">books</span>
+        <v-divider></v-divider>
+      </v-container>
+
       <v-list-item
         prepend-icon="mdi-book-search"
         title="Discover"
         value="Discover"
-        class="text-blue-grey-darken-4"
-      >
-      </v-list-item>
+      />
+
       <v-list-item
         prepend-icon="mdi-bookshelf"
         title="Bookshelf"
         value="Bookshelf"
-        class="text-blue-grey-darken-4"
-      >
-      </v-list-item>
-      <v-list-item
-        prepend-icon="mdi-message-text"
-        title="Messages"
-        value="Messages"
-        class="text-blue-grey-darken-4"
-      >
-      </v-list-item>
+      />
 
-      <v-divider class="mb-1 text-blue-grey-darken-4"></v-divider>
+      <v-container class="py-0 my-2 d-flex flex-row align-center justify-space-between">
+        <v-divider></v-divider>
+        <span class="custom-subtitle px-2">users</span>
+        <v-divider></v-divider>
+      </v-container>
 
       <v-list-item
         prepend-icon="mdi-account-circle"
         title="Profile"
         value="Profile"
-        class="text-blue-grey-darken-4"
-      >
-      </v-list-item>
+      />
+
+      <v-list-item
+        prepend-icon="mdi-message-text"
+        title="Chat"
+        value="Chat"
+        to="/chat"
+      />
     </v-list>
 
-    <v-btn prepend-icon="mdi-logout" class="logout-btn bg-blue-grey-darken-3" @click="logout">
-      Logout
-    </v-btn>
+    <v-list nav class="pa-2" style="position: absolute; bottom: 0;">
+        <v-list-item
+          title="Username"
+          class="bg-blue-grey-darken-3 py-2 px-1"
+          elevation="3"
+        >
+          <template v-slot:prepend>
+            <v-avatar 
+              size="40" 
+              class="elevation-6"
+            >
+              <v-img src="https://randomuser.me/api/portraits/women/85.jpg"></v-img>
+            </v-avatar>
+          </template>
+
+          <template v-slot:subtitle>
+            <span class="custom-subtitle">parcwill1999@gmail.com</span>
+          </template>
+
+          <template v-slot:append>
+            <v-btn 
+              size="x-small" 
+              variant="plain" 
+              icon
+              class="account-logout"
+              @click="logout"
+            >
+              <v-icon>mdi-logout</v-icon>
+            </v-btn>
+          </template>
+        </v-list-item>
+      </v-list>
   </v-navigation-drawer>
 </template>
 
 <script>
 import { mapState } from "vuex";
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   computed: {
@@ -81,41 +113,36 @@ export default {
   },
   methods: {
     logout() {
-      // First, attempt to log out from the server (revoke the token)
       axios
         .post("/api/v1/token/logout/")
         .then(() => {
           localStorage.removeItem("token");
           this.$store.commit("setToken", "");
-
           axios.defaults.headers.common["Authorization"] = "";
-
-          this.$router.push("/auth/login");
+          this.$router.push("/login");
         })
-        .catch((error) => {
-          console.error("Error logging out:", error);
+        .catch(() => {
           localStorage.removeItem("token");
           this.$store.commit("setToken", "");
           axios.defaults.headers.common["Authorization"] = "";
-          this.$router.push("/auth/login");
+          this.$router.push("/login");
         });
-    }
+    },
   },
 };
 </script>
 
 <style scoped>
-.custom-sidebar {
-  height: calc(100vh - 32px) !important;
-  max-width: 224px;
-  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.1);
+.custom-subtitle {
+  font-size: x-small;
+  font-weight: 300;
 }
 
-.logout-btn {
-  position: absolute;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 32px);
+.account-logout:hover {
+  transition: none !important;
+  background-color: transparent !important;
 }
 </style>
+
+
+

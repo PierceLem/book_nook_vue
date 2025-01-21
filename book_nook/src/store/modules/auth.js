@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export default {
   namespaced: true,
   state: {
@@ -13,6 +15,7 @@ export default {
       if (token) {
         state.token = token;
         state.isAuthenticated = true;
+        axios.defaults.headers.common["Authorization"] = "Token " + token;
       } else {
         state.token = "";
         state.isAuthenticated = false;

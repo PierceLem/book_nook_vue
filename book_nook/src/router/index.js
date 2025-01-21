@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Discover from '../views/discover/Discover.vue'
 import MyAccount from '../views/discover/MyAccount.vue'
-import WorkShop from "../layouts/WorkShop.vue";
+import WorkShop from '../layouts/WorkShop.vue'
 import SignUp from '../views/SignUp.vue'
 import LogIn from '../views/LogIn.vue'
+import Chat from '../views/Chat.vue'
 
 import store from '../store'
 
@@ -51,7 +52,17 @@ const routes = [
     component: WorkShop,
     meta: {
       layout: 'WorkShop',
-    },
+    }
+  },
+
+  {
+    path: '/chat',
+    name: 'Chat',
+    component: Chat,
+    meta: {
+      requireLogin: true,
+      layout: 'DefaultLayout',
+    }
   },
 ]
 
@@ -61,8 +72,8 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requireLogin) && !store.state.isAuthenticated) {
-    next('/log-in')
+  if (to.matched.some(record => record.meta.requireLogin) && !store.state.auth.isAuthenticated) {
+    next('/login')
   } else {
     next()
   }

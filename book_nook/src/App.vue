@@ -5,6 +5,8 @@
 </template>
 
 <script>
+
+
 export default {
   name: "App",
   computed: {
@@ -12,6 +14,10 @@ export default {
       const layout = this.$route.meta.layout || 'DefaultLayout';
       return require(`@/layouts/${layout}.vue`).default;
     }
-  }
+  },
+
+  created() {
+    this.$store.commit("auth/initializeStore");
+  },
 };
 </script>
