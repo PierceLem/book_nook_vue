@@ -1,93 +1,46 @@
 <template>
-  <v-app>
-    <v-navigation-drawer
-      :mobile-breakpoint="1100"
-      color="blue-grey-darken-4"
-      elevation="4"
-      width="224"
-      v-model="navDrawer"
-      class="nav-drawer"
-    >
-      <v-sheet class="ma-0 py-0 d-flex flex-row align-center bg-blue-grey-darken-3" elevation="4">
-        <v-col>
-          <v-img src="@/assets/logo-ct.png" height="80px" width="80px"></v-img>
-        </v-col>
-        
-        <v-col class="ma-0 pa-0 d-flex flex-column">
-          <h2>BOOK</h2>
-          <h2>NOOK</h2>
-        </v-col>
-        
-      </v-sheet>
-
-      <v-list nav>
-        <v-container class="pa-0 my-2 d-flex flex-row align-center justify-space-between">
-          <v-divider></v-divider>
-          <span class="drawer-subtitle">books</span>
-          <v-divider></v-divider>
-        </v-container>
-
-        <v-list-item
-          prepend-icon="mdi-book-search"
-          title="Discover"
-          value="Discover"
+  <div class="workshop">
+    <v-container class="message-box">
+      <v-container 
+        v-for="message in messages"
+        class="bubble-container pa-2" 
+        :class="message.sent ? 'align-end' : 'align-start'"
+      >
+        <v-card 
+          rounded="lg" 
+          variant="tonal"
+          :color="message.sent ? 'indigo' : 'teal'"
+          class="pa-0 message-card" 
+          :class="message.sent ? 'ml-0' : 'ml-2 pl-3'"
+          position="relative"
+          max-width="75%"
+          :text="message.text"
         >
-        </v-list-item>
-        <v-list-item
-          prepend-icon="mdi-bookshelf"
-          title="Bookshelf"
-          value="Bookshelf"
+          <v-tooltip location="top" offset="6">
+            <template v-slot:activator="{ props }">
+              <v-avatar 
+                v-if="!message.sent"
+                v-bind="props"
+                class="message-avatar custom-avatar" 
+                size="40px" 
+                image="https://randomuser.me/api/portraits/women/85.jpg"
+              >
+              </v-avatar>
+            </template>
+            <span class="text-caption">Username</span>
+          </v-tooltip>
+          
+        </v-card>
+
+        <span 
+          class="message-date" 
+          :class="message.sent ? 'ml-0' : 'ml-2'"
         >
-        </v-list-item>
-
-        <v-container class="pa-0 my-2 d-flex flex-row align-center justify-space-between">
-          <v-divider></v-divider>
-          <span class="drawer-subtitle">users</span>
-          <v-divider></v-divider>
-        </v-container>
-
-        <v-list-item
-          prepend-icon="mdi-account-circle"
-          title="Profile"
-          value="Profile"
-        >
-        </v-list-item>
-
-        <v-list-item
-          prepend-icon="mdi-message-text"
-          title="Messages"
-          value="Messages"
-        >
-        </v-list-item>
-      </v-list>
-
-      <v-spacer></v-spacer>
-
-      <v-divider></v-divider>
-
-      <v-list nav class="pa-3">
-        <v-list-item
-          prepend-avatar="https://randomuser.me/api/portraits/women/85.jpg"
-          title="Username"
-          subtitle="E-mail"
-          class="bg-blue-grey-darken-3 px-1"
-          elevation="3"
-        >
-          <template v-slot:append>
-            <v-btn 
-              size="small" 
-              variant="plain" 
-              icon
-              class="account-logout"
-              @click="logout"
-            >
-              <v-icon>mdi-logout</v-icon>
-            </v-btn>
-          </template>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-  </v-app>
+          Mon 12:00
+        </span>
+      </v-container>
+    </v-container>
+  </div>
 </template>
 
 <script>
@@ -95,7 +48,14 @@ export default {
   name: "WorkShop",
   data() {
     return {
-      navDrawer: true,
+      messages: [
+        { text: "Hello! How are you?", sent: false },
+        { text: "I'm doing well, thanks! How about you?", sent: true },
+        { text: "I'm good too! Have you been working on anything fun lately?", sent: false },
+        { text: "Yeah, I just started a new Vue project!", sent: true },
+        { text: "That sounds exciting! What's the project about?", sent: false },
+        { text: "It's a messaging app. Actually, you're looking at it right now. 😉", sent: true },
+      ],
     };
   },
 };
@@ -109,20 +69,52 @@ export default {
   min-height: 100vh;
 }
 
-.nav-drawer::v-deep(.v-navigation-drawer__content) {
-  display: flex !important;
-  flex-direction: column !important;
+.message-box {
+  width: 800px;
+  height: 500px;
+  overflow-y: auto;
 }
 
-.drawer-subtitle {
-  font-size: x-small;
-  font-weight: 300;
-  padding-inline: 5px;
+.bubble-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
-.account-logout:hover {
-  transition: none !important;
-  background-color: transparent !important;
+.message-date {
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.667;
+  letter-spacing: 0.0333333333em;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.message-card {
+  overflow: visible;
+  z-index: 2;
+}
+
+.message-card:hover + .message-date {
+  opacity: 1;
+}
+
+.message-avatar {
+  position: absolute;
+  top: 6px;
+  left: -20px;
+  z-index: 3;
+}
+
+.custom-avatar::v-deep(.v-img__img) {
+  border-style: solid;
+  border-width: 3px;
+  border-radius: 50%;
+  border-color: white;
+}
+
+.v-tooltip::v-deep(.v-overlay__content) {
+  padding: 0px 10px;
 }
 </style>
 
