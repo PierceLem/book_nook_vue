@@ -1,5 +1,5 @@
 <template>
-  <v-container class="chat-container">
+  <v-container class="chat-container" min-width="100%">
     <v-app-bar 
       elevation="0" 
       border="sm" 
@@ -15,9 +15,11 @@
               v-bind="props"
             >
               <v-icon size="large">mdi-account-edit-outline</v-icon>
+              <EditThread />
             </v-btn>
           </template>
-          Edit thread
+
+          <span class="text-caption">edit thread</span>
         </v-tooltip>
       </template>
       
@@ -64,20 +66,27 @@
 
         <v-container class="d-flex flex-column pl-2">
           <div>
-            <v-tooltip location="bottom">
-              <template v-slot:activator="{ props }">
-                <v-btn 
-                  variant="text" 
-                  icon="mdi-pencil" 
-                  size="x-small" 
-                  class="mr-1"
-                  v-bind="props"
-                >
-                </v-btn>
-              </template>
+            <v-btn 
+              variant="text" 
+              icon
+              height="25px"
+              width="25px"
+              size="x-small" 
+              class="mr-1"
+              @click="toggleMenu"
+            >
+              <v-icon>mdi-pencil</v-icon>
 
-              <span class="text-caption">edit thread name</span>
-            </v-tooltip>
+              <v-tooltip 
+                :open-on-hover="!menuState"
+                location="bottom" 
+                activator="parent" 
+              >
+                <span class="text-caption">edit thread name</span>
+              </v-tooltip>
+
+              <ThreadRename @menuStateChange="toggleMenu" />
+            </v-btn>
 
             <span class="text-body-1">Group Chat</span>
           </div>
@@ -87,7 +96,7 @@
       </template>
     </v-app-bar>
 
-    <v-container class="messages-container">
+    <v-container class="messages-container" min-width="100%">
       <MessageBubble
         v-for="(message, index) in messages"
         :key="index"
@@ -95,7 +104,7 @@
       />
     </v-container>
 
-    <v-container class="pa-0 ma-0">
+    <v-container class="pa-0 ma-0" min-width="100%">
       <v-textarea 
         class="send-message"
         rows="1" 
@@ -118,26 +127,38 @@
 
 <script>
 import MessageBubble from './MessageBubble.vue';
+import EditThread from './EditThread.vue';
+import ThreadRename from './ThreadRename.vue';
 
 export default {
   name: 'MessageBox',
   
   components: {
     MessageBubble,
+    EditThread,
+    ThreadRename,
   },
 
   data() {
     return {
+      menuState: false,
       messages: [
-        { text: "Hello! How are you?", sent: false, date: 'today', sender: 'insert username' },
-        { text: "I'm doing well, thanks! How about you?", sent: true, date: 'today', sender: 'insert username' },
-        { text: "I'm good too! Have you been working on anything fun lately?", sent: false, date: 'today', sender: 'insert username' },
-        { text: "Yeah, I just started a new Vue project!", sent: true, date: 'today', sender: 'insert username' },
-        { text: "That sounds exciting! What's the project about?", sent: false, date: 'today', sender: 'insert username' },
-        { text: "It's a messaging app. Actually, you're looking at it right now. 😉", sent: true, date: 'today', sender: 'insert username' },
-        { text: "Very interesting. It seems to be coming along nice!", sent: false, date: 'today', sender: 'insert username' },
+        { text: "Hello! How are you?", sent: false, date: 'today', sender: 'insert username 2' },
+        { text: "I'm doing well, thanks! How about you?", sent: true, date: 'today', sender: 'insert username 1' },
+        { text: "I'm good too! Have you been working on anything fun lately?", sent: false, date: 'today', sender: 'insert username 2' },
+        { text: "Yeah, I just started a new Vue project!", sent: true, date: 'today', sender: 'insert username 1' },
+        { text: "That sounds exciting! What's the project about?", sent: false, date: 'today', sender: 'insert username 2' },
+        { text: "It's a messaging app. Actually, you're looking at it right now. 😉", sent: true, date: 'today', sender: 'insert username 1' },
+        { text: "Very interesting. It seems to be coming along nice!", sent: false, date: 'today', sender: 'insert username 2' },
+        { text: "How much longer before you're done?", sent: false, date: 'today', sender: 'insert username 2' },
       ],
     };
+  },
+
+  methods: {
+    toggleMenu(newState) {
+      this.menuState = newState
+    }
   },
 }
 </script>
@@ -145,10 +166,10 @@ export default {
 <style scoped>
 .chat-container {
   height: calc(100vh - 128px);
-  width: 100%;
   display: flex;
   flex-direction: column;
   padding: 0;
+  margin: 0;
 }
 
 .messages-container {
@@ -157,7 +178,8 @@ export default {
   flex-grow: 1;
   overflow-y: scroll;
   scrollbar-width: thin;
-  padding: 0px 20px;
+  padding-inline: 20px;
+  margin: 0;
 }
 
 .participant-list::v-deep(.v-list-item__prepend) {

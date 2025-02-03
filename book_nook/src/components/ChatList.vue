@@ -8,23 +8,44 @@
   >
     <v-list>
       <div class="d-flex align-center pt-1">
-        <v-list-item-title class="ml-6 text-h5">Threads</v-list-item-title>
+        <v-list-item-title class="ml-6 text-h5">
+          Threads
+        </v-list-item-title>
 
         <v-spacer></v-spacer>
 
         <v-btn 
-          size="small" 
-          variant="plain" 
+          size="small"
+          variant="plain"
           icon
           class="mr-2"
+          @click="toggleMenu"
         >
-          <v-icon size="large">mdi-chat-plus-outline</v-icon>
+          <v-icon size="large">
+            mdi-chat-plus-outline
+          </v-icon>
+
+          <v-tooltip 
+            activator="parent"
+            location="bottom" 
+            offset="5" 
+            :open-on-hover="!menuState"
+          >
+            <span class="text-caption">Create Thread</span>
+          </v-tooltip>
+
+          <CreateThread @menuStateChange="toggleMenu" />
         </v-btn>
       </div>
     </v-list>
 
     <v-list-item class="pl-2 pr-0">
-      <input class="custom-input" type="text" placeholder="Search Threads" />
+      <input 
+        class="custom-input" 
+        type="text" 
+        placeholder="Search Threads" 
+      />
+
       <i class="input-icon mdi mdi-magnify"></i>
     </v-list-item>
 
@@ -53,8 +74,25 @@
 </template>
 
 <script>
+import CreateThread from './CreateThread.vue';
+
 export default {
-  name: "ChatList"
+  name: "ChatList",
+  components: {
+    CreateThread,
+  },
+
+  data() {
+    return {
+      menuState: false,
+    }
+  },
+
+  methods: {
+    toggleMenu(newState) {
+      this.menuState = newState
+    }
+  },
 }
 </script>
 

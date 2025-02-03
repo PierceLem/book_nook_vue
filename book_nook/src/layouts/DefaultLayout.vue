@@ -8,7 +8,7 @@
 
     <!-- Main Content -->
     <v-main>
-      <v-container class="pa-0">
+      <v-container class="pa-0 ma-0" min-width="100%">
         <router-view />
       </v-container>
     </v-main>

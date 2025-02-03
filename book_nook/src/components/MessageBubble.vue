@@ -1,6 +1,6 @@
 <template>
   <v-container 
-    class="bubble-container pa-2" 
+    class="bubble-container px-2 py-0" 
     :class="sent ? 'align-end' : 'align-start'"
   >
     <v-card 
@@ -13,7 +13,7 @@
       max-width="75%"
       :text="text"
     >
-      <v-tooltip location="right" offset="-20px" transition="fade-transition" class="username-tooltip">
+      <v-tooltip location="right" offset="-8px" transition="fade-transition" class="username-tooltip">
         <template v-slot:activator="{ props }">
           <v-avatar 
             v-if="!sent"
@@ -106,6 +106,6 @@ export default {
 }
 
 .username-tooltip::v-deep(.v-overlay__content) {
-  transform: translateY(-38px);
+  transform: translateY(-26px);
 }
 </style>
