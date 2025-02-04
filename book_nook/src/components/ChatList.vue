@@ -1,5 +1,6 @@
 <template>
   <v-navigation-drawer 
+    v-model="drawer"
     floating
     :mobile-breakpoint="700"
     width="260"
@@ -74,6 +75,7 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
 import CreateThread from './CreateThread.vue';
 
 export default {
@@ -88,10 +90,23 @@ export default {
     }
   },
 
+  computed: {
+    ...mapGetters("ui", ["isChatDrawerOpen"]),
+    drawer: {
+      get() {
+        return this.isChatDrawerOpen;
+      },
+      set(value) {
+        this.setChatDrawer(value);
+      },
+    },
+  },
+
   methods: {
     toggleMenu(newState) {
       this.menuState = newState
-    }
+    },
+    ...mapActions("ui", ["setChatDrawer"]),
   },
 }
 </script>

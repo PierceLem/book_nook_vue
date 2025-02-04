@@ -1,9 +1,12 @@
 <template>
-  <v-container class="chat-container" min-width="100%">
+  <v-container 
+    class="chat-container" 
+    min-width="100%"
+  >
     <v-app-bar 
       elevation="0" 
       border="sm" 
-      class="pl-2"
+      class="pl-0"
     >
       <template v-slot:append>
         <v-tooltip location="left">
@@ -14,17 +17,45 @@
               class="ml-4"
               v-bind="props"
             >
-              <v-icon size="large">mdi-account-edit-outline</v-icon>
+              <v-icon size="large"
+                >mdi-account-edit-outline
+              </v-icon>
+
               <EditThread />
             </v-btn>
           </template>
 
-          <span class="text-caption">edit thread</span>
+          <span class="text-caption">
+            edit thread
+          </span>
         </v-tooltip>
       </template>
       
       <template v-slot:prepend>
-        <v-menu open-on-hover open-delay="10" close-delay="10">
+        <v-btn 
+          variant="tonal" 
+          width="36-px" 
+          height="36-px" 
+          class="toggle-chat-list"
+          @click="toggleChatDrawer"
+        >
+          <v-icon>mdi-format-list-bulleted</v-icon>
+
+          <v-tooltip 
+            location="bottom" 
+            activator="parent"
+          >
+            <span class="text-caption">
+              thread list
+            </span>
+          </v-tooltip>
+        </v-btn>
+
+        <v-menu 
+          open-on-hover 
+          open-delay="10" 
+          close-delay="10"
+        >
           <template v-slot:activator="{ props }">
             <v-avatar 
               variant="elevated" 
@@ -41,7 +72,10 @@
             </v-avatar>
           </template>
 
-          <v-list density="compact" class="pa-0">
+          <v-list 
+            density="compact" 
+            class="pa-0"
+          >
             <template v-for="n in 3" :key="n">
               <v-list-item
                 class="participant-list mx-2 pa-0"
@@ -55,7 +89,9 @@
                 </template>
 
                 <template v-slot:title>
-                  <span class="text-body-2">Insert username here</span>
+                  <span class="text-body-2">
+                    Insert username here
+                  </span>
                 </template>
               </v-list-item>
 
@@ -72,7 +108,6 @@
               height="25px"
               width="25px"
               size="x-small" 
-              class="mr-1"
               @click="toggleMenu"
             >
               <v-icon>mdi-pencil</v-icon>
@@ -82,21 +117,30 @@
                 location="bottom" 
                 activator="parent" 
               >
-                <span class="text-caption">edit thread name</span>
+                <span class="text-caption">
+                  edit thread name
+                </span>
               </v-tooltip>
 
               <ThreadRename @menuStateChange="toggleMenu" />
             </v-btn>
 
-            <span class="text-body-1">Group Chat</span>
+            <span class="text-body-1">
+              Group Chat
+            </span>
           </div>
 
-          <span class="text-caption text-grey-darken-1 pl-2">Last active 3 hrs ago</span>
+          <span class="text-caption text-grey-darken-1 pl-2">
+            Last active 3 hrs ago
+          </span>
         </v-container>
       </template>
     </v-app-bar>
 
-    <v-container class="messages-container" min-width="100%">
+    <v-container 
+      class="messages-container" 
+      min-width="100%"
+    >
       <MessageBubble
         v-for="(message, index) in messages"
         :key="index"
@@ -104,7 +148,10 @@
       />
     </v-container>
 
-    <v-container class="pa-0 ma-0" min-width="100%">
+    <v-container 
+      class="pa-0 ma-0" 
+      min-width="100%"
+    >
       <v-textarea 
         class="send-message"
         rows="1" 
@@ -126,6 +173,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import MessageBubble from './MessageBubble.vue';
 import EditThread from './EditThread.vue';
 import ThreadRename from './ThreadRename.vue';
@@ -158,7 +206,8 @@ export default {
   methods: {
     toggleMenu(newState) {
       this.menuState = newState
-    }
+    },
+    ...mapActions("ui", ["toggleChatDrawer"]),
   },
 }
 </script>
@@ -180,6 +229,25 @@ export default {
   scrollbar-width: thin;
   padding-inline: 20px;
   margin: 0;
+}
+
+:deep(.v-toolbar__prepend) {
+  margin-inline: 0px auto;
+}
+
+:deep(.v-btn--size-default) {
+  min-width: 36px;
+}
+
+.toggle-chat-list {
+  padding: 0px;
+  border-top-right-radius: 6px !important;
+  border-bottom-right-radius: 6px !important;
+  margin-right: 12px;
+}
+
+.toggle-chat-list::v-deep(.v-btn) {
+  border-radius: 0px;
 }
 
 .participant-list::v-deep(.v-list-item__prepend) {
