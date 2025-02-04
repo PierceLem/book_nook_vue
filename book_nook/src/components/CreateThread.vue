@@ -14,7 +14,12 @@
       <v-divider></v-divider>
 
       <v-list-item class="px-2">
-        <input class="custom-input" type="text" placeholder="Search Users" />
+        <input 
+          v-model="searchQuery"
+          class="custom-input" 
+          type="text" 
+          placeholder="Search Users" 
+        />
         <i class="input-icon mdi mdi-magnify"></i>
       </v-list-item>
 
@@ -26,7 +31,7 @@
         max-height="300px" 
         style="scrollbar-width: thin;"
       >
-        <template v-for="user in users" :key="user.id">
+        <template v-for="user in filteredUsers" :key="user.id">
           <v-list-item class="participant-list mx-2 pa-0">
             <template v-slot:prepend>
               <v-avatar 
@@ -133,9 +138,11 @@
 <script>
 export default {
   name: "CreateThread",
+
   data() {
     return {
       isOpen: false,
+      searchQuery: "",
       selectedUsers: [],
       maxUsers: 10,
       users: [
@@ -168,6 +175,7 @@ export default {
       ],
     };
   },
+
   methods: {
     addUser(user) {
       if (!this.selectedUsers.some((u) => u.id === user.id)) {
@@ -181,6 +189,19 @@ export default {
       let newState = this.isOpen
       this.$emit('menuStateChange', newState);
     },
+  },
+
+  computed: {
+    filteredUsers() {
+      if (!this.searchQuery) return this.users;
+
+      const query = this.searchQuery.toLowerCase();
+
+      return this.users.filter(user =>
+        user.name.toLowerCase().includes(query) ||
+        user.email.toLowerCase().includes(query)
+      );
+    }
   },
 };
 </script>
