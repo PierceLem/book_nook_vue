@@ -1,7 +1,7 @@
 <template>
   <v-row no-gutters>
     <v-col
-      v-for="n in 3"
+      v-for="n in 10"
       :key="n"
       cols="12"
       lg="4"
@@ -9,7 +9,7 @@
       xs="12"
     >
 
-      <BookCard></BookCard>
+      <BookCard />
 
     </v-col>
   </v-row>

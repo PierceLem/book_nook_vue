@@ -30,12 +30,14 @@
         prepend-icon="mdi-book-search"
         title="Discover"
         value="Discover"
+        to="/"
       />
 
       <v-list-item
         prepend-icon="mdi-bookshelf"
         title="Bookshelf"
         value="Bookshelf"
+        to="/bookshelf"
       />
 
       <v-container class="py-0 my-2 d-flex flex-row align-center justify-space-between">
@@ -48,6 +50,7 @@
         prepend-icon="mdi-account-circle"
         title="Profile"
         value="Profile"
+        to="/my-profile"
       />
 
       <v-list-item

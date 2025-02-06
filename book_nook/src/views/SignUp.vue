@@ -73,7 +73,7 @@ export default {
       rules: {
         username: [
           value => !!value || 'Username is required.',
-          value => value.length >= 3 || 'Username must be at least 3 characters.',
+          value => value.length >= 6 || 'Username must be at least 6 characters.',
           value => /^[a-zA-Z0-9_]+$/.test(value) || 'Username can only contain letters, numbers, and underscores.',
         ],
         email: [

@@ -2,7 +2,7 @@ export default {
   namespaced: true,
   state: {
     navDrawer: true,
-    chatDrawer: false,
+    chatDrawer: true,
   },
   mutations: {
     TOGGLE_DRAWER(state) {

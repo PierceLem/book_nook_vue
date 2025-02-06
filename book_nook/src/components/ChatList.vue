@@ -5,7 +5,6 @@
     :mobile-breakpoint="700"
     width="260"
     border="sm"
-    class="pr-2"
   >
     <v-list>
       <div class="d-flex align-center pt-1">
@@ -40,7 +39,7 @@
       </div>
     </v-list>
 
-    <v-list-item class="pl-2 pr-0">
+    <v-list-item class="px-2">
       <input 
         class="custom-input" 
         type="text" 

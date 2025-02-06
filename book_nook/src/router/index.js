@@ -1,10 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Discover from '../views/discover/Discover.vue'
-import MyAccount from '../views/discover/MyAccount.vue'
-import WorkShop from '../layouts/WorkShop.vue'
 import SignUp from '../views/SignUp.vue'
 import LogIn from '../views/LogIn.vue'
+import Discover from '../views/Discover.vue'
+import BookShelf from '@/views/BookShelf.vue'
+import MyProfile from '@/views/MyProfile.vue'
 import Chat from '../views/Chat.vue'
+import WorkShop from '../layouts/WorkShop.vue'
 
 import store from '../store'
 
@@ -35,11 +36,30 @@ const routes = [
       layout: 'DefaultLayout',
     },
   },
+
+  {
+    path: '/bookshelf',
+    name: 'BookShelf',
+    component: BookShelf,
+    meta: {
+      layout: 'DefaultLayout',
+    },
+  },
   
   {
-    path: '/my-account',
-    name: 'MyAccount',
-    component: MyAccount,
+    path: '/my-profile',
+    name: 'MyProfile',
+    component: MyProfile,
+    meta: {
+      requireLogin: true,
+      layout: 'DefaultLayout',
+    }
+  },
+  
+  {
+    path: '/chat',
+    name: 'Chat',
+    component: Chat,
     meta: {
       requireLogin: true,
       layout: 'DefaultLayout',
@@ -52,16 +72,6 @@ const routes = [
     component: WorkShop,
     meta: {
       layout: 'WorkShop',
-    }
-  },
-
-  {
-    path: '/chat',
-    name: 'Chat',
-    component: Chat,
-    meta: {
-      requireLogin: true,
-      layout: 'DefaultLayout',
     }
   },
 ]

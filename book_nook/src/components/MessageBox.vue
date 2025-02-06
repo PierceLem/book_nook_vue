@@ -3,139 +3,7 @@
     class="chat-container" 
     min-width="100%"
   >
-    <v-app-bar 
-      elevation="0" 
-      border="sm" 
-      class="pl-0"
-    >
-      <template v-slot:append>
-        <v-tooltip location="left">
-          <template v-slot:activator="{ props }">
-            <v-btn 
-              icon 
-              variant="plain" 
-              class="ml-4"
-              v-bind="props"
-            >
-              <v-icon size="large"
-                >mdi-account-edit-outline
-              </v-icon>
-
-              <EditThread />
-            </v-btn>
-          </template>
-
-          <span class="text-caption">
-            edit thread
-          </span>
-        </v-tooltip>
-      </template>
-      
-      <template v-slot:prepend>
-        <v-btn 
-          variant="tonal" 
-          width="36-px" 
-          height="36-px" 
-          class="toggle-chat-list"
-          @click="toggleChatDrawer"
-        >
-          <v-icon>mdi-format-list-bulleted</v-icon>
-
-          <v-tooltip 
-            location="bottom" 
-            activator="parent"
-          >
-            <span class="text-caption">
-              thread list
-            </span>
-          </v-tooltip>
-        </v-btn>
-
-        <v-menu 
-          open-on-hover 
-          open-delay="10" 
-          close-delay="10"
-        >
-          <template v-slot:activator="{ props }">
-            <v-avatar 
-              variant="elevated" 
-              color="blue-grey-darken-3" 
-              size="46"
-              v-bind="props"
-            >
-              <v-icon 
-                size="large" 
-                color="white"
-              >
-                mdi-account-group
-              </v-icon>
-            </v-avatar>
-          </template>
-
-          <v-list 
-            density="compact" 
-            class="pa-0"
-          >
-            <template v-for="n in 3" :key="n">
-              <v-list-item
-                class="participant-list mx-2 pa-0"
-              >
-                <template v-slot:prepend>
-                  <v-avatar
-                    image="https://randomuser.me/api/portraits/women/85.jpg"
-                    size="22px"
-                  >
-                  </v-avatar>
-                </template>
-
-                <template v-slot:title>
-                  <span class="text-body-2">
-                    Insert username here
-                  </span>
-                </template>
-              </v-list-item>
-
-              <v-divider class="ml-9" v-if="n < 3"></v-divider>
-            </template>
-          </v-list>
-        </v-menu>
-
-        <v-container class="d-flex flex-column pl-2">
-          <div>
-            <v-btn 
-              variant="text" 
-              icon
-              height="25px"
-              width="25px"
-              size="x-small" 
-              @click="toggleMenu"
-            >
-              <v-icon>mdi-pencil</v-icon>
-
-              <v-tooltip 
-                :open-on-hover="!menuState"
-                location="bottom" 
-                activator="parent" 
-              >
-                <span class="text-caption">
-                  edit thread name
-                </span>
-              </v-tooltip>
-
-              <ThreadRename @menuStateChange="toggleMenu" />
-            </v-btn>
-
-            <span class="text-body-1">
-              Group Chat
-            </span>
-          </div>
-
-          <span class="text-caption text-grey-darken-1 pl-2">
-            Last active 3 hrs ago
-          </span>
-        </v-container>
-      </template>
-    </v-app-bar>
+    <ThreadAppBar />
 
     <v-container 
       class="messages-container" 
@@ -173,23 +41,19 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
 import MessageBubble from './MessageBubble.vue';
-import EditThread from './EditThread.vue';
-import ThreadRename from './ThreadRename.vue';
+import ThreadAppBar from './ThreadAppBar.vue';
 
 export default {
   name: 'MessageBox',
   
   components: {
     MessageBubble,
-    EditThread,
-    ThreadRename,
+    ThreadAppBar,
   },
 
   data() {
     return {
-      menuState: false,
       messages: [
         { text: "Hello! How are you?", sent: false, date: 'today', sender: 'insert username 2' },
         { text: "I'm doing well, thanks! How about you?", sent: true, date: 'today', sender: 'insert username 1' },
@@ -201,13 +65,6 @@ export default {
         { text: "How much longer before you're done?", sent: false, date: 'today', sender: 'insert username 2' },
       ],
     };
-  },
-
-  methods: {
-    toggleMenu(newState) {
-      this.menuState = newState
-    },
-    ...mapActions("ui", ["toggleChatDrawer"]),
   },
 }
 </script>
@@ -229,33 +86,6 @@ export default {
   scrollbar-width: thin;
   padding-inline: 20px;
   margin: 0;
-}
-
-:deep(.v-toolbar__prepend) {
-  margin-inline: 0px auto;
-}
-
-:deep(.v-btn--size-default) {
-  min-width: 36px;
-}
-
-.toggle-chat-list {
-  padding: 0px;
-  border-top-right-radius: 6px !important;
-  border-bottom-right-radius: 6px !important;
-  margin-right: 12px;
-}
-
-.toggle-chat-list::v-deep(.v-btn) {
-  border-radius: 0px;
-}
-
-.participant-list::v-deep(.v-list-item__prepend) {
-  width: 30px;
-}
-
-:deep(.v-list-item--density-compact) {
-  min-height: 30px !important;
 }
 
 .send-message {
