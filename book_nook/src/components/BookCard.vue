@@ -1,26 +1,24 @@
 <template>
-  <v-card max-width="600" max-height="200" elevation="3" class="d-flex ma-2">
-    <v-row no-gutters class="d-flex flex-nowrap">
-      <!-- Left: Image -->
-      <div class="image-container">
-        <img :src="require('@/assets/book-cover.jpg')" alt="Book Cover" class="cover-img">
-      </div>
+  <v-sheet max-width="600" height="200" class="d-flex flex-row ma-2 pb-4" color="transparent">
+    <v-col cols="4" class="pa-0 d-flex justify-center align-center">
+      <img 
+        :src="require('@/assets/book-cover.jpg')" 
+        class="book-cover"
+        alt="Book Cover"
+      />
+    </v-col>
 
-      <!-- Right: Text Content -->
-      <div class="d-flex flex-column overflow-hidden">
-        <v-card-text class="card-text">
-          <h3 class="book-title mb-2">{{ book.title }}</h3>
-          <h5 class="author">{{ book.author }}</h5>
+    <v-col cols="8" class="d-flex flex-column pa-0 pl-2">
+      <h3 class="mb-2">{{ book.title }}</h3>
+      <h5 class="text-medium-emphasis">{{ book.author }}</h5>
 
-          <v-divider class="my-2"></v-divider>
+      <v-divider class="mt-2"></v-divider>
 
-          <p class="book-description">
-            {{ book.description }}
-          </p>
-        </v-card-text>
-      </div>
-    </v-row>
-  </v-card>
+      <p class="book-desc fade-out">
+        {{ book.description }}
+      </p>
+    </v-col>
+  </v-sheet>
 </template>
 
 <script>
@@ -32,7 +30,7 @@ export default {
         title: "The Great Gatsby",
         author: "J.K. Rowling",
         description:
-          "A novel by F. Scott Fitzgerald, set in the Jazz Age on Long Island, near New York City, in the summer of 1922. It tells the story of the enigmatic millionaire Jay Gatsby as he pursues his unrequited love, Daisy Buchanan.",
+          "A novel by F. Scott Fitzgerald, set in the Jazz Age on Long Island, near New York City, in the summer of 1922. It tells the story of the enigmatic millionaire Jay Gatsby as he pursues his unrequited love, Daisy Buchanan. It tells the story of the enigmatic millionaire Jay Gatsby as he pursues his unrequited love, Daisy Buchanan.",
         image: "@/assets/book-cover.jpg",
       },
     };
@@ -41,47 +39,54 @@ export default {
 </script>
 
 <style scoped>
-.card-text {
-  padding-right: 16px;
-  padding-left: 16px;
-  padding-top: 16px;
-  padding-bottom: 16px;
-  flex-grow: 1;
+.book-cover {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.3), 
+              0px 5px 8px rgba(0, 0, 0, 0.3);
+  
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.book-cover:hover {
+  box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.6), 
+              0px 6px 8px rgba(0, 0, 0, 0.55);
+              
+  cursor: pointer;
+}
+
+.book-desc {
+  padding-top: 6px;
+  padding-bottom: 12px;
   overflow-y: auto;
-  scrollbar-width: none; /* Hide scrollbar for Firefox */
-  -ms-overflow-style: none; /* Hide scrollbar for IE */
+  scrollbar-width: none;
+  font-weight: 400;
+  font-size: smaller;
+  color: black;
+  line-height: 15px;
 }
 
-.card-text::-webkit-scrollbar {
-  width: 0; /* Hide scrollbar for Chrome, Edge, Safari */
+.book-desc::-webkit-scrollbar {
+  display: none;
 }
 
-.card-text:hover {
-  scrollbar-width: thin; /* Show thin scrollbar for Firefox on hover */
-  padding-right: 6px;
-}
-
-.card-text:hover::-webkit-scrollbar {
-  width: 8px; /* Show scrollbar width on hover */
-}
-
-.card-text:hover::-webkit-scrollbar-thumb {
-  background-color: #42a5f5; /* Scrollbar thumb color */
-  border-radius: 4px; /* Rounded edges */
-}
-
-.card-text:hover::-webkit-scrollbar-track {
-  background-color: #f5f5f5; /* Scrollbar track color */
-}
-
-.image-container {
-  height: 200px;
-  width: 125px;
-}
-
-.cover-img {
-  height: 200px;
-  width: 125px;
-  object-fit: fill;
+.fade-out {
+  position: relative;
+  max-height: 200px;
+  
+  -webkit-mask-image: linear-gradient(to bottom, 
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 1) 10%,
+    rgba(0, 0, 0, 1) 80%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  mask-image: linear-gradient(to bottom, 
+    rgba(0, 0, 0, 0) 0%, 
+    rgba(0, 0, 0, 1) 10%, 
+    rgba(0, 0, 0, 1) 80%, 
+    rgba(0, 0, 0, 0) 100%
+  );
 }
 </style>

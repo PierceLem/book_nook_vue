@@ -1,7 +1,6 @@
 <template>
   <v-container 
-    class="d-flex flex-column pa-0 ma-0 profile-container" 
-    min-height="100%" 
+    class="d-flex flex-column pa-0 ma-0" 
     min-width="100%"
   >
     <v-card 
@@ -15,7 +14,6 @@
     </v-card>
 
     <v-card 
-      height="80%" 
       elevation="10"
       rounded="xl" 
       class="mx-8 d-flex flex-column profile-card card-border"
@@ -137,26 +135,28 @@
               <v-window
                 v-model="window"
                 show-arrows
-                continuous
+                direction="horizontal"
               >
-                <template v-slot:next>
-                  <v-btn 
-                    icon="mdi-chevron-right" 
-                    variant="text" 
-                    height="25px" 
-                    width="25px"
-                    @click="nextSlide"
-                  ></v-btn>
+                <template v-slot:prev="{ props }">
+                  <v-btn
+                    icon="mdi-chevron-double-left"
+                    height="32"
+                    width="32"
+                    variant="text"
+                    @click="props.onClick"
+                  >
+                  </v-btn>
                 </template>
 
-                <template v-slot:prev>
-                  <v-btn 
-                    icon="mdi-chevron-left" 
-                    variant="text" 
-                    height="25px" 
-                    width="25px"
-                    @click="prevSlide"
-                  ></v-btn>
+                <template v-slot:next="{ props }">
+                  <v-btn
+                    icon="mdi-chevron-double-right"
+                    height="32"
+                    width="32"
+                    variant="text"
+                    @click="props.onClick"
+                  >
+                  </v-btn>
                 </template>
 
                 <v-window-item
@@ -166,10 +166,12 @@
                   <v-container 
                     class="d-flex flex-column justify-center align-center pa-0 ma-0 mt-3" 
                     min-width="100%" 
-                    style="height: 100%;"
+                    height="250"
+                    max-height="250"
                   >
                     <v-sheet 
                       width="40%" 
+                      max-width="125"
                       elevation="6" 
                       rounded="lg" 
                       style="overflow: hidden;"
@@ -269,18 +271,6 @@ export default {
       this.bio = this.newBio;
       this.isEditing = false;
     },
-
-    nextSlide() {
-      if (this.window < this.length - 1) {
-        this.window++;
-      }
-    },
-
-    prevSlide() {
-      if (this.window > 0) {
-        this.window--;
-      }
-    },
   },
 
   computed: {
@@ -305,12 +295,6 @@ export default {
 </script>
 
 <style scoped>
-.profile-container {
-  height: calc(100vh - 64px);
-  overflow-y: scroll;
-  scrollbar-width: thin;
-}
-
 .gradient-overlay::before {
   content: "";
   position: absolute;
