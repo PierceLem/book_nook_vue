@@ -1,19 +1,29 @@
 <template>
-  <v-container class="d-flex flex-column ma-0 pa-0" min-height="100%" min-width="100%">
-    <v-container class="bg-img" width="100%" max-width="100%" max-height="250">
-      <div class="d-flex flex-row justify-between w-100 px-8">
-        <BookCard />
-        <BookCard />
-        <BookCard />
-      </div>
+  <div ref="pageContainer" class="page-wrapper">
+    <v-container 
+      v-for="(shelf, index) in shelves" 
+      :key="index" 
+      class="bg-shelf d-flex flex-row px-8" 
+      width="100%" 
+      max-width="100%" 
+      max-height="250"
+    >
+      <v-col v-for="book in shelf" :cols="shelfWidth" class="d-flex flex-row justify-between w-100 ma-0 px-2 py-0">
+        <BookCard
+          :key="book.id"
+          :title="book.title" 
+          :author="book.author" 
+          :description="book.description" 
+          :image="book.image" 
+        />
+      </v-col>
     </v-container>
 
-    <v-container class="bg-img" width="100%" height="250" max-width="100%" max-height="250">
-    </v-container>
-
-    <v-container class="bg-img" width="100%" height="250" max-width="100%" max-height="250">
-    </v-container>
-  </v-container>
+    <v-container
+      class="bg-shadow d-flex flex-grow-1 pa-0 ma-0" 
+      min-width="100%" 
+    ></v-container>
+  </div>
 </template>
 
 <script>
@@ -21,15 +31,94 @@ import BookCard from '@/components/BookCard.vue';
 
 export default {
   name: "Discover",
+
   components: {
     BookCard,
   },
+
+  data() {
+    return {
+      books: [
+        { id: 1, title: "The Great Gatsby", author: "F. Scott Fitzgerald", description: "A Jazz Age novel about Gatsby's love for Daisy.", image: require('@/assets/book-cover.jpg') },
+        { id: 2, title: "1984", author: "George Orwell", description: "A dystopian novel about a totalitarian society.", image: require('@/assets/book-cover.jpg') },
+        { id: 3, title: "To Kill a Mockingbird", author: "Harper Lee", description: "A novel about racial injustice in the Deep South.", image: require('@/assets/book-cover.jpg') },
+        { id: 4, title: "Pride and Prejudice", author: "Jane Austen", description: "A romantic novel about Elizabeth Bennet and Mr. Darcy.", image: require('@/assets/book-cover.jpg') },
+        { id: 5, title: "Moby-Dick", author: "Herman Melville", description: "A whaling adventure about Captain Ahab's obsession.", image: require('@/assets/book-cover.jpg') },
+        { id: 6, title: "The Catcher in the Rye", author: "J.D. Salinger", description: "A novel about Holden Caulfield's experiences.", image: require('@/assets/book-cover.jpg') },
+        { id: 7, title: "Brave New World", author: "Aldous Huxley", description: "A dystopian novel about a futuristic society.", image: require('@/assets/book-cover.jpg') },
+        { id: 8, title: "Jane Eyre", author: "Charlotte Brontë", description: "A coming-of-age novel about Jane Eyre's journey.", image: require('@/assets/book-cover.jpg') },
+        { id: 9, title: "Crime and Punishment", author: "Fyodor Dostoevsky", description: "A novel about guilt and redemption.", image: require('@/assets/book-cover.jpg') },
+      ],
+      booksPerShelf: 3,
+      shelfWidth: 4,
+      containerWidth: 0,
+    };
+  },
+
+  computed: {
+    shelves() {
+      return this.books.reduce((acc, book, index) => {
+        const shelfIndex = Math.floor(index / this.booksPerShelf);
+        if (!acc[shelfIndex]) acc[shelfIndex] = [];
+        acc[shelfIndex].push(book);
+        return acc;
+      }, []);
+    }
+  },
+
+  watch: {
+    containerWidth(newWidth) {
+      this.updateBooksPerShelf(newWidth);
+    }
+  },
+
+  mounted() {
+    this.containerWidth = this.$refs.pageContainer.clientWidth;
+    window.addEventListener("resize", this.onResize);
+  },
+
+  beforeUnmount() {
+    window.removeEventListener("resize", this.onResize);
+  },
+
+  methods: {
+    onResize() {
+      this.containerWidth = this.$refs.pageContainer.clientWidth;
+    },
+    updateBooksPerShelf(containerWidth) {
+      if (containerWidth <= 700) {
+        this.booksPerShelf = 1;
+        this.shelfWidth = 12;
+      } else if (containerWidth <= 1000) {
+        this.booksPerShelf = 2;
+        this.shelfWidth = 6;
+      } else {
+        this.booksPerShelf = 3;
+        this.shelfWidth = 4;
+      }
+    }
+  }
 };
 </script>
 
 <style scoped>
-.bg-img {
+.page-wrapper {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 100%;
+  min-height: 100%;
+}
+
+.bg-shelf {
   background-image: url('@/assets/bg_shelf.jpg');
+  background-size: 100% 100%;
+  background-position: center;
+}
+
+.bg-shadow {
+  background-image: url('@/assets/bg_shelf_shadow.jpg');
   background-size: 100% 100%;
   background-position: center;
 }

@@ -1,21 +1,21 @@
 <template>
-  <v-sheet max-width="600" height="200" class="d-flex flex-row ma-2 pb-4" color="transparent">
+  <v-sheet max-width="600" min-width="100%" height="200" class="d-flex flex-row ma-2 pb-4" color="transparent">
     <v-col cols="4" class="pa-0 d-flex justify-center align-center">
       <img 
-        :src="require('@/assets/book-cover.jpg')" 
+        :src="image" 
         class="book-cover"
         alt="Book Cover"
       />
     </v-col>
 
     <v-col cols="8" class="d-flex flex-column pa-0 pl-2">
-      <h3 class="mb-2">{{ book.title }}</h3>
-      <h5 class="text-medium-emphasis">{{ book.author }}</h5>
+      <u><h4>{{ title }}</h4></u>
+      <h5 class="text-medium-emphasis">{{ author }}</h5>
 
       <v-divider class="mt-2"></v-divider>
 
       <p class="book-desc fade-out">
-        {{ book.description }}
+        {{ description }}
       </p>
     </v-col>
   </v-sheet>
@@ -24,17 +24,24 @@
 <script>
 export default {
   name: "BookCard",
-  data() {
-    return {
-      book: {
-        title: "The Great Gatsby",
-        author: "J.K. Rowling",
-        description:
-          "A novel by F. Scott Fitzgerald, set in the Jazz Age on Long Island, near New York City, in the summer of 1922. It tells the story of the enigmatic millionaire Jay Gatsby as he pursues his unrequited love, Daisy Buchanan. It tells the story of the enigmatic millionaire Jay Gatsby as he pursues his unrequited love, Daisy Buchanan.",
-        image: "@/assets/book-cover.jpg",
-      },
-    };
-  },
+  props: {
+    title: {
+      type: String,
+      required: true
+    },
+    author: {
+      type: String,
+      required: true
+    },
+    description: {
+      type: String,
+      required: true
+    },
+    image: {
+      type: String,
+      required: true
+    }
+  }
 };
 </script>
 
