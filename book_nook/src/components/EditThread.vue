@@ -119,7 +119,6 @@ export default {
 </script>
 
 <style scoped>
-
 .custom-input {
   background-color: #f0f0f0;
   border-radius: 8px;

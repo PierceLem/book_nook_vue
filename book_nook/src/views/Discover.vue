@@ -1,9 +1,11 @@
 <template>
   <div ref="pageContainer" class="page-wrapper">
+    <DiscoverDrawer />
+
     <v-container 
       v-for="(shelf, index) in shelves" 
       :key="index" 
-      class="bg-shelf d-flex flex-row px-8" 
+      class="d-flex flex-row px-8" 
       width="100%" 
       max-width="100%" 
       max-height="250"
@@ -20,7 +22,7 @@
     </v-container>
 
     <v-container
-      class="bg-shadow d-flex flex-grow-1 pa-0 ma-0" 
+      class="d-flex flex-grow-1 pa-0 ma-0" 
       min-width="100%" 
     ></v-container>
   </div>
@@ -28,12 +30,14 @@
 
 <script>
 import BookCard from '@/components/BookCard.vue';
+import DiscoverDrawer from '@/components/DiscoverDrawer.vue';
 
 export default {
   name: "Discover",
 
   components: {
     BookCard,
+    DiscoverDrawer,
   },
 
   data() {
@@ -109,17 +113,5 @@ export default {
   flex-direction: column;
   min-width: 100%;
   min-height: 100%;
-}
-
-.bg-shelf {
-  background-image: url('@/assets/bg_shelf.jpg');
-  background-size: 100% 100%;
-  background-position: center;
-}
-
-.bg-shadow {
-  background-image: url('@/assets/bg_shelf_shadow.jpg');
-  background-size: 100% 100%;
-  background-position: center;
 }
 </style>
