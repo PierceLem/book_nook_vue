@@ -4,6 +4,7 @@
     :rail="rail"
     width="300"
     permanent
+    :class="{ 'elevation-4': showScrim }"
     @click="railOpen"
   >
     <v-list-item class="pa-2">
@@ -14,7 +15,7 @@
           variant="text"
           height="32"
           width="32"
-          class="ml-1"
+          class="ml-2"
           @click.stop="railClose"
         ></v-btn>
       </template>
@@ -31,14 +32,16 @@
 
     <v-divider></v-divider>
 
-    <v-container 
-      v-if="!rail" 
-      class="pt-2 pb-0 mb-0 d-flex flex-row align-center justify-space-between"
-    >
-      <v-divider></v-divider>
-      <span class="text-caption px-2">Popular&nbsp;Genres</span>
-      <v-divider></v-divider>
-    </v-container>
+    <v-expand-transition>
+      <v-container 
+        v-if="titleState"
+        class="title-container"
+      >
+        <v-divider class="title-divider"></v-divider>
+        <span class="text-caption px-2">Popular&nbsp;Genres</span>
+        <v-divider class="title-divider"></v-divider>
+      </v-container>
+    </v-expand-transition>
 
     <v-list 
       density="compact" 
@@ -69,12 +72,21 @@
             :key="genre.value" 
             :title="genre.title" 
             :value="genre.value"
+            @click="$emit('set-genre', genre.title)"
             ref="genreRefs"
           ></v-list-item>
         </v-list-group>
       </template>
     </v-list>
   </v-navigation-drawer>
+
+  <v-fade-transition>
+    <div
+      v-if="showScrim"
+      class="custom-scrim"
+      @click="rail = true"
+    ></div>
+  </v-fade-transition>
 </template>
 
 <script>
@@ -85,6 +97,8 @@ export default {
     return {
       drawer: true,
       rail: true,
+      titleState: false,
+      screenWidth: window.innerWidth,
       categories: [
         {
           name: "Fiction",
@@ -165,6 +179,20 @@ export default {
     }
   },
 
+  computed: {
+    showScrim() {
+      return this.screenWidth < 700 && !this.rail && this.drawer;
+    },
+  },
+
+  mounted() {
+    window.addEventListener("resize", this.onResize);
+  },
+
+  beforeUnmount() {
+    window.removeEventListener("resize", this.onResize);
+  },
+
   methods: {
     railClose() {
       this.$refs.categoryRefs.forEach((category, index) => {
@@ -177,7 +205,8 @@ export default {
           })
         }
       });
-      this.rail = true;
+      this.titleState = false;
+      this.rail = true
     },
 
     railOpen() {
@@ -192,6 +221,7 @@ export default {
             })
           }
         });
+        this.titleState = true;
         this.rail = false;
       }
     },
@@ -206,7 +236,11 @@ export default {
         }
       });
       openedCategory.open = !openedCategory.open;
-    }
+    },
+
+    onResize() {
+      this.screenWidth = window.innerWidth;
+    },
   },
 }
 </script>
@@ -217,16 +251,41 @@ export default {
 }
 
 :deep(.v-field--prepended) {
-  padding-inline-start: 7px;
+  padding-inline-start: 8px;
 }
 
 :deep(.v-field.v-field--prepended) {
-  --v-field-padding-start: 5px;
+  --v-field-padding-start: 7px;
 }
 
 .genre-list {
   max-height: calc(100vh - 148.8px);
   overflow-y: auto;
   scrollbar-width: thin;
+}
+
+.custom-scrim {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 100vw;
+  height: calc(100vh - 64px);
+  background: black;
+  opacity: 0.2;
+  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1005;
+}
+
+.title-container {
+  padding: 0px 8px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: end;
+  height: 30px;
+}
+
+.title-divider {
+  margin-block: 9px;
 }
 </style>

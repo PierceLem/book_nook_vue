@@ -77,6 +77,7 @@
 import { mapState, mapActions } from "vuex";
 
 export default {
+  name: "AppBar",
   data() {
     return {
       drawer: true,

@@ -1,6 +1,8 @@
 <template>
   <div ref="pageContainer" class="page-wrapper">
-    <DiscoverDrawer />
+    <DiscoverDrawer @set-genre="genre = $event" />
+
+    <DiscoverAppBar :setGenre="genre" />
 
     <v-container 
       v-for="(shelf, index) in shelves" 
@@ -20,15 +22,11 @@
         />
       </v-col>
     </v-container>
-
-    <v-container
-      class="d-flex flex-grow-1 pa-0 ma-0" 
-      min-width="100%" 
-    ></v-container>
   </div>
 </template>
 
 <script>
+import DiscoverAppBar from '@/components/DiscoverAppBar.vue';
 import BookCard from '@/components/BookCard.vue';
 import DiscoverDrawer from '@/components/DiscoverDrawer.vue';
 
@@ -36,12 +34,14 @@ export default {
   name: "Discover",
 
   components: {
-    BookCard,
+    DiscoverAppBar,
     DiscoverDrawer,
+    BookCard,
   },
 
   data() {
     return {
+      genre: "Popular Books",
       books: [
         { id: 1, title: "The Great Gatsby", author: "F. Scott Fitzgerald", description: "A Jazz Age novel about Gatsby's love for Daisy.", image: require('@/assets/book-cover.jpg') },
         { id: 2, title: "1984", author: "George Orwell", description: "A dystopian novel about a totalitarian society.", image: require('@/assets/book-cover.jpg') },

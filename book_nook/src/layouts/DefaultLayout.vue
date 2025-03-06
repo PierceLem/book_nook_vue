@@ -8,9 +8,11 @@
 
     <!-- Main Content -->
     <v-main>
-      <v-container class="d-flex pa-0 ma-0" min-height="100%" min-width="100%">
-        <router-view />
-      </v-container>
+      <router-view v-slot="{ Component }">
+        <keep-alive>
+          <component :is="Component" />
+        </keep-alive>
+      </router-view>
     </v-main>
   </v-app>
 </template>
@@ -19,6 +21,7 @@
 import NavDrawer from "@/components/NavDrawer.vue";
 import AppBar from "@/components/AppBar.vue";
 import { mapState } from "vuex";
+import { KeepAlive } from "vue";
 
 export default {
   components: {
@@ -35,4 +38,9 @@ export default {
 </script>
 
 <style scoped>
+@media (max-width: 700px) {
+  :deep(.v-main) {
+    --v-layout-left: 56px !important;
+  }
+}
 </style>
