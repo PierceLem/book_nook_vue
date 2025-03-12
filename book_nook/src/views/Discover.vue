@@ -1,27 +1,26 @@
 <template>
-  <div ref="pageContainer" class="page-wrapper">
-    <DiscoverDrawer @set-genre="genre = $event" />
+  <div class="page-wrapper">
+    <DiscoverDrawer @setGenre="genre = $event" @drawerToggle="onResize" />
 
     <DiscoverAppBar :setGenre="genre" />
 
-    <v-container 
-      v-for="(shelf, index) in shelves" 
-      :key="index" 
-      class="d-flex flex-row px-8" 
-      width="100%" 
-      max-width="100%" 
-      max-height="250"
-    >
-      <v-col v-for="book in shelf" :cols="shelfWidth" class="d-flex flex-row justify-between w-100 ma-0 px-2 py-0">
-        <BookCard
-          :key="book.id"
-          :title="book.title" 
-          :author="book.author" 
-          :description="book.description" 
-          :image="book.image" 
-        />
-      </v-col>
-    </v-container>
+    <div ref="pageContainer">
+      <div
+        v-for="(shelf, index) in shelves" 
+        :key="index" 
+        class="books-wrapper" 
+      >
+        <v-col v-for="book in shelf" :cols="shelfWidth" class="d-flex flex-row justify-between w-100 ma-0 pa-0 pr-4">
+          <BookCard
+            :key="book.id"
+            :title="book.title" 
+            :author="book.author" 
+            :description="book.description" 
+            :image="book.image" 
+          />
+        </v-col>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -87,18 +86,17 @@ export default {
 
   methods: {
     onResize() {
-      this.containerWidth = this.$refs.pageContainer.clientWidth;
+      this.$nextTick(() => {
+        this.containerWidth = this.$refs.pageContainer.clientWidth;
+      })
     },
     updateBooksPerShelf(containerWidth) {
-      if (containerWidth <= 700) {
+      if (containerWidth <= 850) {
         this.booksPerShelf = 1;
         this.shelfWidth = 12;
-      } else if (containerWidth <= 1000) {
+      } else {
         this.booksPerShelf = 2;
         this.shelfWidth = 6;
-      } else {
-        this.booksPerShelf = 3;
-        this.shelfWidth = 4;
       }
     }
   }
@@ -113,5 +111,14 @@ export default {
   flex-direction: column;
   min-width: 100%;
   min-height: 100%;
+}
+
+.books-wrapper {
+  display: flex;
+  flex-direction: row;
+  padding: 8px 0px 8px 16px;
+  width: 100%;
+  max-width: 100%;
+  max-height: 266px;
 }
 </style>

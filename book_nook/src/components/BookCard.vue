@@ -1,29 +1,92 @@
 <template>
-  <v-sheet max-width="600" min-width="100%" height="200" class="d-flex flex-row ma-2 pb-4" color="transparent">
-    <v-col cols="4" class="pa-0 d-flex justify-center align-center">
-      <img 
-        :src="image" 
-        class="book-cover"
-        alt="Book Cover"
-      />
-    </v-col>
+  <v-sheet 
+    max-width="600" 
+    min-width="100%"
+    height="250" 
+    elevation="4"
+    class="d-flex flex-row ma-0 py-0 pl-2" 
+    border="sm" 
+    rounded="lg" 
+    style="overflow: hidden;"
+  >
+    <div class="d-flex flex-row flex-grow-1 py-4">
+      <v-col 
+        cols="4" 
+        class="pa-0 d-flex justify-center align-center"
+      >
+        <img 
+          :src="image" 
+          class="book-cover"
+          alt="Book Cover"
+        />
+      </v-col>
 
-    <v-col cols="8" class="d-flex flex-column pa-0 pl-2">
-      <u><h4>{{ title }}</h4></u>
-      <h5 class="text-medium-emphasis">{{ author }}</h5>
+      <v-col 
+        cols="8" 
+        class="d-flex flex-column pa-0 pl-2"
+      >
+        <u><h4>{{ title }}</h4></u>
+        <h5 class="text-medium-emphasis">{{ author }}</h5>
 
-      <v-divider class="mt-2"></v-divider>
+        <v-divider class="mt-2"></v-divider>
 
-      <p class="book-desc fade-out">
-        {{ description }}
-      </p>
-    </v-col>
+        <p class="book-desc fade-out">
+          {{ description }}
+        </p>
+      </v-col>
+    </div>
+
+    <v-divider vertical class="pa-0 ma-0"></v-divider>
+
+    <div class="options">
+      <v-btn 
+        :color="liked ? 'red' : ''"
+        variant="text"
+        min-height="35px"
+        min-width="35px"
+        max-height="35px"
+        max-width="35px"
+        rounded="0"
+        @click="toggleLike"
+      >
+        <v-icon>{{ liked ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
+      </v-btn>
+
+      <v-btn 
+        variant="text"
+        min-height="35px"
+        min-width="35px"
+        max-height="35px"
+        max-width="35px"
+        rounded="0"
+      >
+        <v-icon>mdi-download</v-icon>
+      </v-btn>
+
+      <v-btn 
+        variant="text"
+        min-height="35px"
+        min-width="35px"
+        max-height="35px"
+        max-width="35px"
+        rounded="0"
+      >
+        <v-icon>mdi-pencil</v-icon>
+      </v-btn>
+    </div>
   </v-sheet>
 </template>
 
 <script>
 export default {
   name: "BookCard",
+
+  data() {
+    return {
+      liked: false,
+    };
+  },
+
   props: {
     title: {
       type: String,
@@ -41,7 +104,13 @@ export default {
       type: String,
       required: true
     }
-  }
+  },
+
+  methods: {
+    toggleLike() {
+      this.liked = !this.liked;
+    },
+  },
 };
 </script>
 
@@ -53,15 +122,6 @@ export default {
   border-radius: 8px;
   box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.3), 
               0px 5px 8px rgba(0, 0, 0, 0.3);
-  
-  transition: box-shadow 0.3s ease-in-out;
-}
-
-.book-cover:hover {
-  box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.6), 
-              0px 6px 8px rgba(0, 0, 0, 0.55);
-              
-  cursor: pointer;
 }
 
 .book-desc {
@@ -95,5 +155,18 @@ export default {
     rgba(0, 0, 0, 1) 80%, 
     rgba(0, 0, 0, 0) 100%
   );
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  width: 35px;
+  height: 100%;
+}
+
+.gradient-bg {
+  background: linear-gradient(to top, #EEEEEE, #ffffff);
 }
 </style>

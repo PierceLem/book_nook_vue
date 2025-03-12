@@ -7,7 +7,7 @@
     <AppBar />
 
     <!-- Main Content -->
-    <v-main>
+    <v-main :class="activeComponentClass">
       <router-view v-slot="{ Component }">
         <keep-alive>
           <component :is="Component" />
@@ -21,7 +21,6 @@
 import NavDrawer from "@/components/NavDrawer.vue";
 import AppBar from "@/components/AppBar.vue";
 import { mapState } from "vuex";
-import { KeepAlive } from "vue";
 
 export default {
   components: {
@@ -33,13 +32,17 @@ export default {
     ...mapState("ui", {
       isNavDrawerOpen: (state) => state.navDrawer,
     }),
+
+    activeComponentClass() {
+      return this.$route.name === "Discover" ? "discover-padding" : "";
+    },
   },
 };
 </script>
 
 <style scoped>
 @media (max-width: 700px) {
-  :deep(.v-main) {
+  :deep(.discover-padding) {
     --v-layout-left: 56px !important;
   }
 }

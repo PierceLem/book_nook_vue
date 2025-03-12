@@ -4,6 +4,7 @@
     :rail="rail"
     width="300"
     permanent
+    class="bg-blue-grey-darken-4"
     :class="{ 'elevation-4': showScrim }"
     @click="railOpen"
   >
@@ -22,7 +23,7 @@
 
       <v-text-field 
         label="Search Books" 
-        variant="solo-filled" 
+        variant="solo" 
         density="compact" 
         hide-details 
         prepend-inner-icon="mdi-magnify" 
@@ -72,7 +73,7 @@
             :key="genre.value" 
             :title="genre.title" 
             :value="genre.value"
-            @click="$emit('set-genre', genre.title)"
+            @click="$emit('setGenre', genre.title)"
             ref="genreRefs"
           ></v-list-item>
         </v-list-group>
@@ -179,6 +180,8 @@ export default {
     }
   },
 
+  emits: ['setGenre', 'drawerToggle'],
+
   computed: {
     showScrim() {
       return this.screenWidth < 700 && !this.rail && this.drawer;
@@ -206,7 +209,11 @@ export default {
         }
       });
       this.titleState = false;
-      this.rail = true
+      this.rail = true;
+
+      setTimeout(() => {
+        this.$emit("drawerToggle");
+      }, 200);
     },
 
     railOpen() {
@@ -223,6 +230,10 @@ export default {
         });
         this.titleState = true;
         this.rail = false;
+
+        setTimeout(() => {
+          this.$emit("drawerToggle");
+        }, 200);
       }
     },
 
@@ -259,7 +270,7 @@ export default {
 }
 
 .genre-list {
-  max-height: calc(100vh - 148.8px);
+  max-height: calc(100vh - 150.8px);
   overflow-y: auto;
   scrollbar-width: thin;
 }

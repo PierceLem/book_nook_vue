@@ -24,6 +24,7 @@
         label="Username"
         counter=""
         class="mb-3"
+        :error-messages="usernameErrors"
       ></v-text-field>
 
       <v-text-field
@@ -31,6 +32,7 @@
         :rules="rules.email"
         label="E-mail Address"
         class="mb-3"
+        :error-messages="emailErrors"
       ></v-text-field>
 
       <v-text-field
@@ -42,12 +44,14 @@
         label="Password"
         counter
         @click:append-inner="show = !show"
+        :error-messages="passwordErrors"
       ></v-text-field>
 
       <v-container class="w-100 d-flex justify-center pa-0">
         <v-btn class="mt-4" @click="submitForm">Create account</v-btn>
       </v-container>
     </v-form>
+
 
     <div class="d-flex justify-center">
       <v-btn variant="plain" size="x-small" :to="{ name: 'LogIn' }">
@@ -70,10 +74,13 @@ export default {
       email: '',
       password: '',
       errors: [],
+      usernameErrors: [],
+      emailErrors: [],
+      passwordErrors: [],
       rules: {
         username: [
           value => !!value || 'Username is required.',
-          value => value.length >= 6 || 'Username must be at least 6 characters.',
+          value => value.length >= 5 || 'Username must be at least 6 characters.',
           value => /^[a-zA-Z0-9_]+$/.test(value) || 'Username can only contain letters, numbers, and underscores.',
         ],
         email: [
@@ -115,9 +122,19 @@ export default {
           this.$router.push('/auth/login')
         })
         .catch(error => {
+          this.usernameErrors = [];
+          this.emailErrors = [];
+          this.passwordErrors = [];
+
           if (error.response) {
-            for (const property in error.response.data) {
-              this.errors.push(`${property}: ${error.response.data[property]}`)
+            if (error.response.data.username) {
+              this.usernameErrors = error.response.data.username;
+            }
+            if (error.response.data.email) {
+              this.emailErrors = error.response.data.email;
+            }
+            if (error.response.data.password) {
+              this.passwordErrors = error.response.data.password;
             }
 
             console.log(JSON.stringify(error.response.data))
