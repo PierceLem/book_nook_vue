@@ -42,7 +42,7 @@ export default {
     return {
       genre: "Popular Books",
       books: [
-        { id: 1, title: "The Great Gatsby", author: "F. Scott Fitzgerald", description: "A Jazz Age novel about Gatsby's love for Daisy.", image: require('@/assets/book-cover.jpg') },
+        { id: 1, title: "The Great Gatsby", author: "F. Scott Fitzgerald", description: "Set against the backdrop of the Roaring Twenties, this novel captures the extravagance, ambition, and disillusionment of the Jazz Age. It follows Jay Gatsby, a self-made millionaire who throws opulent parties in the hopes of drawing the attention of Daisy Buchanan, the woman he has loved for years but lost to another man. Through the perspective of Nick Carraway, a newcomer to the wealthy world of West Egg, the novel explores themes of love, obsession, social class, and the illusion of the American Dream. As Gatsby’s relentless pursuit of the past unfolds, the story delves into the emptiness of material wealth and the tragic consequences of idealizing a love that may never have truly existed. With its richly drawn characters and haunting prose, this novel remains a timeless critique of a society chasing excess while struggling with its moral decay.", image: require('@/assets/book-cover.jpg') },
         { id: 2, title: "1984", author: "George Orwell", description: "A dystopian novel about a totalitarian society.", image: require('@/assets/book-cover.jpg') },
         { id: 3, title: "To Kill a Mockingbird", author: "Harper Lee", description: "A novel about racial injustice in the Deep South.", image: require('@/assets/book-cover.jpg') },
         { id: 4, title: "Pride and Prejudice", author: "Jane Austen", description: "A romantic novel about Elizabeth Bennet and Mr. Darcy.", image: require('@/assets/book-cover.jpg') },
@@ -91,7 +91,7 @@ export default {
       })
     },
     updateBooksPerShelf(containerWidth) {
-      if (containerWidth <= 850) {
+      if (containerWidth <= 1000) {
         this.booksPerShelf = 1;
         this.shelfWidth = 12;
       } else {
@@ -119,6 +119,6 @@ export default {
   padding: 8px 0px 8px 16px;
   width: 100%;
   max-width: 100%;
-  max-height: 266px;
+  max-height: 366px;
 }
 </style>
