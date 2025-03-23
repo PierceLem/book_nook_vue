@@ -32,6 +32,7 @@
         :rules="rules.email"
         label="E-mail Address"
         class="mb-3"
+        @click="errors = ''"
       ></v-text-field>
 
       <v-text-field
@@ -40,11 +41,21 @@
         :rules="rules.password"
         :type="show ? 'text' : 'password'"
         label="Password"
+        @click="errors = ''"
         @click:append-inner="show = !show"
       ></v-text-field>
 
+      <div v-if="errors" class="w-100 pt-1 d-flex justify-center">
+        <span class="non-field-errors">{{ errors }}</span>
+      </div>
+
       <v-container class="w-100 d-flex justify-center pa-0">
-        <v-btn class="mt-4" @click="submitForm">Log In</v-btn>
+        <v-btn 
+          class="mt-4" 
+          @click="submitForm"
+        >
+          Log In
+        </v-btn>
       </v-container>
     </v-form>
 
@@ -67,7 +78,7 @@ export default {
       show: false,
       email: '',
       password: '',
-      errors: [],
+      errors: '',
       rules: {
         email: [
           value => !!value || 'Email is required.',
@@ -116,9 +127,10 @@ export default {
         })
         .catch((error) => {
           if (error.response) {
-            for (const property in error.response.data) {
-              this.errors.push(`${property}: ${error.response.data[property]}`);
+            if (error.response.data.non_field_errors) {
+              this.errors = error.response.data.non_field_errors.join(" ");
             }
+
             console.log(JSON.stringify(error.response.data));
           } else if (error.message) {
             console.log(JSON.stringify(error.message));
@@ -139,5 +151,12 @@ export default {
 .page-name {
   font-size: larger;
   color: #37474f;
+}
+
+.non-field-errors {
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.0333333333em;
+  color: rgb(176, 0, 32);
 }
 </style>

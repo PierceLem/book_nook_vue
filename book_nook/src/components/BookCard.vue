@@ -10,10 +10,10 @@
     style="overflow: hidden;"
   >
     <div class="detail-container">
-      <div class="d-flex flex-row flex-grow-1 h-100 pt-4 pl-2">
+      <div class="d-flex flex-row flex-grow-1 h-100 py-4 pl-2">
         <v-col 
           cols="4" 
-          class="pa-0 pb-4 d-flex justify-center align-start"
+          class="px-2 py-0 d-flex justify-center align-center"
         >
           <img 
             :src="image" 
@@ -24,21 +24,26 @@
 
         <v-col 
           cols="8" 
-          class="d-flex flex-column pa-0 pl-2"
+          class="d-flex flex-column py-0 pl-2"
         >
           <h3>{{ title }}</h3>
-          <h5 class="text-medium-emphasis">{{ author }}</h5>
+          <h5 class="text-medium-emphasis">{{ authors.length ? authors.join(", ") : "Unknown Author" }}</h5>
 
           <v-divider class="mt-2"></v-divider>
 
           <p class="book-desc fade-out">
-            {{ description }}
+            {{ description ? description : "No description available" }}
           </p>
         </v-col>
       </div>
 
       <v-expand-transition>
-        <Reviews v-show="openReviews" @close="openReviews = false" :title="title" />
+        <Reviews 
+          v-show="openReviews" 
+          @close="openReviews = false" 
+          :id="id" 
+          :title="title" 
+        />
       </v-expand-transition>
     </div>
 
@@ -146,13 +151,18 @@ export default {
   },
 
   props: {
+    id: {
+      type: String,
+      required: true,
+    },
     title: {
       type: String,
-      required: true
+      required: true,
     },
-    author: {
-      type: String,
-      required: true
+    authors: {
+      type: Array,
+      required: true,
+      default: () => []
     },
     description: {
       type: String,
@@ -176,14 +186,14 @@ export default {
 .book-cover {
   max-width: 100%;
   max-height: 100%;
+  width: 100%;
+  height: auto;
   object-fit: contain;
-  border-radius: 8px;
-  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.3), 
-              0px 5px 8px rgba(0, 0, 0, 0.3);
 }
 
 .book-desc {
   padding: 6px 0px;
+  padding-right: 8px;
   overflow-y: auto;
   scrollbar-width: thin;
   font-weight: 400;

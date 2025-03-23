@@ -22,12 +22,14 @@
       </template>
 
       <v-text-field 
+        v-model="searchQuery"
         label="Search Books" 
         variant="solo" 
         density="compact" 
         hide-details 
         prepend-inner-icon="mdi-magnify" 
         rounded="lg"
+        @click:prepend-inner="$emit('query', searchQuery)"
       ></v-text-field>
     </v-list-item>
 
@@ -73,7 +75,7 @@
             :key="genre.value" 
             :title="genre.title" 
             :value="genre.value"
-            @click="$emit('setGenre', genre.title)"
+            @click="$emit('setGenre', genre)"
             ref="genreRefs"
           ></v-list-item>
         </v-list-group>
@@ -98,6 +100,7 @@ export default {
     return {
       drawer: true,
       rail: true,
+      searchQuery: "",
       titleState: false,
       screenWidth: window.innerWidth,
       categories: [
@@ -180,7 +183,7 @@ export default {
     }
   },
 
-  emits: ['setGenre', 'drawerToggle'],
+  emits: ['setGenre'],
 
   computed: {
     showScrim() {
@@ -210,10 +213,6 @@ export default {
       });
       this.titleState = false;
       this.rail = true;
-
-      setTimeout(() => {
-        this.$emit("drawerToggle");
-      }, 200);
     },
 
     railOpen() {
@@ -230,10 +229,6 @@ export default {
         });
         this.titleState = true;
         this.rail = false;
-
-        setTimeout(() => {
-          this.$emit("drawerToggle");
-        }, 200);
       }
     },
 

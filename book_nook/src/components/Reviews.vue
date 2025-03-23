@@ -32,6 +32,7 @@
 
     <div class="w-100 px-2">
       <v-textarea 
+        v-model="review"
         rows="1" 
         auto-grow 
         clearable 
@@ -64,9 +65,22 @@ export default {
   components: {
     Review,
   },
+
+  data() {
+    return {
+      review: "",
+    }
+  },
   
   props: {
-    title: String,
+    title: {
+      type: String,
+      required: true,
+    },
+    id: {
+      type: String,
+      required: true,
+    }
   }
 }
 </script>

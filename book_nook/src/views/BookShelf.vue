@@ -1,7 +1,6 @@
 <template>
   <div
     ref="pageContainer" 
-    class="page-wrapper"
   >
     <v-toolbar color="blue-grey-darken-4" title="My Bookshelf" class="border-b" density="compact" elevation="3">
     </v-toolbar>
@@ -20,66 +19,51 @@
 
       <v-tabs-window v-model="tab">
         <v-tabs-window-item value="option-1" :class="windowClass" class="pb-4">
-          <v-container 
-            v-for="(shelf, index) in shelves" 
-            :key="index" 
-            class="d-flex flex-row px-4" 
-            width="100%" 
-            max-width="100%" 
-            max-height="366"
-          >
-            <v-col v-for="book in shelf" :cols="shelfWidth" class="d-flex flex-row justify-between w-100 ma-0 px-2 py-0">
+          <div class="page-wrapper">
+            <div v-for="book in books" class="book-card-wrapper">
               <BookCard
                 :key="book.id"
                 :title="book.title" 
-                :author="book.author" 
+                :authors="book.author" 
                 :description="book.description" 
                 :image="book.image" 
               />
-            </v-col>
-          </v-container>
+            </div>
+
+            <div v-if="books.length % 2 !== 0" class="book-card-spacer"></div>
+          </div>
         </v-tabs-window-item>
 
         <v-tabs-window-item value="option-2" :class="windowClass" class="pb-4">
-          <v-container 
-            v-for="(shelf, index) in shelves" 
-            :key="index" 
-            class="d-flex flex-row px-4" 
-            width="100%" 
-            max-width="100%" 
-            max-height="366"
-          >
-            <v-col v-for="book in shelf" :cols="shelfWidth" class="d-flex flex-row justify-between w-100 ma-0 px-2 py-0">
+          <div class="page-wrapper">
+            <div v-for="book in books" class="book-card-wrapper">
               <BookCard
                 :key="book.id"
                 :title="book.title" 
-                :author="book.author" 
+                :authors="book.author" 
                 :description="book.description" 
                 :image="book.image" 
               />
-            </v-col>
-          </v-container>
+            </div>
+            
+            <div v-if="books.length % 2 !== 0" class="book-card-spacer"></div>
+          </div>
         </v-tabs-window-item>
 
         <v-tabs-window-item value="option-3" :class="windowClass" class="pb-4">
-          <v-container 
-            v-for="(shelf, index) in shelves" 
-            :key="index" 
-            class="d-flex flex-row px-4" 
-            width="100%" 
-            max-width="100%" 
-            max-height="366"
-          >
-            <v-col v-for="book in shelf" :cols="shelfWidth" class="d-flex flex-row justify-between w-100 ma-0 px-2 py-0">
+          <div class="page-wrapper">
+            <div v-for="book in books" class="book-card-wrapper">
               <BookCard
                 :key="book.id"
                 :title="book.title" 
-                :author="book.author" 
+                :authors="book.author" 
                 :description="book.description" 
                 :image="book.image" 
               />
-            </v-col>
-          </v-container>
+            </div>
+            
+            <div v-if="books.length % 2 !== 0" class="book-card-spacer"></div>
+          </div>
         </v-tabs-window-item>
       </v-tabs-window>
     </div>
@@ -112,21 +96,8 @@ export default {
       { id: 8, title: "Jane Eyre", author: "Charlotte Brontë", description: "A coming-of-age novel about Jane Eyre's journey.", image: require('@/assets/book-cover.jpg') },
       { id: 9, title: "Crime and Punishment", author: "Fyodor Dostoevsky", description: "A novel about guilt and redemption.", image: require('@/assets/book-cover.jpg') },
     ],
-    booksPerShelf: 3,
-    shelfWidth: 4,
     containerWidth: 0,
   }),
-
-  computed: {
-    shelves() {
-      return this.books.reduce((acc, book, index) => {
-        const shelfIndex = Math.floor(index / this.booksPerShelf);
-        if (!acc[shelfIndex]) acc[shelfIndex] = [];
-        acc[shelfIndex].push(book);
-        return acc;
-      }, []);
-    }
-  },
 
   watch: {
     containerWidth(newWidth) {
@@ -149,14 +120,10 @@ export default {
     },
     updateBooksPerShelf(containerWidth) {
       if (containerWidth <= 1000) {
-        this.booksPerShelf = 1;
-        this.shelfWidth = 12;
         this.tabDirection = "horizontal"
         this.containerClass = "flex-column"
         this.windowClass = "bookshelf-window-sm"
       } else {
-        this.booksPerShelf = 2;
-        this.shelfWidth = 6;
         this.tabDirection = "vertical"
         this.containerClass = "flex-row"
         this.windowClass = "bookshelf-window"
@@ -177,5 +144,32 @@ export default {
   max-height: calc(100vh - 160.8px);
   overflow-y: scroll;
   scrollbar-width: thin;
+}
+
+.page-wrapper {
+  padding: 16px 0px 0px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-grow: 1;
+  width: 100%;
+}
+
+.book-card-wrapper {
+  flex-grow: 1;
+  flex-basis: 50%;
+  padding-right: 16px;
+  height: 366px;
+  min-width: 500px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.book-card-spacer {
+  flex-grow: 1;
+  flex-basis: 50%;
+  padding-right: 16px;
+  height: 1px;
+  min-width: 500px;
+  max-width: 100%;
 }
 </style>

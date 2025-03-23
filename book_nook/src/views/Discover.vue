@@ -1,30 +1,25 @@
 <template>
   <div class="page-wrapper">
-    <DiscoverDrawer @setGenre="genre = $event" @drawerToggle="onResize" />
+    <DiscoverDrawer @setGenre="genreSelection($event)" @query="customQuery($event)" />
 
-    <DiscoverAppBar :setGenre="genre" />
+    <DiscoverAppBar :setGenre="searched" />
 
-    <div ref="pageContainer">
-      <div
-        v-for="(shelf, index) in shelves" 
-        :key="index" 
-        class="books-wrapper" 
-      >
-        <v-col v-for="book in shelf" :cols="shelfWidth" class="d-flex flex-row justify-between w-100 ma-0 pa-0 pr-4">
-          <BookCard
-            :key="book.id"
-            :title="book.title" 
-            :author="book.author" 
-            :description="book.description" 
-            :image="book.image" 
-          />
-        </v-col>
-      </div>
+    <div v-for="book in books" class="book-card-wrapper">
+      <BookCard
+        :key="book.id"
+        :id="book.id"
+        :title="book.title" 
+        :authors="book.authors" 
+        :description="book.description" 
+        :image="book.thumbnail" 
+      />
     </div>
+    <div v-if="books.length % 2 !== 0" class="book-card-spacer"></div>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
 import DiscoverAppBar from '@/components/DiscoverAppBar.vue';
 import BookCard from '@/components/BookCard.vue';
 import DiscoverDrawer from '@/components/DiscoverDrawer.vue';
@@ -40,63 +35,43 @@ export default {
 
   data() {
     return {
-      genre: "Popular Books",
-      books: [
-        { id: 1, title: "The Great Gatsby", author: "F. Scott Fitzgerald", description: "Set against the backdrop of the Roaring Twenties, this novel captures the extravagance, ambition, and disillusionment of the Jazz Age. It follows Jay Gatsby, a self-made millionaire who throws opulent parties in the hopes of drawing the attention of Daisy Buchanan, the woman he has loved for years but lost to another man. Through the perspective of Nick Carraway, a newcomer to the wealthy world of West Egg, the novel explores themes of love, obsession, social class, and the illusion of the American Dream. As Gatsby’s relentless pursuit of the past unfolds, the story delves into the emptiness of material wealth and the tragic consequences of idealizing a love that may never have truly existed. With its richly drawn characters and haunting prose, this novel remains a timeless critique of a society chasing excess while struggling with its moral decay.", image: require('@/assets/book-cover.jpg') },
-        { id: 2, title: "1984", author: "George Orwell", description: "A dystopian novel about a totalitarian society.", image: require('@/assets/book-cover.jpg') },
-        { id: 3, title: "To Kill a Mockingbird", author: "Harper Lee", description: "A novel about racial injustice in the Deep South.", image: require('@/assets/book-cover.jpg') },
-        { id: 4, title: "Pride and Prejudice", author: "Jane Austen", description: "A romantic novel about Elizabeth Bennet and Mr. Darcy.", image: require('@/assets/book-cover.jpg') },
-        { id: 5, title: "Moby-Dick", author: "Herman Melville", description: "A whaling adventure about Captain Ahab's obsession.", image: require('@/assets/book-cover.jpg') },
-        { id: 6, title: "The Catcher in the Rye", author: "J.D. Salinger", description: "A novel about Holden Caulfield's experiences.", image: require('@/assets/book-cover.jpg') },
-        { id: 7, title: "Brave New World", author: "Aldous Huxley", description: "A dystopian novel about a futuristic society.", image: require('@/assets/book-cover.jpg') },
-        { id: 8, title: "Jane Eyre", author: "Charlotte Brontë", description: "A coming-of-age novel about Jane Eyre's journey.", image: require('@/assets/book-cover.jpg') },
-        { id: 9, title: "Crime and Punishment", author: "Fyodor Dostoevsky", description: "A novel about guilt and redemption.", image: require('@/assets/book-cover.jpg') },
-      ],
-      booksPerShelf: 3,
-      shelfWidth: 4,
-      containerWidth: 0,
+      searched: "Popular Books",
+      books: [],
     };
   },
 
-  computed: {
-    shelves() {
-      return this.books.reduce((acc, book, index) => {
-        const shelfIndex = Math.floor(index / this.booksPerShelf);
-        if (!acc[shelfIndex]) acc[shelfIndex] = [];
-        acc[shelfIndex].push(book);
-        return acc;
-      }, []);
-    }
-  },
-
-  watch: {
-    containerWidth(newWidth) {
-      this.updateBooksPerShelf(newWidth);
-    }
-  },
-
   mounted() {
-    this.containerWidth = this.$refs.pageContainer.clientWidth;
-    window.addEventListener("resize", this.onResize);
-  },
-
-  beforeUnmount() {
-    window.removeEventListener("resize", this.onResize);
+    this.fetchBooks("bestsellers");
   },
 
   methods: {
-    onResize() {
-      this.$nextTick(() => {
-        this.containerWidth = this.$refs.pageContainer.clientWidth;
-      })
+    async fetchBooks(query) {
+      this.books = [];
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/search-books/", {
+          params: { q: query },
+        });
+
+        this.books = response.data;
+      } catch (err) {
+        this.error = "Failed to fetch books.";
+      } finally {
+        this.loading = false;
+      }
     },
-    updateBooksPerShelf(containerWidth) {
-      if (containerWidth <= 1000) {
-        this.booksPerShelf = 1;
-        this.shelfWidth = 12;
-      } else {
-        this.booksPerShelf = 2;
-        this.shelfWidth = 6;
+
+    genreSelection(selectedGenre) {
+      this.searched = selectedGenre.title;
+      this.fetchBooks(selectedGenre.value);
+    },
+
+    customQuery(query) {
+      if(query) {
+        this.searched = query;
+        this.fetchBooks(query);
       }
     }
   }
@@ -105,20 +80,29 @@ export default {
 
 <style scoped>
 .page-wrapper {
-  padding: 0;
-  margin: 0;
+  padding: 16px 0px 0px 16px;
   display: flex;
-  flex-direction: column;
-  min-width: 100%;
-  min-height: 100%;
+  flex-wrap: wrap;
+  flex-grow: 1;
+  width: 100%;
 }
 
-.books-wrapper {
-  display: flex;
-  flex-direction: row;
-  padding: 8px 0px 8px 16px;
-  width: 100%;
+.book-card-wrapper {
+  flex-grow: 1;
+  flex-basis: 50%;
+  padding-right: 16px;
+  height: 366px;
+  min-width: 500px;
   max-width: 100%;
-  max-height: 366px;
+  box-sizing: border-box;
+}
+
+.book-card-spacer {
+  flex-grow: 1;
+  flex-basis: 50%;
+  padding-right: 16px;
+  height: 1px;
+  min-width: 500px;
+  max-width: 100%;
 }
 </style>
