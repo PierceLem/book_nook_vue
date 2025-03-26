@@ -23,7 +23,7 @@
         </v-col>
 
         <v-col 
-          cols="8" 
+          cols="8"
           class="d-flex flex-column py-0 pl-2"
         >
           <h3>{{ title }}</h3>
@@ -43,6 +43,7 @@
           @close="openReviews = false" 
           :id="id" 
           :title="title" 
+          ref="reviewList"
         />
       </v-expand-transition>
     </div>
@@ -51,16 +52,18 @@
 
     <div class="options">
       <v-btn 
-        :color="liked ? 'red' : ''"
+        :color="localLiked ? 'red' : ''"
         variant="text"
-        min-height="35px"
+        min-height="48px"
         min-width="35px"
-        max-height="35px"
+        max-height="48px"
         max-width="35px"
+        stacked
         rounded="0"
         @click="toggleLike"
       >
-        <v-icon>{{ liked ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
+        <v-icon>{{ localLiked ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
+        <span class="likes-number">{{ localLikes }}</span>
       </v-btn>
 
       <v-btn 
@@ -92,7 +95,7 @@
         max-height="35px"
         max-width="35px"
         rounded="0"
-        @click="openReviews = true"
+        @click="loadReviews"
       >
         <v-tooltip
           location="left" 
@@ -134,6 +137,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import Reviews from './Reviews.vue';
 
 export default {
@@ -145,7 +149,8 @@ export default {
 
   data() {
     return {
-      liked: false,
+      localLiked: this.liked,
+      localLikes: this.likes,
       openReviews: false,
     };
   },
@@ -162,23 +167,60 @@ export default {
     authors: {
       type: Array,
       required: true,
-      default: () => []
+      default: () => [],
     },
     description: {
       type: String,
-      required: true
+      required: false,
     },
     image: {
       type: String,
-      required: true
+      required: true,
+    },
+    likes: {
+      type: Number,
+      required: true,
+      default: "0",
+    },
+    liked: {
+      type: Boolean,
+      required: true,
+      default: false,
     }
   },
 
   methods: {
-    toggleLike() {
-      this.liked = !this.liked;
+    async toggleLike() {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("User is not authenticated. No token found.");
+        }
+
+        const response = await axios.post(
+          `/like/${this.id}/`,
+          {},
+          {
+            headers: {
+              Authorization: `Token ${token}`,
+            },
+          }
+        );
+
+        console.log("Updated Likes:", response.data.likes_count);
+        console.log("Updated Liked:", response.data.liked);
+        this.localLikes = response.data.likes_count;
+        this.localLiked = response.data.liked;
+      } catch (error) {
+        console.error("Error liking/unliking book:", error);
+      }
     },
-  },
+
+    loadReviews() {
+      this.openReviews = true;
+      this.$refs.reviewList.fetchReviews();
+    }
+  }
 };
 </script>
 
@@ -219,5 +261,10 @@ export default {
   width: calc(100% - 35px);
   height: 100%;
   position: relative;
+}
+
+.likes-number {
+  font-size: x-small;
+  opacity: 60%;
 }
 </style>

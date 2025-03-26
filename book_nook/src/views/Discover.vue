@@ -12,6 +12,8 @@
         :authors="book.authors" 
         :description="book.description" 
         :image="book.thumbnail" 
+        :likes="book.likes"
+        :liked="book.liked"
       />
     </div>
     <div v-if="books.length % 2 !== 0" class="book-card-spacer"></div>
@@ -51,9 +53,20 @@ export default {
       this.error = null;
 
       try {
-        const response = await axios.get("http://127.0.0.1:8000/search-books/", {
-          params: { q: query },
-        });
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("User is not authenticated. No token found.");
+        }
+
+        const response = await axios.get(
+          "/search-books/",
+          {
+            params: { q: query },
+            headers: {
+              Authorization: `Token ${token}`, 
+            },
+          }
+        );
 
         this.books = response.data;
       } catch (err) {

@@ -183,7 +183,7 @@ export default {
     }
   },
 
-  emits: ['setGenre'],
+  emits: ['setGenre', 'query'],
 
   computed: {
     showScrim() {

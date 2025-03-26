@@ -27,12 +27,22 @@
     </v-toolbar>
 
     <div class="review-list">
-      <Review />
+      <v-list class="pt-0">
+        <Review
+          v-if="reviews.length > 0"
+          v-for="review in reviews"
+          :user="review.user"
+          :text="review.review"
+          :createdAt="review.created_at"
+        />
+      </v-list>
+      
+      <span v-if="!reviews.length > 0">Be the first to write a review!</span>
     </div>
 
     <div class="w-100 px-2">
       <v-textarea 
-        v-model="review"
+        v-model="myReview"
         rows="1" 
         auto-grow 
         clearable 
@@ -48,6 +58,7 @@
             icon="mdi-send" 
             variant="text" 
             size="small"
+            @click="submitReview"
           >
           </v-btn>
         </template>
@@ -57,6 +68,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import Review from './Review.vue';
 
 export default {
@@ -68,7 +80,8 @@ export default {
 
   data() {
     return {
-      review: "",
+      myReview: "",
+      reviews: [],
     }
   },
   
@@ -80,6 +93,46 @@ export default {
     id: {
       type: String,
       required: true,
+    },
+  },
+
+  methods: {
+    async submitReview() {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("User is not authenticated. No token found.");
+        }
+
+        const response = await axios.post(
+          "/add-review/",
+          {
+            book_id: this.id, 
+            review: this.myReview,
+          },
+          {
+            headers: {
+              Authorization: `Token ${token}`,
+            },
+          }
+        );
+
+        console.log("Review submitted:", response.data);
+        this.reviews.push(response.data);
+      } catch (error) {
+        console.error("Error submitting review:", error);
+      }
+    },
+
+    async fetchReviews() { // This function is triggered by the parent component via refs
+      try {
+        const response = await axios.get(`/reviews/${this.id}`);
+        console.log("API Response:", response.data);
+        this.reviews = response.data;
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+        this.reviews = [];
+      }
     }
   }
 }
