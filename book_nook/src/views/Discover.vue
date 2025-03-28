@@ -7,13 +7,13 @@
     <div v-for="book in books" class="book-card-wrapper">
       <BookCard
         :key="book.id"
-        :id="book.id"
+        :bookId="book.id"
         :title="book.title" 
         :authors="book.authors" 
         :description="book.description" 
         :image="book.thumbnail" 
-        :likes="book.likes"
-        :liked="book.liked"
+        :bookLikes="book.likes"
+        :bookLiked="book.liked"
       />
     </div>
     <div v-if="books.length % 2 !== 0" class="book-card-spacer"></div>

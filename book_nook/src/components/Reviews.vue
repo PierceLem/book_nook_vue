@@ -34,6 +34,9 @@
           :user="review.user"
           :text="review.review"
           :createdAt="review.created_at"
+          :reviewLikes="review.likes"
+          :reviewLiked="review.liked"
+          :reviewId="review.id"
         />
       </v-list>
       
@@ -90,7 +93,7 @@ export default {
       type: String,
       required: true,
     },
-    id: {
+    bookId: {
       type: String,
       required: true,
     },
@@ -107,7 +110,7 @@ export default {
         const response = await axios.post(
           "/add-review/",
           {
-            book_id: this.id, 
+            book_id: this.bookId, 
             review: this.myReview,
           },
           {
@@ -117,7 +120,6 @@ export default {
           }
         );
 
-        console.log("Review submitted:", response.data);
         this.reviews.push(response.data);
       } catch (error) {
         console.error("Error submitting review:", error);
@@ -126,8 +128,8 @@ export default {
 
     async fetchReviews() { // This function is triggered by the parent component via refs
       try {
-        const response = await axios.get(`/reviews/${this.id}`);
-        console.log("API Response:", response.data);
+        const response = await axios.get(`/reviews/${this.bookId}`);
+        console.log("Reviews:", response.data);
         this.reviews = response.data;
       } catch (error) {
         console.error("Error fetching reviews:", error);

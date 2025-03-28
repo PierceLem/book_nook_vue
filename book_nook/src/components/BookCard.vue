@@ -41,7 +41,7 @@
         <Reviews 
           v-show="openReviews" 
           @close="openReviews = false" 
-          :id="id" 
+          :bookId="bookId" 
           :title="title" 
           ref="reviewList"
         />
@@ -52,7 +52,7 @@
 
     <div class="options">
       <v-btn 
-        :color="localLiked ? 'red' : ''"
+        :color="localBookLiked ? 'red' : ''"
         variant="text"
         min-height="48px"
         min-width="35px"
@@ -62,8 +62,8 @@
         rounded="0"
         @click="toggleLike"
       >
-        <v-icon>{{ localLiked ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
-        <span class="likes-number">{{ localLikes }}</span>
+        <v-icon>{{ localBookLiked ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
+        <span class="likes-number">{{ localBookLikes }}</span>
       </v-btn>
 
       <v-btn 
@@ -149,14 +149,14 @@ export default {
 
   data() {
     return {
-      localLiked: this.liked,
-      localLikes: this.likes,
+      localBookLiked: this.bookLiked,
+      localBookLikes: this.bookLikes,
       openReviews: false,
     };
   },
 
   props: {
-    id: {
+    bookId: {
       type: String,
       required: true,
     },
@@ -177,12 +177,12 @@ export default {
       type: String,
       required: true,
     },
-    likes: {
+    bookLikes: {
       type: Number,
       required: true,
-      default: "0",
+      default: 0,
     },
-    liked: {
+    bookLiked: {
       type: Boolean,
       required: true,
       default: false,
@@ -198,7 +198,7 @@ export default {
         }
 
         const response = await axios.post(
-          `/like/${this.id}/`,
+          `/like-book/${this.bookId}/`,
           {},
           {
             headers: {
@@ -206,11 +206,9 @@ export default {
             },
           }
         );
-
-        console.log("Updated Likes:", response.data.likes_count);
-        console.log("Updated Liked:", response.data.liked);
-        this.localLikes = response.data.likes_count;
-        this.localLiked = response.data.liked;
+        
+        this.localBookLikes = response.data.likes;
+        this.localBookLiked = response.data.liked;
       } catch (error) {
         console.error("Error liking/unliking book:", error);
       }
