@@ -4,34 +4,63 @@
     density="compact"
     border="sm"
     rounded="lg"
-    elevation="2"
+    elevation="1"
     class="mx-2 my-2 pa-0 pl-12 review-item"
     style="overflow: hidden; position: relative;"
   >
-    <v-avatar size="40" border="md" class="review-avatar">
+    <v-avatar 
+      size="40" 
+      border="md" 
+      class="review-avatar"
+    >
       <v-img src="https://randomuser.me/api/portraits/women/85.jpg" />
     </v-avatar>
 
-    <v-toolbar height="25" color="grey-lighten-3" class="px-3 toolbar-border">
-      <v-toolbar-title class="ml-0">{{ user }}</v-toolbar-title>
+    <v-toolbar 
+      height="25" 
+      :color="isOwner ? 'blue-lighten-5' : 'grey-lighten-4'" 
+      class="px-3 toolbar-border"
+    >
+      <v-toolbar-title 
+        class="ml-0" 
+        :class="isOwner ? 'text-blue-darken-3' : ''"
+        :text="isOwner ? 'You' : user"
+      >
+      </v-toolbar-title>
 
       <template v-slot:append>
-        <span class="text-caption">{{ createdAt }}</span>
+        <v-icon
+          v-if="isOwner"
+          size="14"
+          class="review-option mr-2"
+        >
+          mdi-pencil-outline
+        </v-icon>
+
+        <v-icon
+          v-if="isOwner"
+          size="14"
+          class="review-option mr-3"
+        >
+          mdi-trash-can-outline
+        </v-icon>
+
+        <v-rating
+          :model-value="rating"
+          half-increments
+          size="x-small"
+          density="compact"
+          color="yellow-darken-3"
+          class="pb-1"
+          readonly
+        ></v-rating>
       </template>
     </v-toolbar>
 
     <span class="text-review px-2 pt-1">{{ text }}</span>
 
-    <div class="d-flex flex-row align-bottom justify-end w-100 pr-2">
-      <span class="likes-number">{{ localReviewLikes }}</span>
-      <v-icon 
-        size="xs"
-        :color="localReviewLiked ? 'blue' : ''"
-        class="like"
-        @click="likeReview"
-      >
-        {{ localReviewLiked ? 'mdi-thumb-up' : 'mdi-thumb-up-outline' }}
-      </v-icon>
+    <div class="d-flex flex-row align-center justify-end w-100 pr-1">
+      <span class="date">{{ createdAt }}</span>
     </div>
   </v-list-item>
 </template>
@@ -50,6 +79,10 @@ export default {
   },
 
   props: {
+    reviewId: {
+      type: Number,
+      required: true,
+    },
     user: {
       type: String,
       required: true,
@@ -58,24 +91,18 @@ export default {
       type: String,
       required: true,
     },
+    rating: {
+      type: Number,
+      required: true,
+    },
     createdAt: {
       type: String,
       required: true,
     },
-    reviewLikes: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
-    reviewLiked: {
+    isOwner: {
       type: Boolean,
       required: true,
-      default: false,
     },
-    reviewId: {
-      type: Number,
-      required: true,
-    }
   },
 
   methods: {
@@ -130,18 +157,15 @@ export default {
   left: 4px;
 }
 
-.like {
-  padding-bottom: 2px;
-}
-
-.like:hover {
+.review-option:hover {
   cursor: pointer;
 }
 
-.likes-number {
+.date {
   font-size: x-small;
   opacity: 60%;
-  margin-right: 6px;
+  margin-right: 3px;
+  margin-left: 6px;
   padding-top: 2px;
 }
 

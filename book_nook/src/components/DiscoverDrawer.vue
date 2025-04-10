@@ -3,8 +3,8 @@
     v-model="drawer"
     :rail="rail"
     width="300"
+    elevation="0"
     permanent
-    class="bg-blue-grey-darken-4"
     :class="{ 'elevation-4': showScrim }"
     @click="railOpen"
   >
@@ -187,7 +187,7 @@ export default {
 
   computed: {
     showScrim() {
-      return this.screenWidth < 700 && !this.rail && this.drawer;
+      return this.screenWidth < 830 && !this.rail && this.drawer;
     },
   },
 
@@ -262,6 +262,10 @@ export default {
 
 :deep(.v-field.v-field--prepended) {
   --v-field-padding-start: 7px;
+}
+
+:deep(.v-list-item__content) {
+  overflow: visible !important;
 }
 
 .genre-list {

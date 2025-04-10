@@ -1,8 +1,7 @@
 <template>
   <v-app-bar 
     elevation="0" 
-    border="sm" 
-    class="pl-0"
+    class="pl-0 border-b"
   >
     <template v-slot:append>
       <v-tooltip location="left">

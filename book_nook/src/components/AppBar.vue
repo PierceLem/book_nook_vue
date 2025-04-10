@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar :elevation="3" color="blue-grey-darken-3">
+  <v-app-bar elevation="0" border="b">
     <template v-slot:prepend>
       <v-app-bar-nav-icon
         @click.prevent="toggleDrawer"

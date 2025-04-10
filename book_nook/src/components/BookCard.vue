@@ -3,7 +3,7 @@
     max-width="600" 
     min-width="100%"
     height="350" 
-    elevation="6"
+    elevation="2"
     class="d-flex flex-row ma-0 pa-0" 
     border="sm" 
     rounded="lg" 
@@ -16,7 +16,7 @@
           class="px-2 py-0 d-flex justify-center align-center"
         >
           <img 
-            :src="image" 
+            :src="thumbnail" 
             class="book-cover"
             alt="Book Cover"
           />
@@ -43,6 +43,9 @@
           @close="openReviews = false" 
           :bookId="bookId" 
           :title="title" 
+          :authors="authors"
+          :description="description"
+          :thumbnail="thumbnail"
           ref="reviewList"
         />
       </v-expand-transition>
@@ -52,48 +55,26 @@
 
     <div class="options">
       <v-btn 
-        :color="localBookLiked ? 'red' : ''"
+        color="yellow-darken-3"
         variant="text"
-        min-height="48px"
+        min-height="44px"
         min-width="35px"
-        max-height="48px"
+        max-height="44px"
         max-width="35px"
         stacked
         rounded="0"
-        @click="toggleLike"
       >
-        <v-icon>{{ localBookLiked ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
-        <span class="likes-number">{{ localBookLikes }}</span>
+        <v-icon size="18px" class="pt-1">{{ rating ? 'mdi-star' : 'mdi-star-outline' }}</v-icon>
+        <span v-if="rating" class="rating">{{ rating }}/5</span>
       </v-btn>
 
       <v-btn 
         variant="text"
-        min-height="35px"
+        min-height="44px"
         min-width="35px"
-        max-height="35px"
+        max-height="44px"
         max-width="35px"
-        rounded="0"
-      >
-        <v-tooltip
-          location="left" 
-          activator="parent" 
-          offset="5"
-          open-delay="800"
-        >
-          <span class="text-caption">
-            Add to bookshelf
-          </span>
-        </v-tooltip>
-
-        <v-icon>mdi-book-plus-outline</v-icon>
-      </v-btn>
-
-      <v-btn 
-        variant="text"
-        min-height="35px"
-        min-width="35px"
-        max-height="35px"
-        max-width="35px"
+        stacked
         rounded="0"
         @click="loadReviews"
       >
@@ -108,7 +89,32 @@
           </span>
         </v-tooltip>
 
-        <v-icon>mdi-message-bulleted</v-icon>
+        <v-icon size="18px" class="pt-1">mdi-message-bulleted</v-icon>
+        <span class="rating">{{ reviewsCount }}</span>
+      </v-btn>
+
+      <v-btn 
+        :color="localIsSaved ? 'green' : ''"
+        variant="text"
+        min-height="35px"
+        min-width="35px"
+        max-height="35px"
+        max-width="35px"
+        rounded="0"
+        @click="saveBook"
+      >
+        <v-tooltip
+          location="left" 
+          activator="parent" 
+          offset="5"
+          open-delay="800"
+        >
+          <span class="text-caption">
+            Add to bookshelf
+          </span>
+        </v-tooltip>
+
+        <v-icon :icon="localIsSaved ? 'mdi-book-check-outline' : 'mdi-book-plus-outline'"></v-icon>
       </v-btn>
 
       <v-btn 
@@ -149,8 +155,7 @@ export default {
 
   data() {
     return {
-      localBookLiked: this.bookLiked,
-      localBookLikes: this.bookLikes,
+      localIsSaved: this.isSaved,
       openReviews: false,
     };
   },
@@ -173,24 +178,27 @@ export default {
       type: String,
       required: false,
     },
-    image: {
+    thumbnail: {
       type: String,
       required: true,
     },
-    bookLikes: {
+    reviewsCount: {
       type: Number,
       required: true,
       default: 0,
     },
-    bookLiked: {
+    rating: {
+      type: Number,
+      required: false,
+    },
+    isSaved: {
       type: Boolean,
       required: true,
-      default: false,
     }
   },
 
   methods: {
-    async toggleLike() {
+    async saveBook() {
       try {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -198,8 +206,16 @@ export default {
         }
 
         const response = await axios.post(
-          `/like-book/${this.bookId}/`,
-          {},
+          `/toggle-save-book/`,
+          {
+            book_data: {
+              book_id: this.bookId,
+              title: this.title,
+              thumbnail: this.thumbnail,
+              description: this.description,
+              authors: this.authors,
+            }
+          },
           {
             headers: {
               Authorization: `Token ${token}`,
@@ -207,8 +223,7 @@ export default {
           }
         );
         
-        this.localBookLikes = response.data.likes;
-        this.localBookLiked = response.data.liked;
+        this.localIsSaved = response.data.is_saved;
       } catch (error) {
         console.error("Error liking/unliking book:", error);
       }
@@ -235,7 +250,7 @@ export default {
   padding: 6px 0px;
   padding-right: 8px;
   overflow-y: auto;
-  scrollbar-width: thin;
+  scrollbar-width: none;
   font-weight: 400;
   font-size: smaller;
   color: black;
@@ -261,7 +276,7 @@ export default {
   position: relative;
 }
 
-.likes-number {
+.rating {
   font-size: x-small;
   opacity: 60%;
 }

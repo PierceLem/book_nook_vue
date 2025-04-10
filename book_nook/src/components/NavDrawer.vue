@@ -1,15 +1,14 @@
 <template>
   <v-navigation-drawer
     :mobile-breakpoint="1100"
-    color="blue-grey-darken-4"
-    elevation="4"
+    elevation="0"
     width="224"
     v-model="navDrawer"
     app
   >
-    <v-sheet class="ma-0 py-0 d-flex flex-row align-center bg-blue-grey-darken-3" elevation="4">
+    <v-sheet class="ma-0 py-0 d-flex flex-row align-center" elevation="0">
       <v-col cols="6" class="d-flex flex-row align-right pr-0">
-        <v-img src="@/assets/logo-ct.png" height="80px" width="80px"></v-img>
+        <v-img src="@/assets/logo-ct-dark.png" height="80px" width="80px"></v-img>
       </v-col>
       
       <v-col cols="6" class="ma-0 pa-0 d-flex flex-column">
@@ -64,13 +63,11 @@
     <v-list nav class="pa-2" style="position: absolute; bottom: 0;">
         <v-list-item
           title="Username"
-          class="bg-blue-grey-darken-3 py-2 px-1"
-          elevation="3"
+          class="py-2 px-1"
         >
           <template v-slot:prepend>
             <v-avatar 
               size="40" 
-              class="elevation-6"
             >
               <v-img src="https://randomuser.me/api/portraits/women/85.jpg"></v-img>
             </v-avatar>

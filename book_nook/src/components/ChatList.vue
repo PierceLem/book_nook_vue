@@ -4,7 +4,7 @@
     floating
     :mobile-breakpoint="700"
     width="260"
-    border="sm"
+    border="e"
   >
     <v-list>
       <div class="d-flex align-center pt-1">

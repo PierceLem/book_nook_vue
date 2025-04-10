@@ -6,7 +6,7 @@
         
         <v-badge
           color="grey"
-          content="10"
+          :content=reviews.length
           inline
         ></v-badge>
       </v-toolbar-title>
@@ -31,42 +31,69 @@
         <Review
           v-if="reviews.length > 0"
           v-for="review in reviews"
+          :reviewId="review.id"
           :user="review.user"
           :text="review.review"
+          :rating="review.rating"
           :createdAt="review.created_at"
-          :reviewLikes="review.likes"
-          :reviewLiked="review.liked"
-          :reviewId="review.id"
+          :isOwner="review.is_owner"
         />
       </v-list>
       
-      <span v-if="!reviews.length > 0">Be the first to write a review!</span>
+      <span class="empty-review-text" v-if="!reviews.length > 0">Be the first to write a review!</span>
     </div>
 
-    <div class="w-100 px-2">
-      <v-textarea 
-        v-model="myReview"
-        rows="1" 
-        auto-grow 
-        clearable 
-        hide-details
-        density="compact"
-        max-rows="3"
-        label="Write a review"
+    <div class="review-select border-t" @click="reviewFocus = !reviewFocus">
+      <v-btn
+        size="xs"
+        :append-icon="reviewFocus ? 'mdi-arrow-down' : 'mdi-arrow-up'"
+        variant="text"
+        text="Write a review"
       >
-        <template v-slot:prepend-inner>
-          <v-btn 
-            height="30"
-            width="30"
-            icon="mdi-send" 
-            variant="text" 
-            size="small"
-            @click="submitReview"
-          >
-          </v-btn>
-        </template>
-      </v-textarea>
+      </v-btn>
     </div>
+
+    <v-expand-transition>
+      <div v-show="reviewFocus" >
+        <div class="d-flex align-center flex-column my-auto">
+          <span class="text-h6 ml-n3">{{ myRating }}/5</span>
+
+          <v-rating
+            v-model="myRating"
+            color="yellow-darken-3"
+            half-increments
+            hover
+          ></v-rating>
+        </div>
+
+        <v-textarea 
+          v-model="myReview"
+          rows="1" 
+          auto-grow 
+          clearable 
+          hide-details="auto"
+          variant="underlined"
+          density="compact"
+          max-rows="3"
+          label="Write a review"
+          :rules="reviewRules"
+          :error-messages="ratingError" 
+          class="ma-2"
+        >
+          <template v-slot:append-inner>
+            <v-btn 
+              height="30"
+              width="30"
+              icon="mdi-send" 
+              variant="text" 
+              size="small"
+              @click="submitReview"
+            >
+            </v-btn>
+          </template>
+        </v-textarea>
+      </div>
+    </v-expand-transition>
   </div>
 </template>
 
@@ -84,16 +111,35 @@ export default {
   data() {
     return {
       myReview: "",
+      reviewRules: [
+        v => !!v || 'Review cannot be blank'
+      ],
+      myRating: 0,
+      ratingError: '',
       reviews: [],
+      reviewFocus: false,
     }
   },
   
   props: {
+    bookId: {
+      type: String,
+      required: true,
+    },
     title: {
       type: String,
       required: true,
     },
-    bookId: {
+    authors: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
+    description: {
+      type: String,
+      required: false,
+    },
+    thumbnail: {
       type: String,
       required: true,
     },
@@ -107,11 +153,25 @@ export default {
           throw new Error("User is not authenticated. No token found.");
         }
 
+        if (this.myRating === 0) {
+          this.ratingError = 'Rating is required';
+          return;
+        } else {
+          this.ratingError = '';
+        }
+
         const response = await axios.post(
           "/add-review/",
           {
-            book_id: this.bookId, 
+            book_data: {
+              book_id: this.bookId,
+              title: this.title,
+              thumbnail: this.thumbnail,
+              description: this.description,
+              authors: this.authors,
+            },
             review: this.myReview,
+            rating: this.myRating,
           },
           {
             headers: {
@@ -119,14 +179,14 @@ export default {
             },
           }
         );
-
-        this.reviews.push(response.data);
+        this.reviews.unshift(response.data);
+        this.myReview = '';
       } catch (error) {
         console.error("Error submitting review:", error);
       }
     },
 
-    async fetchReviews() { // This function is triggered by the parent component via refs
+    async fetchReviews() {
       try {
         const response = await axios.get(`/reviews/${this.bookId}`);
         console.log("Reviews:", response.data);
@@ -154,8 +214,29 @@ export default {
 
 .review-list {
   flex-grow: 1;
+  position: relative;
   overflow-y: auto;
-  scrollbar-width: thin;
+  scrollbar-width: none;
+}
+
+.review-select {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 32px;
+  width: 100%;
+  border-top-right-radius: 8px;
+  border-top-left-radius: 8px;
+}
+
+.empty-review-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 100%;
 }
 
 :deep(.v-toolbar__append) {

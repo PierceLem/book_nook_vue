@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar elevation="0" density="comfortable" class="border-b media-app-bar bg-blue-grey-darken-4">
+  <v-app-bar elevation="0" density="comfortable" class="border-b media-app-bar">
     <v-app-bar-title>{{ setGenre }}</v-app-bar-title>
   </v-app-bar>
 </template>

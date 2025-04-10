@@ -11,9 +11,10 @@
         :title="book.title" 
         :authors="book.authors" 
         :description="book.description" 
-        :image="book.thumbnail" 
-        :bookLikes="book.likes"
-        :bookLiked="book.liked"
+        :thumbnail="book.thumbnail"
+        :reviewsCount="book.reviews_count"
+        :rating="book.rating"
+        :isSaved="book.is_saved"
       />
     </div>
     <div v-if="books.length % 2 !== 0" class="book-card-spacer"></div>

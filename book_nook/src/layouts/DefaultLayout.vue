@@ -9,8 +9,8 @@
     <!-- Main Content -->
     <v-main :class="activeComponentClass">
       <router-view v-slot="{ Component }">
-        <keep-alive>
-          <component :is="Component" />
+        <keep-alive :include="cachedComponents">
+          <component :is="Component" :key="$route.fullPath" />
         </keep-alive>
       </router-view>
     </v-main>
@@ -36,12 +36,16 @@ export default {
     activeComponentClass() {
       return this.$route.name === "Discover" ? "discover-padding" : "";
     },
+
+    cachedComponents() {
+      return ["Discover", "Chat"];
+    },
   },
 };
 </script>
 
 <style scoped>
-@media (max-width: 700px) {
+@media (max-width: 830px) {
   :deep(.discover-padding) {
     --v-layout-left: 56px !important;
   }

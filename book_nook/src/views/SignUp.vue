@@ -119,7 +119,7 @@ export default {
         .then(response => {
           console.log(response)
 
-          this.$router.push('/auth/login')
+          this.$router.push('/login')
         })
         .catch(error => {
           this.usernameErrors = [];

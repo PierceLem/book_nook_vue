@@ -1,68 +1,58 @@
 <template>
   <div
     ref="pageContainer" 
+    class="h-100 w-100"
   >
-    <v-toolbar color="blue-grey-darken-4" title="My Bookshelf" class="border-b" density="compact" elevation="3">
+    <v-toolbar title="My Bookshelf" color="white" class="border-b" density="compact">
     </v-toolbar>
 
-    <div class="d-flex" :class="containerClass">
+    <div class="d-flex tabs-wrapper" :class="containerClass">
       <v-tabs
         v-model="tab"
-        color="blue-grey-lighten-1"
-        bg-color="blue-grey-darken-4"
         :direction="tabDirection"
       >
-        <v-tab prepend-icon="mdi-heart" text="Liked" value="option-1"></v-tab>
-        <v-tab prepend-icon="mdi-playlist-edit" text="Reviewed" value="option-2"></v-tab>
-        <v-tab prepend-icon="mdi-download" text="Saved" value="option-3"></v-tab>
+        <v-tab prepend-icon="mdi-playlist-edit" text="Reviewed" value="option-1"></v-tab>
+        <v-tab prepend-icon="mdi-download" text="Saved" value="option-2"></v-tab>
       </v-tabs>
 
-      <v-tabs-window v-model="tab">
-        <v-tabs-window-item value="option-1" :class="windowClass" class="pb-4">
+      <v-tabs-window v-model="tab" class="w-100 h-100">
+        <v-tabs-window-item value="option-1" :class="windowClass" class="pb-4 h-100">
           <div class="page-wrapper">
-            <div v-for="book in books" class="book-card-wrapper">
+            <div v-for="book in reviewedBooks" class="book-card-wrapper">
               <BookCard
                 :key="book.id"
+                :bookId="book.id"
                 :title="book.title" 
-                :authors="book.author" 
+                :authors="book.authors" 
                 :description="book.description" 
-                :image="book.image" 
-              />
-            </div>
-
-            <div v-if="books.length % 2 !== 0" class="book-card-spacer"></div>
-          </div>
-        </v-tabs-window-item>
-
-        <v-tabs-window-item value="option-2" :class="windowClass" class="pb-4">
-          <div class="page-wrapper">
-            <div v-for="book in books" class="book-card-wrapper">
-              <BookCard
-                :key="book.id"
-                :title="book.title" 
-                :authors="book.author" 
-                :description="book.description" 
-                :image="book.image" 
+                :thumbnail="book.thumbnail"
+                :reviewsCount="book.reviews_count"
+                :rating="book.rating"
+                :isSaved="book.is_saved"
               />
             </div>
             
-            <div v-if="books.length % 2 !== 0" class="book-card-spacer"></div>
+            <div v-if="reviewedBooks.length % 2 !== 0" class="book-card-spacer"></div>
           </div>
         </v-tabs-window-item>
 
-        <v-tabs-window-item value="option-3" :class="windowClass" class="pb-4">
+        <v-tabs-window-item value="option-2" :class="windowClass" class="pb-4 h-100">
           <div class="page-wrapper">
-            <div v-for="book in books" class="book-card-wrapper">
+            <div v-for="book in savedBooks" class="book-card-wrapper">
               <BookCard
                 :key="book.id"
+                :bookId="book.id"
                 :title="book.title" 
-                :authors="book.author" 
+                :authors="book.authors" 
                 :description="book.description" 
-                :image="book.image" 
+                :thumbnail="book.thumbnail"
+                :reviewsCount="book.reviews_count"
+                :rating="book.rating"
+                :isSaved="book.is_saved"
               />
             </div>
             
-            <div v-if="books.length % 2 !== 0" class="book-card-spacer"></div>
+            <div v-if="savedBooks.length % 2 !== 0" class="book-card-spacer"></div>
           </div>
         </v-tabs-window-item>
       </v-tabs-window>
@@ -71,6 +61,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import BookCard from '@/components/BookCard.vue';
 
 export default {
@@ -85,29 +76,21 @@ export default {
     tabDirection: null,
     containerClass: null,
     windowClass: null,
-    books: [
-      { id: 1, title: "The Great Gatsby", author: "F. Scott Fitzgerald", description: "A Jazz Age novel about Gatsby's love for Daisy.", image: require('@/assets/book-cover.jpg') },
-      { id: 2, title: "1984", author: "George Orwell", description: "A dystopian novel about a totalitarian society.", image: require('@/assets/book-cover.jpg') },
-      { id: 3, title: "To Kill a Mockingbird", author: "Harper Lee", description: "A novel about racial injustice in the Deep South.", image: require('@/assets/book-cover.jpg') },
-      { id: 4, title: "Pride and Prejudice", author: "Jane Austen", description: "A romantic novel about Elizabeth Bennet and Mr. Darcy.", image: require('@/assets/book-cover.jpg') },
-      { id: 5, title: "Moby-Dick", author: "Herman Melville", description: "A whaling adventure about Captain Ahab's obsession.", image: require('@/assets/book-cover.jpg') },
-      { id: 6, title: "The Catcher in the Rye", author: "J.D. Salinger", description: "A novel about Holden Caulfield's experiences.", image: require('@/assets/book-cover.jpg') },
-      { id: 7, title: "Brave New World", author: "Aldous Huxley", description: "A dystopian novel about a futuristic society.", image: require('@/assets/book-cover.jpg') },
-      { id: 8, title: "Jane Eyre", author: "Charlotte Brontë", description: "A coming-of-age novel about Jane Eyre's journey.", image: require('@/assets/book-cover.jpg') },
-      { id: 9, title: "Crime and Punishment", author: "Fyodor Dostoevsky", description: "A novel about guilt and redemption.", image: require('@/assets/book-cover.jpg') },
-    ],
+    reviewedBooks: [],
+    savedBooks: [],
     containerWidth: 0,
   }),
 
   watch: {
     containerWidth(newWidth) {
-      this.updateBooksPerShelf(newWidth);
+      this.updateTabOrientation(newWidth);
     }
   },
 
   mounted() {
     this.containerWidth = this.$refs.pageContainer.clientWidth;
     window.addEventListener("resize", this.onResize);
+    this.fetchUserBooks();
   },
 
   beforeUnmount() {
@@ -118,7 +101,7 @@ export default {
     onResize() {
       this.containerWidth = this.$refs.pageContainer.clientWidth;
     },
-    updateBooksPerShelf(containerWidth) {
+    updateTabOrientation(containerWidth) {
       if (containerWidth <= 1000) {
         this.tabDirection = "horizontal"
         this.containerClass = "flex-column"
@@ -128,7 +111,31 @@ export default {
         this.containerClass = "flex-row"
         this.windowClass = "bookshelf-window"
       }
-    }
+    },
+    async fetchUserBooks() {
+      console.log("fetching books");
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("User is not authenticated. No token found.");
+        }
+
+        const response = await axios.get(
+          "/bookshelf/",
+          {
+            headers: {
+              Authorization: `Token ${token}`, 
+            },
+          }
+        );
+        this.reviewedBooks = response.data.reviewed_books;
+        this.savedBooks = response.data.saved_books;
+      } catch (err) {
+        this.error = "Failed to fetch books.";
+      } finally {
+        this.loading = false;
+      }
+    },
   }
 };
 </script>
@@ -136,13 +143,13 @@ export default {
 <style scoped>
 .bookshelf-window {
   max-height: calc(100vh - 112.8px);
-  overflow-y: scroll;
+  overflow-y: auto;
   scrollbar-width: thin;
 }
 
 .bookshelf-window-sm {
   max-height: calc(100vh - 160.8px);
-  overflow-y: scroll;
+  overflow-y: auto;
   scrollbar-width: thin;
 }
 
@@ -150,7 +157,12 @@ export default {
   padding: 16px 0px 0px 16px;
   display: flex;
   flex-wrap: wrap;
-  flex-grow: 1;
+  height: 100%;
+  width: 100%;
+}
+
+.tabs-wrapper {
+  height: calc(100vh - 112.8px);
   width: 100%;
 }
 
