@@ -4,19 +4,20 @@
     floating
     :mobile-breakpoint="700"
     width="260"
-    border="e"
+    class="pt-1 pb-2 pr-0 pl-2"
   >
-    <v-list>
-      <div class="d-flex align-center pt-1">
-        <v-list-item-title class="ml-6 text-h5">
+    <div class="drawer-content">
+      <div class="d-flex align-center justify-space-between pt-2 pb-1">
+        <span class="ml-6 text-h5 text-indigo-darken-3">
           Threads
-        </v-list-item-title>
+        </span>
 
         <v-spacer></v-spacer>
 
         <v-btn 
           size="small"
           variant="plain"
+          color="indigo-darken-3"
           icon
           class="mr-2"
           @click="toggleMenu"
@@ -29,6 +30,7 @@
             activator="parent"
             location="bottom" 
             offset="5" 
+            open-delay="800"
             :open-on-hover="!menuState"
           >
             <span class="text-caption">Create Thread</span>
@@ -37,39 +39,38 @@
           <CreateThread @menuStateChange="toggleMenu" />
         </v-btn>
       </div>
-    </v-list>
 
-    <v-list-item class="px-2">
-      <input 
-        class="custom-input" 
-        type="text" 
-        placeholder="Search Threads" 
-      />
+      <v-text-field 
+        v-model="searchQuery"
+        label="Search Threads" 
+        variant="solo" 
+        density="compact" 
+        bg-color="indigo-lighten-3"
+        hide-details 
+        prepend-inner-icon="mdi-magnify" 
+        rounded="lg"
+        class="px-1"
+        @click:prepend-inner="$emit('query', searchQuery)"
+      ></v-text-field>
 
-      <i class="input-icon mdi mdi-magnify"></i>
-    </v-list-item>
-
-    <v-list
-      density="compact"
-      nav
-      class="thread-list"
-    >
-      <v-list-item 
-        v-for="n in 12"
-        :key="n"
-        prepend-avatar="https://randomuser.me/api/portraits/women/85.jpg"
-        title="Insert thread name"
-        subtitle="Insert last received message here."
-        class="thread-item pa-2 my-2"
+      <v-list
+        density="compact"
+        base-color="indigo-darken-3"
+        nav
+        class="thread-list py-0 px-1"
       >
-        <v-badge
-          color="green"
-          content="1"
-          overlap
-          class="thread-badge"
-        ></v-badge>
-      </v-list-item>
-    </v-list>
+        <v-list-item 
+          v-for="n in 12"
+          :key="n"
+          color="indigo-darken-3"
+          prepend-avatar="https://randomuser.me/api/portraits/women/85.jpg"
+          title="Insert thread name"
+          subtitle="Insert last received message here."
+          class="thread-item py-2 px-2 my-1"
+        >
+        </v-list-item>
+      </v-list>
+    </div>
   </v-navigation-drawer>
 </template>
 
@@ -111,60 +112,73 @@ export default {
 </script>
 
 <style scoped>
-.custom-input {
-  background-color: #f0f0f0;
-  border-radius: 8px;
-  padding: 8px 12px 8px 30px;
-  font-size: 12px;
+:deep(.v-field) {
+  transition: background-color 0.3s ease;
+  --v-field-padding-start: 7px;
+}
+
+:deep(.v-field--active) {
+  background-color: #303F9F !important; /* Your custom color */
+  opacity: 1;
+  transition: background-color 0.3s ease;
+}
+
+:deep(.v-field--variant-solo) {
+  box-shadow: none !important;
+}
+
+:deep(.v-field--prepended) {
+  padding-inline-start: 8px;
+}
+
+:deep(.v-field--active .v-field-label) {
+  color: #ffffff; /* Active/focused color */
+}
+
+:deep(.v-field-label) {
+  color: #1A237E; /* Inactive color */
+  opacity: 1;
+}
+
+:deep(.v-field--active .v-icon.mdi-magnify) {
+  color: #ffffff; /* Different color when focused, if desired */
+}
+
+:deep(.v-icon.mdi-magnify) {
+  color: #1A237E; /* Your custom color */
+  opacity: 1;
+}
+
+.v-navigation-drawer--temporary.v-navigation-drawer--active {
+  box-shadow: none !important;
+}
+
+.v-navigation-drawer {
+  background: rgb(255 255 255 / 0%) !important;
+}
+
+.drawer-content {
+  height: 100%;
   width: 100%;
-  max-width: 300px;
-}
-
-.input-icon {
-  position: absolute;
-  left: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #888;
-}
-
-.custom-input:focus {
-  outline: none;
+  border-radius: 8px;
+  background-color: #C5CAE9;
+  overflow: hidden;
 }
 
 .thread-list {
   max-height: calc(100vh - 168px);
-  overflow-y: auto;
-  scrollbar-width: none;
-}
-
-.thread-list::-webkit-scrollbar {
-  width: 0px;
-  background: transparent;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(26, 35, 126, 0.5) transparent;
 }
 
 .thread-item {
   transition: background-color 0.3s ease;
-  position: relative;
+  border-radius: 24px;
 }
 
 .thread-item:hover {
   background-color: #f0f0f0;
   cursor: pointer;
-}
-
-.thread-badge {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  z-index: 1;
-}
-
-.thread-badge ::v-deep(.v-badge__badge) {
-  position: absolute !important;
-  bottom: auto !important;
-  left: auto !important;
-  transform: translateX(-100%) !important;
-  transform-origin: top right;
 }
 </style>

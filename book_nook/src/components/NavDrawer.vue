@@ -1,95 +1,92 @@
 <template>
   <v-navigation-drawer
     :mobile-breakpoint="1100"
-    elevation="0"
+    floating
     width="224"
     v-model="navDrawer"
     app
+    class="py-2 pr-0 pl-2"
   >
-    <v-sheet class="ma-0 py-0 d-flex flex-row align-center" elevation="0">
-      <v-col cols="6" class="d-flex flex-row align-right pr-0">
-        <v-img src="@/assets/logo-ct-dark.png" height="80px" width="80px"></v-img>
-      </v-col>
-      
-      <v-col cols="6" class="ma-0 pa-0 d-flex flex-column">
-        <h2>BOOK</h2>
-        <h2>NOOK</h2>
-      </v-col>
-      
-    </v-sheet>
+    <div class="drawer-content">
+      <div class="d-flex flex-column align-center w-100 pt-2">
+        <v-img src="@/assets/undraw_reading-time_indigo.svg" width="60%"></v-img>
+        <span class="text-h5 text-indigo-darken-3">BOOK NOOK</span>
+      </div>
 
-    <v-list dense nav>
-      <v-container class="py-0 my-2 d-flex flex-row align-center justify-space-between">
-        <v-divider></v-divider>
-        <span class="custom-subtitle px-2">books</span>
-        <v-divider></v-divider>
-      </v-container>
+      <v-list dense nav color="indigo-darken-4">
+        <v-container class="py-0 my-2 d-flex flex-row align-center justify-space-between">
+          <v-divider color="indigo-darken-4"></v-divider>
+          <span class="custom-subtitle px-2 text-indigo-darken-3">books</span>
+          <v-divider color="indigo-darken-4"></v-divider>
+        </v-container>
 
-      <v-list-item
-        prepend-icon="mdi-book-search"
-        title="Discover"
-        value="Discover"
-        to="/"
-      />
-
-      <v-list-item
-        prepend-icon="mdi-bookshelf"
-        title="Bookshelf"
-        value="Bookshelf"
-        to="/bookshelf"
-      />
-
-      <v-container class="py-0 my-2 d-flex flex-row align-center justify-space-between">
-        <v-divider></v-divider>
-        <span class="custom-subtitle px-2">users</span>
-        <v-divider></v-divider>
-      </v-container>
-
-      <v-list-item
-        prepend-icon="mdi-account-circle"
-        title="Profile"
-        value="Profile"
-        to="/my-profile"
-      />
-
-      <v-list-item
-        prepend-icon="mdi-message-text"
-        title="Chat"
-        value="Chat"
-        to="/chat"
-      />
-    </v-list>
-
-    <v-list nav class="pa-2" style="position: absolute; bottom: 0;">
         <v-list-item
-          title="Username"
-          class="py-2 px-1"
-        >
-          <template v-slot:prepend>
-            <v-avatar 
-              size="40" 
-            >
-              <v-img src="https://randomuser.me/api/portraits/women/85.jpg"></v-img>
-            </v-avatar>
-          </template>
+          prepend-icon="mdi-book-search"
+          base-color="indigo"
+          title="Discover"
+          value="Discover"
+          to="/"
+        />
 
-          <template v-slot:subtitle>
-            <span class="custom-subtitle">parcwill1999@gmail.com</span>
-          </template>
+        <v-list-item
+          prepend-icon="mdi-bookshelf"
+          base-color="indigo"
+          title="Bookshelf"
+          value="Bookshelf"
+          to="/bookshelf"
+        />
 
-          <template v-slot:append>
-            <v-btn 
-              size="x-small" 
-              variant="plain" 
-              icon
-              class="account-logout"
-              @click="logout"
-            >
-              <v-icon>mdi-logout</v-icon>
-            </v-btn>
-          </template>
-        </v-list-item>
+        <v-container class="py-0 my-2 d-flex flex-row align-center justify-space-between">
+          <v-divider color="indigo-darken-4"></v-divider>
+          <span class="custom-subtitle px-2 text-indigo-darken-3">users</span>
+          <v-divider color="indigo-darken-4"></v-divider>
+        </v-container>
+
+        <v-list-item
+          prepend-icon="mdi-account-circle"
+          base-color="indigo"
+          title="Profile"
+          value="Profile"
+          to="/my-profile"
+        />
+
+        <v-list-item
+          prepend-icon="mdi-message-text"
+          base-color="indigo"
+          title="Chat"
+          value="Chat"
+          to="/chat"
+        />
       </v-list>
+
+      <div class="logout-img-wrapper">
+        <img :src="require('@/assets/undraw_hooked.svg')" class="logout-img" />
+      </div>
+
+      <div class="filler"></div>
+
+      <div class="logout-avatar-container">
+        <div class="d-flex flex-column pl-1">
+          <span class="text-username">Pierce_admin</span>
+          <span class="text-email">Parcwill@gmail.com</span>
+        </div>
+
+        <v-avatar :image="require('@/assets/avatar-avocado-food-svgrepo-com.jpg')"></v-avatar>
+      </div>
+
+      <v-btn 
+        tile rounded="md" 
+        size="22px" 
+        color="indigo-darken-3" 
+        variant="text" 
+        class="logout-btn" 
+        @click="logout"
+      >
+        <template v-slot="icon">
+          <v-icon size="20px">mdi-logout</v-icon>
+        </template>
+      </v-btn>
+    </div>
   </v-navigation-drawer>
 </template>
 
@@ -133,9 +130,86 @@ export default {
 </script>
 
 <style scoped>
+@media (max-width: 1100px) {
+  .v-navigation-drawer {
+    background: rgb(255 255 255 / 0%) !important;
+  }
+}
+
 .custom-subtitle {
   font-size: x-small;
-  font-weight: 300;
+  font-weight: 400;
+}
+
+.logout-img-wrapper {
+  position: absolute;
+  bottom: 8px;
+  left: 17px;
+  width: 196px;
+  height: 90px;
+  overflow: hidden;
+}
+
+.logout-img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+}
+
+.logout-avatar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline-end: 4px;
+  position: absolute;
+  bottom: 20px;
+  left: 21px;
+  height: 48px;
+  width: 160px;
+  border-top-right-radius: 24px;
+  border-bottom-right-radius: 24px;
+  background-color: #C5CAE9;
+}
+
+.text-email {
+  font-size: x-small;
+  opacity: 75%;
+  color: #283593;
+}
+
+.text-username {
+  font-size: small;
+  color: #283593;
+  font-weight: 600;
+}
+
+.filler {
+  position: absolute;
+  bottom: 8px;
+  left: 35px;
+  width: 160px;
+  height: 65px;
+  background-color: white;
+}
+
+.logout-btn {
+  position: absolute;
+  bottom: 33px;
+  left: 183px;
+}
+
+.drawer-content {
+  height: 100%;
+  width: 100%;
+  border-radius: 8px;
+  background-color: #C5CAE9;
+  overflow: hidden;
+}
+
+.v-navigation-drawer--temporary.v-navigation-drawer--active {
+  box-shadow: none !important;
 }
 
 .account-logout:hover {

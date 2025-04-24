@@ -16,7 +16,6 @@ export default {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-image: url('@/assets/bg-book.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

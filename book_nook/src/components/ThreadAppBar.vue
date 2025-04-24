@@ -1,89 +1,103 @@
 <template>
   <v-app-bar 
     elevation="0" 
-    class="pl-0 border-b"
+    density="comfortable"
   >
-    <template v-slot:append>
-      <v-tooltip location="left">
-        <template v-slot:activator="{ props }">
+    <div class="w-100 h-100 pt-1 px-2">
+      <div class="nav-wrapper">
+        <div class="d-flex flex-row align-center">
           <v-btn 
-            icon 
-            variant="plain" 
-            class="ml-4"
-            v-bind="props"
+            variant="tonal" 
+            width="36-px" 
+            height="36-px" 
+            rounded="0"
+            color="indigo-darken-3"
+            class="toggle-chat-list"
+            @click="toggleChatDrawer"
           >
-            <v-icon size="large"
-              >mdi-account-edit-outline
-            </v-icon>
-
-            <EditThread />
-          </v-btn>
-        </template>
-
-        <span class="text-caption">
-          edit thread
-        </span>
-      </v-tooltip>
-    </template>
-    
-    <template v-slot:prepend>
-      <v-btn 
-        variant="tonal" 
-        width="36-px" 
-        height="36-px" 
-        rounded="0"
-        class="toggle-chat-list"
-        @click="toggleChatDrawer"
-      >
-        <v-icon>mdi-format-list-bulleted</v-icon>
-
-        <v-tooltip 
-          location="bottom" 
-          activator="parent"
-        >
-          <span class="text-caption">
-            thread list
-          </span>
-        </v-tooltip>
-      </v-btn>
-
-      <ThreadParticipants />
-
-      <v-container class="d-flex flex-column pl-2">
-        <div>
-          <v-btn 
-            variant="text" 
-            icon
-            height="25px"
-            width="25px"
-            size="x-small" 
-            @click="toggleMenu"
-          >
-            <v-icon>mdi-pencil</v-icon>
+            <v-icon>mdi-format-list-bulleted</v-icon>
 
             <v-tooltip 
-              :open-on-hover="!menuState"
               location="bottom" 
-              activator="parent" 
+              activator="parent"
+              open-delay="800"
             >
               <span class="text-caption">
-                edit thread name
+                thread list
               </span>
             </v-tooltip>
-
-            <ThreadRename @menuStateChange="toggleMenu" />
           </v-btn>
 
-          <span class="text-body-1">
-            Group Chat
-          </span>
+          <ThreadParticipants />
+
+          <v-container class="d-flex flex-column pl-2">
+            <div>
+              <v-btn 
+                variant="tonal" 
+                tile
+                rounded
+                icon
+                height="20px"
+                width="20px"
+                size="x-small" 
+                color="indigo-darken-3"
+                @click="toggleMenu"
+              >
+                <v-icon>mdi-pencil</v-icon>
+
+                <v-tooltip 
+                  :open-on-hover="!menuState"
+                  location="bottom" 
+                  activator="parent" 
+                  open-delay="800"
+                >
+                  <span class="text-caption">
+                    edit thread name
+                  </span>
+                </v-tooltip>
+
+                <ThreadRename @menuStateChange="toggleMenu" />
+              </v-btn>
+
+              <span class="text-body-1 text-indigo-darken-3">
+                Group Chat
+              </span>
+            </div>
+
+            <span class="text-caption text-indigo-darken-3 opacity-70 pl-2">
+              Last active 3 hrs ago
+            </span>
+          </v-container>
         </div>
 
-        <span class="text-caption text-grey-darken-1 pl-2">
-          Last active 3 hrs ago
-        </span>
-      </v-container>
-    </template>
+        <div class="d-flex flex-row align-center">
+          <v-tooltip location="left" open-delay="800">
+            <template v-slot:activator="{ props }">
+              <v-btn 
+                icon 
+                tile
+                rounded="lg"
+                variant="tonal" 
+                size="36px"
+                color="indigo-darken-3"
+                class="mr-2"
+                v-bind="props"
+              >
+                <v-icon size="25px"
+                  >mdi-account-edit-outline
+                </v-icon>
+
+                <EditThread />
+              </v-btn>
+            </template>
+
+            <span class="text-caption">
+              edit thread
+            </span>
+          </v-tooltip>
+        </div>
+      </div>
+    </div>
   </v-app-bar>
 </template>
 
@@ -118,6 +132,18 @@ export default {
 </script>
 
 <style scoped>
+.nav-wrapper {
+  display: flex;
+  align-content: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  background-color: #C5CAE9;
+  overflow: hidden;
+}
+
 :deep(.v-toolbar__prepend) {
   margin-inline: 0px auto;
 }

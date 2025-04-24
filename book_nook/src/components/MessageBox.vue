@@ -1,43 +1,33 @@
 <template>
-  <v-container 
-    class="chat-container" 
-    min-width="100%"
-  >
+  <div class="chat-container">
     <ThreadAppBar />
 
-    <v-container 
-      class="messages-container" 
-      min-width="100%"
-    >
+    <div class="messages-container">
       <MessageBubble
         v-for="(message, index) in messages"
         :key="index"
         v-bind="message"
       />
-    </v-container>
+    </div>
 
-    <v-container 
-      class="pa-0 ma-0" 
-      min-width="100%"
-    >
+    <div class="message-field-container">
       <v-textarea 
         class="send-message"
+        prepend-inner-icon="mdi-send"
+        label="send message"
+        variant="solo"
+        density="compact"
+        bg-color="indigo-lighten-3"
+        rounded="lg"
         rows="1" 
         auto-grow 
         clearable 
+        hide-details="auto"
         max-rows="4"
       >
-        <template v-slot:prepend-inner>
-          <v-btn 
-            icon="mdi-send" 
-            variant="text" 
-            size="small"
-          >
-          </v-btn>
-        </template>
       </v-textarea>
-    </v-container>   
-  </v-container>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -72,10 +62,15 @@ export default {
 <style scoped>
 .chat-container {
   height: calc(100vh - 128px);
+  width: calc(100% - 16px);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  padding: 0;
-  margin: 0;
+  padding-inline: 12px;
+  margin-inline: 8px;
+  background-color: #C5CAE9;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
 }
 
 .messages-container {
@@ -84,11 +79,57 @@ export default {
   flex-grow: 1;
   overflow-y: scroll;
   scrollbar-width: thin;
-  padding-inline: 20px;
+  padding: 10px 0px 10px 10px;
   margin: 0;
+  border-radius: 8px;
+  border: solid 2px #9FA8DA;
+  background-color: white;
+}
+
+.message-field-container {
+  width: 100%;
+  padding: 8px;
+  background-color: #C5CAE9;
 }
 
 .send-message {
   margin: 0 22px;
+}
+
+:deep(.v-field) {
+  transition: background-color 0.3s ease;
+  --v-field-padding-start: 7px;
+}
+
+:deep(.v-field--active) {
+  background-color: #303F9F !important; /* Your custom color */
+  opacity: 1;
+  transition: background-color 0.3s ease;
+}
+
+:deep(.v-field--variant-solo) {
+  box-shadow: none !important;
+}
+
+:deep(.v-field--prepended) {
+  padding-inline-start: 8px;
+}
+
+:deep(.v-field--active .v-field-label) {
+  color: #ffffff; /* Active/focused color */
+}
+
+:deep(.v-field-label) {
+  color: #1A237E; /* Inactive color */
+  opacity: 1;
+}
+
+:deep(.v-field--active .v-icon.mdi-send) {
+  color: #ffffff; /* Different color when focused, if desired */
+}
+
+:deep(.v-icon.mdi-send) {
+  color: #1A237E; /* Your custom color */
+  opacity: 1;
 }
 </style>

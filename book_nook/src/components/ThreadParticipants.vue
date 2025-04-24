@@ -1,14 +1,13 @@
 <template>
   <v-menu 
     open-on-hover
-    open-delay="10" 
+    open-delay="800" 
     close-delay="10"
   >
     <template v-slot:activator="{ props }">
       <v-avatar 
-        variant="elevated" 
-        color="blue-grey-darken-3" 
-        size="46"
+        color="indigo-darken-4" 
+        size="42"
         v-bind="props"
       >
         <v-icon 

@@ -47,7 +47,7 @@ export default {
 <style scoped>
 @media (max-width: 830px) {
   :deep(.discover-padding) {
-    --v-layout-left: 56px !important;
+    --v-layout-left: 64px !important;
   }
 }
 </style>

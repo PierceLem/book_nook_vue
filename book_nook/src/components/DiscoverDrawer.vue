@@ -3,84 +3,94 @@
     v-model="drawer"
     :rail="rail"
     width="300"
+    rail-width="64"
+    floating
     elevation="0"
     permanent
+    class="pt-1 pb-2 pr-0 pl-2"
     :class="{ 'elevation-4': showScrim }"
     @click="railOpen"
   >
-    <v-list-item class="pa-2">
-      <template v-slot:append>
-        <v-btn
-          v-if="!rail"
-          icon="mdi-chevron-left"
-          variant="text"
-          height="32"
-          width="32"
-          class="ml-2"
-          @click.stop="railClose"
-        ></v-btn>
-      </template>
+    <div class="drawer-content">
+      <v-list-item class="pa-2 pb-0">
+        <template v-slot:append>
+          <v-btn
+            v-if="!rail"
+            icon="mdi-chevron-left"
+            tile
+            rounded="lg"
+            variant="text"
+            color="indigo-darken-4"
+            height="40"
+            width="40"
+            class="ml-2"
+            @click.stop="railClose"
+          ></v-btn>
+        </template>
 
-      <v-text-field 
-        v-model="searchQuery"
-        label="Search Books" 
-        variant="solo" 
-        density="compact" 
-        hide-details 
-        prepend-inner-icon="mdi-magnify" 
-        rounded="lg"
-        @click:prepend-inner="$emit('query', searchQuery)"
-      ></v-text-field>
-    </v-list-item>
+        <v-text-field 
+          v-model="searchQuery"
+          label="Search Books" 
+          variant="solo" 
+          density="compact" 
+          bg-color="indigo-lighten-3"
+          hide-details 
+          prepend-inner-icon="mdi-magnify" 
+          rounded="lg"
+          @click:prepend-inner="$emit('query', searchQuery)"
+        ></v-text-field>
+      </v-list-item>
 
-    <v-divider></v-divider>
-
-    <v-expand-transition>
-      <v-container 
-        v-if="titleState"
-        class="title-container"
-      >
-        <v-divider class="title-divider"></v-divider>
-        <span class="text-caption px-2">Popular&nbsp;Genres</span>
-        <v-divider class="title-divider"></v-divider>
-      </v-container>
-    </v-expand-transition>
-
-    <v-list 
-      density="compact" 
-      nav 
-      class="genre-list"
-    >
-      <template 
-        v-for="(category, index) in categories" 
-        :key="index"
-      >
-        <v-list-group 
-          ref="categoryRefs"
+      <v-expand-transition>
+        <v-container 
+          v-show="!rail"
+          class="title-container"
         >
-          <template v-slot:activator="{ props }">
-            <v-list-item 
-              v-bind="props" 
-              :prepend-icon="category.icon" 
-              :title="category.name" 
-              :disabled="rail"
-              @click="openGroup(index, category)"
-              ref="activatorRefs"
-              class="pl-2 activator"
-            ></v-list-item>
-          </template>
+          <v-divider class="title-divider" color="indigo-darken-3"></v-divider>
+          <span class="text-caption text-indigo-darken-3 px-2">Popular&nbsp;Genres</span>
+          <v-divider class="title-divider" color="indigo-darken-3"></v-divider>
+        </v-container>
+      </v-expand-transition>
 
-          <v-list-item 
-            v-for="genre in category.genres" 
-            :key="genre.value" 
-            :title="genre.title" 
-            :value="genre.value"
-            @click="$emit('setGenre', genre)"
-            ref="genreRefs"
-          ></v-list-item>
-        </v-list-group>
-      </template>
-    </v-list>
+      <v-list 
+        density="compact" 
+        color="indigo-darken-4"
+        nav 
+        class="genre-list"
+      >
+        <template 
+          v-for="(category, index) in categories" 
+          :key="index"
+        >
+          <v-list-group 
+            ref="categoryRefs"
+            base-color="indigo"
+          >
+            <template v-slot:activator="{ props }">
+              <v-list-item 
+                v-bind="props" 
+                :prepend-icon="category.icon" 
+                :title="category.name" 
+                :disabled="rail"
+                @click="openGroup(index, category)"
+                ref="activatorRefs"
+                class="pl-2 activator"
+              ></v-list-item>
+            </template>
+
+            <v-list-item 
+              v-for="genre in category.genres" 
+              base-color="indigo-darken-4"
+              :key="genre.value" 
+              :title="genre.title" 
+              :value="genre.value"
+              @click="$emit('setGenre', genre)"
+              ref="genreRefs"
+            ></v-list-item>
+          </v-list-group>
+        </template>
+      </v-list>
+    </div>
   </v-navigation-drawer>
 
   <v-fade-transition>
@@ -212,6 +222,7 @@ export default {
         }
       });
       this.titleState = false;
+      this.searchQuery = '';
       this.rail = true;
     },
 
@@ -252,26 +263,56 @@ export default {
 </script>
 
 <style scoped>
-:deep(.v-field--variant-solo-filled) {
-  box-shadow: none;
+:deep(.v-field) {
+  transition: background-color 0.3s ease;
+  --v-field-padding-start: 7px;
+}
+
+:deep(.v-field--active) {
+  background-color: #303F9F !important; /* Your custom color */
+  opacity: 1;
+  transition: background-color 0.3s ease;
+}
+
+:deep(.v-field--variant-solo) {
+  box-shadow: none !important;
 }
 
 :deep(.v-field--prepended) {
   padding-inline-start: 8px;
 }
 
-:deep(.v-field.v-field--prepended) {
-  --v-field-padding-start: 7px;
+:deep(.v-field--active .v-field-label) {
+  color: #ffffff; /* Active/focused color */
+}
+
+:deep(.v-field-label) {
+  color: #1A237E; /* Inactive color */
+  opacity: 1;
+}
+
+:deep(.v-field--active .v-icon.mdi-magnify) {
+  color: #ffffff; /* Different color when focused, if desired */
+}
+
+:deep(.v-icon.mdi-magnify) {
+  color: #1A237E; /* Your custom color */
+  opacity: 1;
 }
 
 :deep(.v-list-item__content) {
   overflow: visible !important;
 }
 
+.v-navigation-drawer {
+  background: rgb(255 255 255 / 0%) !important;
+}
+
 .genre-list {
   max-height: calc(100vh - 150.8px);
   overflow-y: auto;
   scrollbar-width: thin;
+  scrollbar-color: rgba(26, 35, 126, 0.5) transparent;
 }
 
 .custom-scrim {
@@ -279,7 +320,7 @@ export default {
   bottom: 0;
   right: 0;
   width: 100vw;
-  height: calc(100vh - 64px);
+  height: 100vh;
   background: black;
   opacity: 0.2;
   transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -297,5 +338,13 @@ export default {
 
 .title-divider {
   margin-block: 9px;
+}
+
+.drawer-content {
+  height: 100%;
+  width: 100%;
+  border-radius: 8px;
+  background-color: #C5CAE9;
+  overflow: hidden;
 }
 </style>

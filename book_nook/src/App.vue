@@ -21,3 +21,11 @@ export default {
   },
 };
 </script>
+
+<style>
+html, body {
+  overflow-y: scroll;
+  scrollbar-width: none;
+  scrollbar-color: rgba(26, 35, 126, 0.5) transparent;
+}
+</style>
