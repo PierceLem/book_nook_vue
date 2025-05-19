@@ -3,7 +3,7 @@ import SignUp from '../views/SignUp.vue'
 import LogIn from '../views/LogIn.vue'
 import Discover from '../views/Discover.vue'
 import BookShelf from '@/views/BookShelf.vue'
-import MyProfile2 from '@/views/MyProfile2.vue'
+import MyProfile from '@/views/MyProfile.vue'
 import Chat from '../views/Chat.vue'
 import WorkShop from '../layouts/WorkShop.vue'
 
@@ -49,7 +49,7 @@ const routes = [
   {
     path: '/my-profile',
     name: 'MyProfile',
-    component: MyProfile2,
+    component: MyProfile,
     meta: {
       requireLogin: true,
       layout: 'DefaultLayout',

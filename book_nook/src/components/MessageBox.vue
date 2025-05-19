@@ -82,7 +82,6 @@ export default {
   padding: 10px 0px 10px 10px;
   margin: 0;
   border-radius: 8px;
-  border: solid 2px #9FA8DA;
   background-color: white;
 }
 

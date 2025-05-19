@@ -1,19 +1,21 @@
 <template>
   <div class="review-container">
-    <v-toolbar height="35">
-      <v-toolbar-title class="text-body-2">
+    <v-toolbar height="35" color="indigo-lighten-5" class="toolbar-border">
+      <v-toolbar-title class="text-body-1 text-indigo">
         Reviews
         
         <v-badge
-          color="grey"
+          color="indigo"
           :content=reviews.length
           inline
+          class="pl-1"
         ></v-badge>
       </v-toolbar-title>
 
       <template v-slot:append>
         <v-btn 
           variant="text"
+          color="indigo"
           min-height="35px"
           min-width="35px"
           max-height="35px"
@@ -26,8 +28,8 @@
       </template>
     </v-toolbar>
 
-    <div class="review-list">
-      <v-list class="pt-0">
+    <div class="review-list-wrapper">
+      <v-list class="pt-0 pb-9">
         <Review
           v-if="reviews.length > 0"
           v-for="review in reviews"
@@ -37,68 +39,40 @@
           :rating="review.rating"
           :createdAt="review.created_at"
           :isOwner="review.is_owner"
+          @edit-review="overlayValue = true"
+          @delete-review="deleteReview"
         />
       </v-list>
-      
       <span class="empty-review-text" v-if="!reviews.length > 0">Be the first to write a review!</span>
     </div>
+    
+    <v-btn
+      icon="mdi-tooltip-edit-outline"
+      tile
+      color="indigo"
+      size="small"
+      height="30px"
+      width="30px"
+      class="write-review-btn"
+      @click="overlayValue = true"
+    ></v-btn>
 
-    <div class="review-select border-t" @click="reviewFocus = !reviewFocus">
-      <v-btn
-        size="xs"
-        :append-icon="reviewFocus ? 'mdi-arrow-down' : 'mdi-arrow-up'"
-        variant="text"
-        text="Write a review"
-      >
-      </v-btn>
-    </div>
-
-    <v-expand-transition>
-      <div v-show="reviewFocus" >
-        <div class="d-flex align-center flex-column my-auto">
-          <span class="text-h6 ml-n3">{{ myRating }}/5</span>
-
-          <v-rating
-            v-model="myRating"
-            color="yellow-darken-3"
-            half-increments
-            hover
-          ></v-rating>
-        </div>
-
-        <v-textarea 
-          v-model="myReview"
-          rows="1" 
-          auto-grow 
-          clearable 
-          hide-details="auto"
-          variant="underlined"
-          density="compact"
-          max-rows="3"
-          label="Write a review"
-          :rules="reviewRules"
-          :error-messages="ratingError" 
-          class="ma-2"
-        >
-          <template v-slot:append-inner>
-            <v-btn 
-              height="30"
-              width="30"
-              icon="mdi-send" 
-              variant="text" 
-              size="small"
-              @click="submitReview"
-            >
-            </v-btn>
-          </template>
-        </v-textarea>
-      </div>
-    </v-expand-transition>
+    <ReviewCard 
+      v-model="overlayValue"
+      @review-submitted="addNewReview"
+      :myReview="myReview"
+      :bookId="bookId" 
+      :title="title"
+      :authors="authors"
+      :description="description"
+      :thumbnail="thumbnail"
+    />
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import ReviewCard from './ReviewCard.vue';
 import Review from './Review.vue';
 
 export default {
@@ -106,18 +80,14 @@ export default {
 
   components: {
     Review,
+    ReviewCard,
   },
 
   data() {
     return {
-      myReview: "",
-      reviewRules: [
-        v => !!v || 'Review cannot be blank'
-      ],
-      myRating: 0,
-      ratingError: '',
       reviews: [],
-      reviewFocus: false,
+      myReview: {},
+      overlayValue: false,
     }
   },
   
@@ -146,54 +116,36 @@ export default {
   },
 
   methods: {
-    async submitReview() {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("User is not authenticated. No token found.");
-        }
-
-        if (this.myRating === 0) {
-          this.ratingError = 'Rating is required';
-          return;
-        } else {
-          this.ratingError = '';
-        }
-
-        const response = await axios.post(
-          "/add-review/",
-          {
-            book_data: {
-              book_id: this.bookId,
-              title: this.title,
-              thumbnail: this.thumbnail,
-              description: this.description,
-              authors: this.authors,
-            },
-            review: this.myReview,
-            rating: this.myRating,
-          },
-          {
-            headers: {
-              Authorization: `Token ${token}`,
-            },
-          }
-        );
-        this.reviews.unshift(response.data);
-        this.myReview = '';
-      } catch (error) {
-        console.error("Error submitting review:", error);
-      }
-    },
-
     async fetchReviews() {
       try {
         const response = await axios.get(`/reviews/${this.bookId}`);
-        console.log("Reviews:", response.data);
         this.reviews = response.data;
+        this.myReview = this.reviews.length && this.reviews[0].is_owner ? this.reviews[0] : null;
       } catch (error) {
         console.error("Error fetching reviews:", error);
         this.reviews = [];
+      }
+    },
+
+    async deleteReview(reviewId) {
+      try {
+        const token = localStorage.getItem("token");
+        await axios.delete(`/delete-review/${reviewId}/`, {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        });
+        this.reviews = this.reviews.filter(review => review.id !== reviewId);
+      } catch (error) {
+        console.error("Error deleting review:", error);
+      }
+    },
+
+    addNewReview(newReview) {
+      if (this.reviews.length > 0 && this.reviews[0].is_owner) {
+        this.reviews[0] = newReview;
+      } else {
+        this.reviews.unshift(newReview);
       }
     }
   }
@@ -204,19 +156,26 @@ export default {
 .review-container {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: calc(100% - 198px);
   height: 100%;
   background-color: white;
+  border-left: solid 2px #C5CAE9;
   position: absolute;
   top: 0;
-  left: 0;
+  right: 0;
+  z-index: 1001;
 }
 
-.review-list {
+.toolbar-border {
+  border-bottom: solid 2px #C5CAE9;
+}
+
+.review-list-wrapper {
   flex-grow: 1;
   position: relative;
   overflow-y: auto;
-  scrollbar-width: none;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(26, 35, 126, 0.5) transparent;
 }
 
 .review-select {
@@ -228,6 +187,14 @@ export default {
   width: 100%;
   border-top-right-radius: 8px;
   border-top-left-radius: 8px;
+}
+
+.write-review-btn {
+  position: absolute;
+  bottom: 4px;
+  right: 15px;
+  padding-top: 3px;
+  z-index: 2001;
 }
 
 .empty-review-text {

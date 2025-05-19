@@ -1,257 +1,215 @@
 <template>
-  <v-container 
-    class="d-flex flex-column pa-0 ma-0" 
-    min-width="100%"
-  >
-    <v-card 
-      height="60%" 
-      min-height="250px"
-      rounded="xl" 
-      elevation="10"
-      class="mx-2 mt-2 card-border gradient-overlay" 
-      image="https://wallpaperaccess.com/full/253342.jpg"
+  <div class="d-flex flex-row h-100 w-100">
+    <div 
+      class="d-flex flex-column flex-grow-1 ml-4 mb-4 mt-15 bg-indigo-lighten-4 rounded-xl position-relative" 
+      style="overflow: visible;"
     >
-    </v-card>
+      <ProfileCard />
 
-    <v-card 
-      elevation="10"
-      rounded="xl" 
-      class="mx-8 d-flex flex-column profile-card card-border"
-    >
-      <v-avatar 
-        image="https://randomuser.me/api/portraits/women/85.jpg" 
-        size="100px" 
-        class="profile-avatar"
-      >
-      </v-avatar>
+      <div class="d-flex flex-row w-100 h-100 pa-4" style="margin-top: 130px;">
+        <div class="d-flex flex-column w-50 h-100 pa-4">
+          <v-chip prepend-icon="mdi-account-details" size="x-large" color="indigo" variant="elevated" class="mx-auto mb-2">
+            About
+          </v-chip>
 
-      <v-container 
-        class="py-0 pr-0 ma-0 d-flex flex-column" 
-        height="60px" 
-        min-width="100%" 
-        style="padding-left: 160px;"
-      >
-        <span class="text-h5 pt-2">Parcwilleous</span>
-        <span class="text-caption text-medium-emphasis">Parcwill@gmail.com</span>
-      </v-container>
+          <div class="d-flex flex-row justify-space-between align-center px-2">
+            <span class="text-h6 text-indigo font-weight-medium">bio</span>
 
-      <v-container 
-        class="d-flex flex-row mx-0 pa-0" 
-        min-width="100%"
-      >
-        <v-col 
-          cols="4" 
-          class="d-flex flex-column"
-        >
-          <v-list>
-            <v-list-item 
+            <v-btn
+              :icon="isEditing ? 'mdi-undo-variant' : 'mdi-square-edit-outline'"
+              variant="text"
+              color="indigo"
+              tile
+              flat
+              size="25px"
+              rounded
+              @click="isEditing = !isEditing"
+            ></v-btn>
+          </div>
+
+          <v-card
+            variant="text"
+            rounded="lg"
+            color="indigo"
+            class="pl-0 pr-2 py-2"
+            v-if="!isEditing" 
+          >
+            <p class="text-caption">{{ bio }}</p>
+          </v-card>
+
+          <div v-if="isEditing" class="pa-0">
+            <v-textarea 
+              v-model="newBio" 
+              label="Edit Bio" 
+              variant="outlined" 
+              color="indigo"
+              base-color="indigo"
+              counter="200"
+              rounded="lg"
+              rows="4" 
+              auto-grow 
+              max-rows="8"
+              hide-details="auto" 
               density="compact" 
-              class="py-0"
+              class="pt-2 bio-input"
+              :rules="rules.bio"
             >
-              <template v-slot:append>
-                <v-btn
-                  height="30px"
-                  width="30px"
-                  :icon="bioIcon"
-                  variant="text"
-                  rounded
-                  @click="isEditing = !isEditing"
+              <template v-slot:append-inner>
+                <v-btn 
+                  icon="mdi-check" 
+                  variant="tonal" 
+                  color="indigo"
+                  height="20px" 
+                  width="20px" 
+                  size="x-small" 
+                  @click="submitBio"
                 ></v-btn>
               </template>
-              <template v-slot:prepend>
-                <span class="text-h6">Bio</span>
-              </template>
-            </v-list-item>
+            </v-textarea>
+          </div>
 
-            <v-list-item 
-              v-if="!isEditing" 
-              border="none" 
-              rounded="lg" 
-              class="bg-blue-grey-lighten-5 py-2 mt-2"
-            >
-              <p class="text-caption">{{ bio }}</p>
-            </v-list-item>
+          <span class="text-indigo text-caption font-weight-black mt-4">Socials: </span>
 
-            <v-list-item v-if="isEditing" class="pa-0">
-              <v-textarea 
-                v-model="newBio" 
-                label="New Bio" 
-                variant="outlined" 
-                rounded="lg"
-                rows="4" 
-                auto-grow 
-                max-rows="8"
-                hide-details="auto" 
-                density="compact" 
-                class="pt-2"
-                :rules="rules.bio"
-              >
-                <template v-slot:append-inner>
-                  <v-btn 
-                    icon="mdi-check" 
-                    variant="tonal" 
-                    height="20px" 
-                    width="20px" 
-                    size="x-small" 
-                    @click="submitBio"
-                  ></v-btn>
-                </template>
-              </v-textarea>
-            </v-list-item>
+          <div class="d-flex flex-column pl-2">
+            <div class="d-block mb-1">
+              <v-icon color="indigo" class="mr-1">mdi-instagram</v-icon>
+              <v-btn
+                append-icon="mdi-plus"
+                variant="tonal"
+                color="indigo"
+                size="x-small"
+                text="add account"
+                class=""
+              ></v-btn>
+            </div>
 
-            <v-list-item 
-              prepend-icon="mdi-email-outline" 
-              density="compact"  
-              class="py-0 mt-4" 
-              slim
-            >
-              <span class="text-body-2">Parcwill@gmail.com</span>
-            </v-list-item>
+            <div class="d-block mb-1">
+              <v-icon color="indigo" class="mr-1">mdi-facebook</v-icon>
+              <v-btn
+                append-icon="mdi-plus"
+                variant="tonal"
+                color="indigo"
+                size="x-small"
+                text="add account"
+                class=""
+              ></v-btn>
+            </div>
 
-            <v-list-item 
-              density="compact" 
-              class="py-0"
-            >
-              <span class="text-caption text-medium-emphasis">joined: Dec. 4, 2024</span>
-            </v-list-item>
-          </v-list>
-        </v-col>
+            <div class="d-block">
+              <v-icon color="indigo" class="mr-1">mdi-github</v-icon>
+              <v-btn
+                append-icon="mdi-plus"
+                variant="tonal"
+                color="indigo"
+                size="x-small"
+                text="add account"
+                class=""
+              ></v-btn>
+            </div>
+          </div>
+          <div class="d-block mt-4">
+            <span class="text-indigo text-caption font-weight-black">date joined: </span>
+            <span class="text-indigo text-caption">Today</span>
+          </div>
+        </div>
 
-        <v-divider vertical></v-divider>
+        <v-divider vertical opacity="35%" thickness="2" color="indigo" class="custom-shadow-divider"></v-divider>
 
-        <v-col
-          cols="4" 
-          class="d-flex flex-column"
+        <div class="d-flex flex-column w-50 h-100 pa-4">
+          <v-chip prepend-icon="mdi-cog-outline" size="x-large" color="indigo" variant="elevated" class="mx-auto mb-2">
+            Settings
+          </v-chip>
+
+          <span class="text-h6 text-indigo font-weight-medium ml-2 mb-1">Notifications</span>
+
+          <div class="d-flex flex-row justify-space-between align-center">
+            <span class="text-indigo text-caption">Friend Requests</span>
+            <v-switch color="indigo" density="compact" hide-details></v-switch>
+          </div>
+          <div class="d-flex flex-row justify-space-between align-center">
+            <span class="text-indigo text-caption">Thread Messages</span>
+            <v-switch color="indigo" density="compact" hide-details></v-switch>
+          </div>
+          <div class="d-flex flex-row justify-space-between align-center mb-4">
+            <span class="text-indigo text-caption">Book Recommendations</span>
+            <v-switch color="indigo" density="compact" hide-details></v-switch>
+          </div>
+
+          <span class="text-h6 text-indigo font-weight-medium ml-2 mb-1">Personal</span>
+
+          <div class="d-flex flex-row justify-space-between align-center">
+            <span class="text-indigo text-caption">Auto-accept friend requests</span>
+            <v-switch color="indigo" density="compact" hide-details></v-switch>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex flex-column mx-4 mt-3 mb-4 bg-indigo-lighten-4 rounded-xl" color="indigo" style="min-width: 300px; overflow: hidden;">
+      <v-tabs
+        v-model="tab"
+        align-tabs="center"
+        density="comfortable"
+        bg-color="indigo"
+        color="white"
+      >
+        <v-tab width="100px" :value="1">Friends</v-tab>
+        <v-tab width="100px" :value="2">Search</v-tab>
+        <v-tab width="100px" :value="3">Requests</v-tab>
+      </v-tabs>
+
+      <v-tabs-window v-model="tab">
+        <v-tabs-window-item
+          v-for="n in 3"
+          :key="n"
+          :value="n"
+          class="px-1"
         >
-          <v-list>
+          <v-text-field 
+            v-model="searchQuery"
+            label="Search Friends" 
+            variant="solo" 
+            density="compact" 
+            bg-color="indigo-lighten-3"
+            hide-details 
+            prepend-inner-icon="mdi-magnify" 
+            rounded="lg"
+            class="px-1 pt-1"
+            @click:prepend-inner="$emit('query', searchQuery)"
+          ></v-text-field>
+
+          <v-list
+            density="compact"
+            base-color="indigo-darken-3"
+            nav
+            class="thread-list pt-0 pb-1 px-1"
+          >
             <v-list-item 
-              class="py-0" 
-              density="compact"
+              v-for="n in 12"
+              :key="n"
+              color="indigo-darken-3"
+              prepend-avatar="https://randomuser.me/api/portraits/women/85.jpg"
+              title="Username"
+              subtitle="Email@example.com"
+              class="thread-item py-2 px-2 my-1"
             >
-              <span class="text-h6">Favourites</span>
-            </v-list-item>
-
-            <v-list-item class="pa-0">
-              <v-window
-                v-model="window"
-                show-arrows
-                direction="horizontal"
-              >
-                <template v-slot:prev="{ props }">
-                  <v-btn
-                    icon="mdi-chevron-double-left"
-                    height="32"
-                    width="32"
-                    variant="text"
-                    @click="props.onClick"
-                  >
-                  </v-btn>
-                </template>
-
-                <template v-slot:next="{ props }">
-                  <v-btn
-                    icon="mdi-chevron-double-right"
-                    height="32"
-                    width="32"
-                    variant="text"
-                    @click="props.onClick"
-                  >
-                  </v-btn>
-                </template>
-
-                <v-window-item
-                  v-for="n in length"
-                  :key="n"
-                >
-                  <v-container 
-                    class="d-flex flex-column justify-center align-center pa-0 ma-0 mt-3" 
-                    min-width="100%" 
-                    height="250"
-                    max-height="250"
-                  >
-                    <v-sheet 
-                      width="40%" 
-                      max-width="125"
-                      elevation="6" 
-                      rounded="lg" 
-                      style="overflow: hidden;"
-                    >
-                      <v-img 
-                        src="@/assets/book-cover.jpg" 
-                        cover
-                      ></v-img>
-                    </v-sheet>
-                    
-                    <span class="text-body-1 mt-2">The Great Gatsby</span>
-
-                    <span class="text-caption">J.K. Rowling</span>
-                  </v-container>
-                </v-window-item>
-              </v-window>
             </v-list-item>
           </v-list>
-        </v-col>
-
-        <v-divider vertical></v-divider>
-
-        <v-col 
-          cols="4" 
-          class="d-flex flex-column"
-        >
-          <v-list>
-            <v-list-item 
-              class="py-0" 
-              density="compact"
-            >
-              <span class="text-h6">Friends List</span>
-            </v-list-item>
-            
-            <v-list-item class="px-2">
-              <input 
-                v-model="searchQuery"
-                class="custom-input" 
-                type="text" 
-                placeholder="Search Users" 
-              />
-              <i class="input-icon mdi mdi-magnify"></i>
-            </v-list-item>
-
-            <v-divider class="pa-0 ma-0"></v-divider>
-
-            <v-list 
-              class="pa-0 ma-0" 
-              max-height="350px"
-              style="scrollbar-width: thin;"
-            >
-              <template v-for="user in filteredUsers" :key="user.id">
-                <ListUsers
-                  :name="user.name"
-                  :email="user.email"
-                  :avatar="user.avatar"
-                  btnType="text"
-                  icon="mdi-account-minus-outline"
-                  :disabled="false"
-                />
-              </template>
-            </v-list>
-          </v-list>
-        </v-col>
-      </v-container>
-    </v-card>
-  </v-container>
+        </v-tabs-window-item>
+      </v-tabs-window>
+    </div>
+  </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import ListUsers from '@/components/ListUsers.vue';
+import ProfileCard from '@/components/ProfileCard.vue';
 
 export default {
   name: "MyProfile",
 
   components: {
-    ListUsers,
+    ProfileCard,
   },
-
+  
   data() {
     return {
       bio: "Hi, I’m Alec Thompson, Decisions: If you can’t decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality).",
@@ -259,10 +217,12 @@ export default {
       isEditing: false,
       searchQuery: "",
       rules: {
-        bio: [value => !!value || "Bio cannot be empty"]
+        bio: [
+          value => !!value || "Bio cannot be empty",
+          value => value.length <= 400 || `Maximum 200 characters allowed).`
+        ]
       },
-      length: 3,
-      window: 0,
+      tab: null,
     }
   },
 
@@ -271,90 +231,94 @@ export default {
       this.bio = this.newBio;
       this.isEditing = false;
     },
-  },
-
-  computed: {
-    bioIcon() {
-      return this.isEditing ? "mdi-undo-variant" : "mdi-pencil";
-    },
-
-    ...mapGetters("auth", ["allUsers"]),
-
-    filteredUsers() {
-      if (!this.searchQuery) return this.allUsers;
-
-      const query = this.searchQuery.toLowerCase();
-
-      return this.allUsers.filter(user =>
-        user.name.toLowerCase().includes(query) ||
-        user.email.toLowerCase().includes(query)
-      );
-    },
-  },
+  }
 };
 </script>
 
 <style scoped>
-.gradient-overlay::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to top, rgb(96, 125, 139, 0.5), rgb(55, 71, 79, 0.6));
-  z-index: 1;
-  border-radius: inherit;
+.custom-shadow-divider {
+  mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
 }
 
-:deep(textarea) {
+.bio-input :deep(.v-field__input) {
   font-size: 0.75rem;
-  font-weight: 400;
-  line-height: 1.667;
-  letter-spacing: 0.0333333333em;
-  scrollbar-width: none;
 }
 
-:deep(.v-window__controls) {
-  padding: 0;
+.bio-input :deep(.v-label) {
+  color: #3f51b5;
 }
 
-.profile-card {
-  position: relative;
-  top: -40px;
-  overflow: visible;
+:deep(.v-input--density-compact) {
+  --v-input-control-height: 28px !important;
 }
 
-.card-border {
-  border-width: 3px;
-  border-color: #607D8B;
+:deep(.v-switch__track) {
+  height: 8px;
+  min-width: 26px;
 }
 
-.profile-avatar {
-  position: absolute;
-  border-width: 4px;
-  border-color: white;
-  top: -50px;
-  left: 50px;
+:deep(.v-switch__thumb) {
+  height: 13px;
+  width: 13px;
 }
 
-.custom-input {
+:deep(.v-field) {
+  transition: background-color 0.3s ease;
+  --v-field-padding-start: 7px;
+}
+
+:deep(.v-field--active) {
+  background-color: #303F9F !important;
+  opacity: 1;
+  transition: background-color 0.3s ease;
+}
+
+:deep(.v-field--variant-solo) {
+  box-shadow: none !important;
+}
+
+:deep(.v-field--prepended) {
+  padding-inline-start: 8px;
+}
+
+:deep(.v-field--active .v-field-label) {
+  color: #ffffff;
+}
+
+:deep(.v-field-label) {
+  color: #1A237E;
+  opacity: 1;
+}
+
+:deep(.v-field--active .v-icon.mdi-magnify) {
+  color: #ffffff;
+}
+
+:deep(.v-icon.mdi-magnify) {
+  color: #1A237E;
+  opacity: 1;
+}
+
+.thread-list {
+  max-height: calc(100vh - 180px);
+  background-color: #C5CAE9;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(26, 35, 126, 0.5) transparent;
+}
+
+.thread-item {
+  transition: background-color 0.3s ease;
+  border-radius: 24px;
+}
+
+.thread-item:hover {
   background-color: #f0f0f0;
-  border-radius: 8px;
-  padding: 8px 12px 8px 30px;
-  font-size: 12px;
-  width: 100%;
-}
-
-.input-icon {
-  position: absolute;
-  left: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #888;
-}
-
-.custom-input:focus {
-  outline: none;
+  cursor: pointer;
 }
 </style>

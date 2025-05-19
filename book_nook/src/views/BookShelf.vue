@@ -1,15 +1,18 @@
 <template>
   <div
     ref="pageContainer" 
-    class="h-100 w-100"
+    class="h-100 w-100 pt-1 px-2"
   >
-    <v-toolbar title="My Bookshelf" color="white" class="border-b" density="compact">
-    </v-toolbar>
+    <div class="bookshelf-toolbar">
+      <span class="text-h5 text-indigo">My Bookshelf</span>
+    </div>
 
     <div class="d-flex tabs-wrapper" :class="containerClass">
       <v-tabs
         v-model="tab"
+        color="indigo"
         :direction="tabDirection"
+        :class="tabsClass"
       >
         <v-tab prepend-icon="mdi-playlist-edit" text="Reviewed" value="option-1"></v-tab>
         <v-tab prepend-icon="mdi-download" text="Saved" value="option-2"></v-tab>
@@ -76,6 +79,7 @@ export default {
     tabDirection: null,
     containerClass: null,
     windowClass: null,
+    tabsClass: null,
     reviewedBooks: [],
     savedBooks: [],
     containerWidth: 0,
@@ -151,6 +155,12 @@ export default {
   max-height: calc(100vh - 160.8px);
   overflow-y: auto;
   scrollbar-width: thin;
+}
+
+.bookshelf-toolbar {
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .page-wrapper {

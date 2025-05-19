@@ -51,3 +51,10 @@ export default {
   }
 }
 </style>
+
+<style>
+.v-app {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(26, 35, 126, 0.5) transparent;
+}
+</style>

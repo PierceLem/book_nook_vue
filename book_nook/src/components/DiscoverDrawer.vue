@@ -324,7 +324,7 @@ export default {
   background: black;
   opacity: 0.2;
   transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 1005;
+  z-index: 1004;
 }
 
 .title-container {

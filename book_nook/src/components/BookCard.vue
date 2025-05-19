@@ -5,18 +5,10 @@
     variant="flat"
     rounded="lg"
     height="350" 
-    class="d-flex ma-0 pa-1 bg-indigo-lighten-4" 
-    style="overflow: hidden;"
+    class="d-flex ma-0" 
+    style="overflow: hidden; border: 2px solid #C5CAE9;"
   >
-    <div class="detail-container bg-indigo-lighten-5">
-      <div class="options-chamfer-wrapper-bl-1">
-        <div class="options-chamfer-bl"></div>
-      </div>
-
-      <div class="options-chamfer-wrapper-bl-2">
-        <div class="options-chamfer-bl"></div>
-      </div>
-
+    <div class="detail-container bg-white">
       <div class="options-container">
         <v-btn 
           variant="text"
@@ -27,7 +19,6 @@
           max-width="35px"
           stacked
           rounded="0"
-          @click="loadReviews"
         >
           <v-tooltip
             location="left" 
@@ -36,11 +27,34 @@
             open-delay="800"
           >
             <span class="text-caption">
-              Reviews
+              Send to thread
             </span>
           </v-tooltip>
 
-          <v-icon size="18px" class="pt-1">mdi-message-bulleted</v-icon>
+          <v-icon size="18px" class="pt-1">mdi-message-arrow-left-outline</v-icon>
+        </v-btn>
+
+        <v-btn 
+          variant="text"
+          color="indigo-accent-4"
+          min-height="35px"
+          min-width="35px"
+          max-height="35px"
+          max-width="35px"
+          rounded="0"
+        >
+          <v-tooltip
+            location="left" 
+            activator="parent" 
+            offset="5"
+            open-delay="800"
+          >
+            <span class="text-caption">
+              Recommend to a friend
+            </span>
+          </v-tooltip>
+
+          <v-icon>mdi-account-arrow-left-outline</v-icon>
         </v-btn>
 
         <v-btn 
@@ -66,49 +80,18 @@
 
           <v-icon :icon="localIsSaved ? 'mdi-book-check-outline' : 'mdi-book-plus-outline'"></v-icon>
         </v-btn>
-
-        <v-btn 
-          variant="text"
-          color="indigo-accent-4"
-          min-height="35px"
-          min-width="35px"
-          max-height="35px"
-          max-width="35px"
-          rounded="0"
-        >
-          <v-tooltip
-            location="left" 
-            activator="parent" 
-            offset="5"
-            open-delay="800"
-          >
-            <span class="text-caption">
-              Recommend to a friend
-            </span>
-          </v-tooltip>
-
-          <v-icon>mdi-account-arrow-left-outline</v-icon>
-        </v-btn>
-      </div>
-
-      <div class="ratings-chamfer-wrapper-tr-1">
-        <div class="ratings-chamfer-tr"></div>
-      </div>
-
-      <div class="ratings-chamfer-wrapper-tr-2">
-        <div class="ratings-chamfer-tr"></div>
       </div>
 
       <div class="ratings-container">
-        <div class="text-h6 mb-1 text-indigo-darken-3" style="height: 23px;">
+        <div class="text-h6 mb-1 text-indigo" style="height: 23px;">
           3.5
-          <span class="text-caption text-indigo-darken-3">/5</span>
+          <span class="text-caption text-indigo">/5</span>
         </div>
 
         <v-rating
           model-value="3.5"
           color="white"
-          active-color="yellow-accent-4"
+          active-color="yellow-darken-3"
           size="x-small"
           density="comfortable"
           half-increments
@@ -118,10 +101,11 @@
 
         <v-btn
           variant="text"
-          color="indigo-accent-4"
+          color="indigo-darken-3"
           size="small"
           density="comfortable"
           class="px-1 my-1"
+          @click="loadReviews"
         >
           <span class="text-caption">15 ratings</span>
         </v-btn>
@@ -139,10 +123,10 @@
         <div class="book-header">
           <h3
             ref="titleRef"
-            class="text-indigo-darken-3 book-title"
+            class="text-indigo book-title"
             :class="{ 'scrolling': isTitleOverflowing }"
           >
-            <span class="scroll-inner pl-2">{{ title }}</span>
+            <span class="scroll-inner">{{ title }}</span>
           </h3>
 
           <h5
@@ -150,16 +134,30 @@
             class="text-indigo-lighten-2 book-authors"
             :class="{ 'scrolling': isAuthorOverflowing }"
           >
-            <span class="scroll-inner pl-2">
+            <span class="scroll-inner">
               {{ authors.length ? authors.join(", ") : "Unknown Author" }}
             </span>
           </h5>
         </div>
 
-        <p class="book-desc pl-2">
+        <p class="book-desc pl-3">
           {{ description ? description : "No description available" }}
         </p>
       </div>
+
+      <v-expand-x-transition>
+        <Reviews 
+          v-show="openReviews" 
+          @close="openReviews = false" 
+          :bookId="bookId" 
+          :title="title"
+          :authors="authors"
+          :description="description"
+          :thumbnail="thumbnail"
+          :reviewsCount="reviewsCount"
+          ref="reviewList"
+        />
+      </v-expand-x-transition>
     </div>
   </v-card>
 </template>
@@ -254,8 +252,6 @@ export default {
         title.style.setProperty('--title-scroll-duration', `${titleSpeed}s`);
       } else {
         this.isTitleOverflowing = false;
-        title.style.removeProperty('--title-scroll-distance');
-        title.style.removeProperty('--title-scroll-duration');
       }
 
       if (authors && authors.scrollWidth > authors.clientWidth) {
@@ -268,8 +264,6 @@ export default {
         authors.style.setProperty('--author-scroll-duration', `${authorsSpeed}s`);
       } else {
         this.isAuthorOverflowing = false;
-        authors.style.removeProperty('--author-scroll-distance');
-        authors.style.removeProperty('--author-scroll-duration');
       }
     },
 
@@ -357,7 +351,8 @@ export default {
   flex-direction: column;
   width: calc(100% - 102px);
   min-height: 75px;
-  padding-top: 6px;
+  padding-top: 15px;
+  padding-left: 4px;
 }
 
 .book-title,
@@ -367,6 +362,7 @@ export default {
   text-overflow: ellipsis;
   position: relative;
   max-width: 100%;
+  padding-left: 6px;
   display: block;
   mask-image: linear-gradient(to right, transparent 0px, black 8px, black calc(100% - 8px), transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0px, black 8px, black calc(100% - 8px), transparent 100%);
@@ -415,7 +411,9 @@ export default {
   flex-direction: row;
   align-items: center;
   border-top-right-radius: 8px;
-  background-color: #C5CAE9;
+  background-color: #E8EAF6;
+  border-top: 2px solid #C5CAE9;
+  border-right: 2px solid #C5CAE9;
   overflow: hidden;
 }
 
@@ -427,70 +425,17 @@ export default {
   flex-direction: column;
   align-items: center;
   border-bottom-left-radius: 8px;
-  background-color: #C5CAE9;
+  background-color: #E8EAF6;
+  border-bottom: 2px solid #C5CAE9;
+  border-left: 2px solid #C5CAE9;
   overflow: hidden;
+  z-index: 1001;
 }
-
-/* css for applying chamfers to the content in the corners of the book cards */
-  .options-chamfer-wrapper-bl-1 {
-    position: absolute;
-    bottom: 35px;
-    left: 0px;
-    height: 8px;
-    width: 8px;
-    background-color: #C5CAE9;
-  }
-
-  .options-chamfer-wrapper-bl-2 {
-    position: absolute;
-    bottom: 0px;
-    left: 105px;
-    height: 8px;
-    width: 8px;
-    background-color: #C5CAE9;
-  }
-
-  .options-chamfer-bl {
-    height: 100%;
-    width: 100%;
-    border-bottom-left-radius: 100%;
-    background-color: #E8EAF6;
-    z-index: 1000;
-  }
-
-  .ratings-chamfer-wrapper-tr-1 {
-    position: absolute;
-    top: 0px;
-    right: 100px;
-    height: 8px;
-    width: 8px;
-    background-color: #C5CAE9;
-  }
-
-  .ratings-chamfer-wrapper-tr-2 {
-    position: absolute;
-    top: 75px;
-    right: 0px;
-    height: 8px;
-    width: 8px;
-    background-color: #C5CAE9;
-    z-index: 1000;
-  }
-
-  .ratings-chamfer-tr {
-    height: 100%;
-    width: 100%;
-    border-top-right-radius: 100%;
-    background-color: #E8EAF6;
-  }
-/* */
 
 .detail-container {
   width: 100%;
   height: 100%;
   position: relative;
-  border-top-left-radius: 8px;
-  border-bottom-right-radius: 8px;
   display: flex;
   flex-direction: row;
   overflow: hidden;

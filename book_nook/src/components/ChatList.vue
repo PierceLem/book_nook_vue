@@ -118,7 +118,7 @@ export default {
 }
 
 :deep(.v-field--active) {
-  background-color: #303F9F !important; /* Your custom color */
+  background-color: #303F9F !important;
   opacity: 1;
   transition: background-color 0.3s ease;
 }
@@ -132,20 +132,20 @@ export default {
 }
 
 :deep(.v-field--active .v-field-label) {
-  color: #ffffff; /* Active/focused color */
+  color: #ffffff;
 }
 
 :deep(.v-field-label) {
-  color: #1A237E; /* Inactive color */
+  color: #1A237E;
   opacity: 1;
 }
 
 :deep(.v-field--active .v-icon.mdi-magnify) {
-  color: #ffffff; /* Different color when focused, if desired */
+  color: #ffffff;
 }
 
 :deep(.v-icon.mdi-magnify) {
-  color: #1A237E; /* Your custom color */
+  color: #1A237E;
   opacity: 1;
 }
 
