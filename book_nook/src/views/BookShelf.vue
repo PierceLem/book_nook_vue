@@ -149,12 +149,14 @@ export default {
   max-height: calc(100vh - 112.8px);
   overflow-y: auto;
   scrollbar-width: thin;
+  scrollbar-color: rgba(63, 81, 181, 0.5) transparent;
 }
 
 .bookshelf-window-sm {
   max-height: calc(100vh - 160.8px);
   overflow-y: auto;
   scrollbar-width: thin;
+  scrollbar-color: rgba(63, 81, 181, 0.5) transparent;
 }
 
 .bookshelf-toolbar {
@@ -164,7 +166,7 @@ export default {
 }
 
 .page-wrapper {
-  padding: 16px 0px 0px 16px;
+  padding: 8px 0px 0px 8px;
   display: flex;
   flex-wrap: wrap;
   height: 100%;
@@ -179,8 +181,8 @@ export default {
 .book-card-wrapper {
   flex-grow: 1;
   flex-basis: 50%;
-  padding-right: 16px;
-  height: 366px;
+  padding-right: 8px;
+  height: 358px;
   min-width: 500px;
   max-width: 100%;
   box-sizing: border-box;

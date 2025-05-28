@@ -21,6 +21,7 @@
         height="22px"
         width="22px"
         icon
+        color="indigo"
         :variant="btnType"
         class="ml-1"
         :disabled="disabled"

@@ -16,8 +16,6 @@ export default {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-color: #3F51B5;
 }
 </style>

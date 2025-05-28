@@ -159,7 +159,7 @@ export default {
   width: calc(100% - 198px);
   height: 100%;
   background-color: white;
-  border-left: solid 2px #C5CAE9;
+  border-left: solid 2px #E8EAF6;
   position: absolute;
   top: 0;
   right: 0;
@@ -167,7 +167,7 @@ export default {
 }
 
 .toolbar-border {
-  border-bottom: solid 2px #C5CAE9;
+  border-bottom: solid 1px #C5CAE9;
 }
 
 .review-list-wrapper {
@@ -175,7 +175,7 @@ export default {
   position: relative;
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: rgba(26, 35, 126, 0.5) transparent;
+  scrollbar-color: rgba(63, 81, 181, 0.5) transparent;
 }
 
 .review-select {

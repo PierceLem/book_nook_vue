@@ -1,9 +1,8 @@
 <template>
   <v-app-bar 
     elevation="0" 
-    density="comfortable"
   >
-    <div class="w-100 h-100 pt-1 px-2">
+    <div class="w-100 h-100 pt-2 px-2">
       <div class="nav-wrapper">
         <div class="d-flex flex-row align-center">
           <v-btn 
@@ -11,7 +10,7 @@
             width="36-px" 
             height="36-px" 
             rounded="0"
-            color="indigo-darken-3"
+            color="indigo"
             class="toggle-chat-list"
             @click="toggleChatDrawer"
           >
@@ -32,46 +31,48 @@
 
           <v-container class="d-flex flex-column pl-2">
             <div>
-              <v-btn 
-                variant="tonal" 
-                tile
-                rounded
-                icon
-                height="20px"
-                width="20px"
-                size="x-small" 
-                color="indigo-darken-3"
-                @click="toggleMenu"
+              <v-tooltip 
+                :open-on-hover="!menuState"
+                location="bottom" 
+                activator="parent" 
+                open-delay="800"
+                :disabled="renameMenuState"
               >
-                <v-icon>mdi-pencil</v-icon>
+                <template v-slot:activator="{ props }">
+                  <v-btn 
+                    variant="tonal" 
+                    tile
+                    rounded
+                    icon
+                    height="20px"
+                    width="20px"
+                    size="x-small" 
+                    color="indigo"
+                    v-bind="props"
+                  >
+                    <v-icon>mdi-pencil</v-icon>
+                    <ThreadRename @menuStateChange="renameMenuState = $event" />
+                  </v-btn>
+                </template>
 
-                <v-tooltip 
-                  :open-on-hover="!menuState"
-                  location="bottom" 
-                  activator="parent" 
-                  open-delay="800"
-                >
-                  <span class="text-caption">
-                    edit thread name
-                  </span>
-                </v-tooltip>
+                <span class="text-caption">
+                  edit thread name
+                </span>
+              </v-tooltip>
 
-                <ThreadRename @menuStateChange="toggleMenu" />
-              </v-btn>
-
-              <span class="text-body-1 text-indigo-darken-3">
+              <span class="text-body-1 text-indigo">
                 Group Chat
               </span>
             </div>
 
-            <span class="text-caption text-indigo-darken-3 opacity-70 pl-2">
+            <span class="text-caption text-indigo opacity-70 pl-2">
               Last active 3 hrs ago
             </span>
           </v-container>
         </div>
 
         <div class="d-flex flex-row align-center">
-          <v-tooltip location="left" open-delay="800">
+          <v-tooltip location="left" open-delay="800" :disabled="editThreadMenuState">
             <template v-slot:activator="{ props }">
               <v-btn 
                 icon 
@@ -79,7 +80,7 @@
                 rounded="lg"
                 variant="tonal" 
                 size="36px"
-                color="indigo-darken-3"
+                color="indigo"
                 class="mr-2"
                 v-bind="props"
               >
@@ -87,7 +88,7 @@
                   >mdi-account-edit-outline
                 </v-icon>
 
-                <EditThread />
+                <EditThread @menuStateChange="editThreadMenuState = $event" />
               </v-btn>
             </template>
 
@@ -118,14 +119,12 @@ export default {
 
   data() {
     return {
-      menuState: false,
+      renameMenuState: false,
+      editThreadMenuState: false,
     }
   },
 
   methods: {
-    toggleMenu(newState) {
-      this.menuState = newState
-    },
     ...mapActions("ui", ["toggleChatDrawer"]),
   },
 };
@@ -140,7 +139,7 @@ export default {
   height: 100%;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
-  background-color: #C5CAE9;
+  background-color: #E8EAF6;
   overflow: hidden;
 }
 

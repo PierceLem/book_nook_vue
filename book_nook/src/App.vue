@@ -22,7 +22,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 html, body {
   scrollbar-width: none;
 }

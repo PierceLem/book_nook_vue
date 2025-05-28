@@ -6,7 +6,7 @@
     rounded="lg"
     height="350" 
     class="d-flex ma-0" 
-    style="overflow: hidden; border: 2px solid #C5CAE9;"
+    style="overflow: hidden; border: 2px solid #E8EAF6;"
   >
     <div class="detail-container bg-white">
       <div class="options-container">
@@ -32,29 +32,6 @@
           </v-tooltip>
 
           <v-icon size="18px" class="pt-1">mdi-message-arrow-left-outline</v-icon>
-        </v-btn>
-
-        <v-btn 
-          variant="text"
-          color="indigo-accent-4"
-          min-height="35px"
-          min-width="35px"
-          max-height="35px"
-          max-width="35px"
-          rounded="0"
-        >
-          <v-tooltip
-            location="left" 
-            activator="parent" 
-            offset="5"
-            open-delay="800"
-          >
-            <span class="text-caption">
-              Recommend to a friend
-            </span>
-          </v-tooltip>
-
-          <v-icon>mdi-account-arrow-left-outline</v-icon>
         </v-btn>
 
         <v-btn 
@@ -101,7 +78,7 @@
 
         <v-btn
           variant="text"
-          color="indigo-darken-3"
+          color="indigo"
           size="small"
           density="comfortable"
           class="px-1 my-1"
@@ -131,7 +108,8 @@
 
           <h5
             ref="authorRef"
-            class="text-indigo-lighten-2 book-authors"
+            class="text-indigo book-authors"
+            style="opacity: 0.75;"
             :class="{ 'scrolling': isAuthorOverflowing }"
           >
             <span class="scroll-inner">
@@ -412,8 +390,8 @@ export default {
   align-items: center;
   border-top-right-radius: 8px;
   background-color: #E8EAF6;
-  border-top: 2px solid #C5CAE9;
-  border-right: 2px solid #C5CAE9;
+  border-top: 2px solid #E8EAF6;
+  border-right: 2px solid #E8EAF6;
   overflow: hidden;
 }
 
@@ -426,8 +404,8 @@ export default {
   align-items: center;
   border-bottom-left-radius: 8px;
   background-color: #E8EAF6;
-  border-bottom: 2px solid #C5CAE9;
-  border-left: 2px solid #C5CAE9;
+  border-bottom: 2px solid #E8EAF6;
+  border-left: 2px solid #E8EAF6;
   overflow: hidden;
   z-index: 1001;
 }

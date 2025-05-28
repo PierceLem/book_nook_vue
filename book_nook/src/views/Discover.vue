@@ -2,6 +2,8 @@
   <div class="page-wrapper">
     <DiscoverDrawer @setGenre="genreSelection($event)" @query="customQuery($event)" />
 
+    <v-card elevation="4" color="indigo" class="search-query py-1 px-2 rounded-lg text-h6">{{ searched }}</v-card>
+
     <div class="books-container">
       <div v-for="book in books" class="book-card-wrapper">
         <BookCard
@@ -37,7 +39,7 @@ export default {
 
   data() {
     return {
-      searched: "Popular Books",
+      searched: "Popular on Book Nook",
       books: [],
     };
   },
@@ -94,32 +96,35 @@ export default {
 <style scoped>
 .page-wrapper {
   position: relative;
-  margin-right: 8px;
   height: calc(100vh - 64px);
 }
 
-.books-container {
+.search-query {
   position: absolute;
-  left: 0;
-  top: -4px;
+  top: 8px;
+  left: 8px;
+  z-index: 1000;
+}
+
+.books-container {
   display: flex;
   flex-wrap: wrap;
-  height: calc(100% + 4px);
+  height: 100%;
   width: 100%;
-  padding: 8px 0px 8px 8px;
+  padding: 56px 0px 0px 8px;
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: rgba(26, 35, 126, 0.5) transparent;
+  scrollbar-color: rgba(63, 81, 181, 0.5) transparent;
 }
 
 .book-card-wrapper {
   flex-grow: 1;
   flex-basis: 50%;
-  padding-inline: 8px;
-  height: 366px;
+  height: 358px;
   min-width: 500px;
   max-width: 100%;
   box-sizing: border-box;
+  padding-right: 8px;
 }
 
 .book-card-spacer {

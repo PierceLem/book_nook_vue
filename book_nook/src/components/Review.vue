@@ -25,6 +25,7 @@
         ></v-rating>
 
         <v-spacer></v-spacer>
+
         <span class="date">{{ createdAt }}</span>
       </v-list-item-title>
 

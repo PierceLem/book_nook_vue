@@ -1,6 +1,6 @@
 <template>
   <v-card 
-    class="profile-card d-flex flex-row align-center rounded-xl bg-indigo-lighten-4 pl-0" 
+    class="profile-card d-flex flex-row align-center rounded-xl bg-indigo-lighten-5 pl-0" 
     elevation="3"
   >
     <v-card 
@@ -61,43 +61,43 @@
 
       <div class="d-flex flex-row align-center justify-space-around w-lg-75 w-xl-50 w-md-75 w-100">
         <div 
-          class="d-flex flex-column justify-center bg-white px-1 pt-1 rounded-lg elevation-10 indigo-border" 
+          class="d-flex flex-column justify-center bg-white px-1 pt-1 rounded-lg elevation-10 bg-indigo" 
           style="width: 52px;"
         >
-          <span class="text-caption text-indigo align-self-center" style="line-height: 13px;">
+          <span class="text-caption text-white align-self-center" style="line-height: 13px;">
             reviews
           </span>
-          <span class="text-caption text-indigo align-self-center" style="line-height: 13px;">
+          <span class="text-caption text-white align-self-center" style="line-height: 13px;">
             Written
           </span>
-          <span class="text-h6 text-indigo align-self-center">
+          <span class="text-h6 text-white align-self-center">
             24
           </span>
         </div>
 
         <div 
-          class="d-flex flex-column justify-center bg-white px-1 pt-1 rounded-lg elevation-10 indigo-border" 
+          class="d-flex flex-column justify-center bg-white px-1 pt-1 rounded-lg elevation-10 bg-indigo" 
           style="width: 52px;"
         >
-          <span class="text-caption text-indigo align-self-center" style="line-height: 26px;">
+          <span class="text-caption text-white align-self-center" style="line-height: 26px;">
             Friends
           </span>
-          <span class="text-h6 text-indigo align-self-center">
+          <span class="text-h6 text-white align-self-center">
             432
           </span>
         </div>
 
         <div 
-          class="d-flex flex-column justify-center bg-white px-1 pt-1 rounded-lg elevation-10 indigo-border"   
+          class="d-flex flex-column justify-center bg-white px-1 pt-1 rounded-lg elevation-10 bg-indigo"   
           style="width: 52px;"
         >
-          <span class="text-caption text-indigo align-self-center" style="line-height: 13px;">
+          <span class="text-caption text-white align-self-center" style="line-height: 13px;">
             Saved
           </span>
-          <span class="text-caption text-indigo align-self-center" style="line-height: 13px;">
+          <span class="text-caption text-white align-self-center" style="line-height: 13px;">
             Books
           </span>
-          <span class="text-h6 text-indigo align-self-center">
+          <span class="text-h6 text-white align-self-center">
             25
           </span>
         </div>
@@ -125,7 +125,7 @@ export default {
   transform: translateX(-50%);
   height: 180px;
   width: 90%;
-  border: solid 2px #C5CAE9;
+  border: solid 2px #E8EAF6;
 
   background-image: 
     linear-gradient(to top, rgba(26, 35, 126, 0.55), transparent 70%),

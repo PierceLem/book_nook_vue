@@ -1,22 +1,20 @@
 <template>
   <v-app-bar elevation="0" floating>
-    <div class="w-100 h-100 pt-2 pb-1 pr-2 pl-2">
+    <div class="w-100 h-100 pt-2 pb-0 px-2">
       <div class="nav-wrapper">
         <div class="d-flex align-center">
-          <v-app-bar-nav-icon tile rounded="lg" size="52px" color="indigo-darken-3" @click.prevent="toggleDrawer" class="mr-4" />
+          <v-app-bar-nav-icon tile rounded="lg" size="52px" color="indigo" @click.prevent="toggleDrawer" class="mr-4" />
         </div>
 
         <div class="d-flex align-center">
           <NotificationsMenu />
 
-          <v-divider vertical class="mx-2 my-2" />
+          <v-divider color="indigo" vertical class="mx-2 my-2" />
 
-          <v-btn icon tile rounded="lg" size="52px" color="indigo-darken-3" class="mr-2">
-            <v-icon>mdi-account-circle</v-icon>
-          </v-btn>
+          <span class="text-indigo text-body-2 mx-2">Username</span>
 
-          <v-btn icon tile rounded="lg" size="52px" color="indigo-darken-3">
-            <v-icon>mdi-dots-vertical</v-icon>
+          <v-btn icon tile rounded="lg" size="52px" color="indigo">
+            <v-avatar :image="require('@/assets/avatar-avocado-food-svgrepo-com.jpg')"></v-avatar>
           </v-btn>
         </div>
       </div>
@@ -75,7 +73,7 @@ export default {
   width: 100%;
   height: 100%;
   border-radius: 8px;
-  background-color: #C5CAE9;
+  background-color: #E8EAF6;
   overflow: hidden;
 }
 

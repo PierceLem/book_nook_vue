@@ -7,7 +7,7 @@
     floating
     elevation="0"
     permanent
-    class="pt-1 pb-2 pr-0 pl-2"
+    class="pt-2 pb-2 pr-0 pl-2"
     :class="{ 'elevation-4': showScrim }"
     @click="railOpen"
   >
@@ -20,7 +20,7 @@
             tile
             rounded="lg"
             variant="text"
-            color="indigo-darken-4"
+            color="indigo"
             height="40"
             width="40"
             class="ml-2"
@@ -31,11 +31,12 @@
         <v-text-field 
           v-model="searchQuery"
           label="Search Books" 
-          variant="solo" 
+          variant="outlined" 
           density="compact" 
-          bg-color="indigo-lighten-3"
+          color="indigo"
+          :base-color="rail ? 'indigo-lighten-5' : 'indigo'"
           hide-details 
-          prepend-inner-icon="mdi-magnify" 
+          prepend-inner-icon="mdi-magnify"
           rounded="lg"
           @click:prepend-inner="$emit('query', searchQuery)"
         ></v-text-field>
@@ -46,18 +47,29 @@
           v-show="!rail"
           class="title-container"
         >
-          <v-divider class="title-divider" color="indigo-darken-3"></v-divider>
-          <span class="text-caption text-indigo-darken-3 px-2">Popular&nbsp;Genres</span>
-          <v-divider class="title-divider" color="indigo-darken-3"></v-divider>
+          <v-divider class="title-divider" color="indigo"></v-divider>
+          <span class="text-caption text-indigo px-2">Genres</span>
+          <v-divider class="title-divider" color="indigo"></v-divider>
         </v-container>
       </v-expand-transition>
 
       <v-list 
         density="compact" 
-        color="indigo-darken-4"
+        color="indigo"
         nav 
         class="genre-list"
       >
+        <v-list-item
+          base-color="indigo"
+          prepend-icon="mdi-star-shooting"
+          :disabled="rail"
+          :key="defaultGenre.value" 
+          :title="defaultGenre.title" 
+          :value="defaultGenre.value"
+          @click="$emit('setGenre', defaultGenre)"
+          ref="genreRefs"
+        ></v-list-item>
+
         <template 
           v-for="(category, index) in categories" 
           :key="index"
@@ -80,7 +92,7 @@
 
             <v-list-item 
               v-for="genre in category.genres" 
-              base-color="indigo-darken-4"
+              base-color="indigo"
               :key="genre.value" 
               :title="genre.title" 
               :value="genre.value"
@@ -113,6 +125,10 @@ export default {
       searchQuery: "",
       titleState: false,
       screenWidth: window.innerWidth,
+      defaultGenre: {
+        title: 'Popular on Book Nook',
+        value: 'bestsellers',
+      },
       categories: [
         {
           name: "Fiction",
@@ -264,40 +280,23 @@ export default {
 
 <style scoped>
 :deep(.v-field) {
-  transition: background-color 0.3s ease;
   --v-field-padding-start: 7px;
-}
-
-:deep(.v-field--active) {
-  background-color: #303F9F !important; /* Your custom color */
-  opacity: 1;
-  transition: background-color 0.3s ease;
-}
-
-:deep(.v-field--variant-solo) {
-  box-shadow: none !important;
 }
 
 :deep(.v-field--prepended) {
   padding-inline-start: 8px;
 }
 
-:deep(.v-field--active .v-field-label) {
-  color: #ffffff; /* Active/focused color */
+:deep(.v-field__input) {
+  color: #3F51B5;
 }
 
 :deep(.v-field-label) {
-  color: #1A237E; /* Inactive color */
-  opacity: 1;
-}
-
-:deep(.v-field--active .v-icon.mdi-magnify) {
-  color: #ffffff; /* Different color when focused, if desired */
+  color: #3F51B5;
 }
 
 :deep(.v-icon.mdi-magnify) {
-  color: #1A237E; /* Your custom color */
-  opacity: 1;
+  color: #3F51B5;
 }
 
 :deep(.v-list-item__content) {
@@ -312,7 +311,7 @@ export default {
   max-height: calc(100vh - 150.8px);
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: rgba(26, 35, 126, 0.5) transparent;
+  scrollbar-color: rgba(63, 81, 181, 0.5) transparent;
 }
 
 .custom-scrim {
@@ -344,7 +343,7 @@ export default {
   height: 100%;
   width: 100%;
   border-radius: 8px;
-  background-color: #C5CAE9;
+  background-color: #E8EAF6;
   overflow: hidden;
 }
 </style>

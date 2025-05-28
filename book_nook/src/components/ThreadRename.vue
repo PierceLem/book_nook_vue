@@ -6,18 +6,20 @@
     :close-on-content-click="false"
     location="bottom"
   >
-    <v-card class="pa-2">
+    <v-card class="px-1 pb-1 pt-2">
       <v-text-field 
-        label="Rename Thread" 
+        label="New Thread Name" 
+        density="compact"
         variant="underlined" 
+        hide-details="auto"
         width="200px"
         v-model="threadName"
         :rules="[validateRequired, validateMaxLength]"
       >
         <template v-slot:append-inner>
           <v-btn 
-            height="25px" 
-            width="25px" 
+            height="20px" 
+            width="20px" 
             size="x-small" 
             icon="mdi-check" 
             variant="tonal"

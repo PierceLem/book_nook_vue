@@ -10,14 +10,14 @@
     <div class="drawer-content">
       <div class="d-flex flex-column align-center w-100 pt-2">
         <v-img src="@/assets/undraw_reading-time_indigo.svg" width="60%"></v-img>
-        <span class="text-h5 text-indigo-darken-3">BOOK NOOK</span>
+        <span class="text-h5 text-indigo">BOOK NOOK</span>
       </div>
 
-      <v-list dense nav color="indigo-darken-4">
+      <v-list dense nav color="indigo">
         <v-container class="py-0 my-2 d-flex flex-row align-center justify-space-between">
-          <v-divider color="indigo-darken-4"></v-divider>
-          <span class="custom-subtitle px-2 text-indigo-darken-3">books</span>
-          <v-divider color="indigo-darken-4"></v-divider>
+          <v-divider color="indigo"></v-divider>
+          <span class="custom-subtitle px-2 text-indigo">books</span>
+          <v-divider color="indigo"></v-divider>
         </v-container>
 
         <v-list-item
@@ -29,34 +29,58 @@
         />
 
         <v-list-item
-          prepend-icon="mdi-bookshelf"
           base-color="indigo"
           title="Bookshelf"
           value="Bookshelf"
           to="/bookshelf"
-        />
+        >
+          <template v-slot:prepend>
+            <v-badge
+              dot
+              color="error"
+            >
+              <v-icon color="indigo">mdi-bookshelf</v-icon>
+            </v-badge>
+          </template>
+        </v-list-item>
 
         <v-container class="py-0 my-2 d-flex flex-row align-center justify-space-between">
-          <v-divider color="indigo-darken-4"></v-divider>
-          <span class="custom-subtitle px-2 text-indigo-darken-3">users</span>
-          <v-divider color="indigo-darken-4"></v-divider>
+          <v-divider color="indigo"></v-divider>
+          <span class="custom-subtitle px-2 text-indigo">users</span>
+          <v-divider color="indigo"></v-divider>
         </v-container>
 
         <v-list-item
-          prepend-icon="mdi-account-circle"
           base-color="indigo"
           title="Profile"
           value="Profile"
           to="/my-profile"
-        />
+        >
+          <template v-slot:prepend>
+            <v-badge
+              dot
+              color="error"
+            >
+              <v-icon color="indigo">mdi-account-circle</v-icon>
+            </v-badge>
+          </template>
+        </v-list-item>
 
         <v-list-item
-          prepend-icon="mdi-message-text"
           base-color="indigo"
           title="Chat"
           value="Chat"
           to="/chat"
-        />
+        >
+          <template v-slot:prepend>
+            <v-badge
+              dot
+              color="error"
+            >
+              <v-icon color="indigo">mdi-message-text</v-icon>
+            </v-badge>
+          </template>
+        </v-list-item>
       </v-list>
 
       <div class="logout-img-wrapper">
@@ -77,7 +101,7 @@
       <v-btn 
         tile rounded="md" 
         size="22px" 
-        color="indigo-darken-3" 
+        color="indigo" 
         variant="text" 
         class="logout-btn" 
         @click="logout"
@@ -170,18 +194,18 @@ export default {
   width: 160px;
   border-top-right-radius: 24px;
   border-bottom-right-radius: 24px;
-  background-color: #C5CAE9;
+  background-color: #E8EAF6;
 }
 
 .text-email {
   font-size: x-small;
   opacity: 75%;
-  color: #283593;
+  color: #3F51B5;
 }
 
 .text-username {
   font-size: small;
-  color: #283593;
+  color: #3F51B5;
   font-weight: 600;
 }
 
@@ -204,7 +228,7 @@ export default {
   height: 100%;
   width: 100%;
   border-radius: 8px;
-  background-color: #C5CAE9;
+  background-color: #E8EAF6;
   overflow: hidden;
 }
 
