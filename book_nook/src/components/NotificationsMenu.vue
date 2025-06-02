@@ -1,7 +1,7 @@
 <template>
   <v-menu 
     v-model="menu" 
-    close-on-content-click="false"
+    :close-on-content-click="false"
     location="end"
   >
     <template v-slot:activator="{ props }">

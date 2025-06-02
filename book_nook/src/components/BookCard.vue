@@ -12,7 +12,7 @@
       <div class="options-container">
         <v-btn 
           variant="text"
-          color="indigo-accent-4"
+          color="indigo"
           min-height="35px"
           min-width="35px"
           max-height="35px"
@@ -35,7 +35,7 @@
         </v-btn>
 
         <v-btn 
-          :color="localIsSaved ? 'green-accent-4' : 'indigo-accent-4'"
+          :color="localIsSaved ? 'green-accent-4' : 'indigo'"
           variant="text"
           min-height="35px"
           min-width="35px"
@@ -67,7 +67,7 @@
 
         <v-rating
           model-value="3.5"
-          color="white"
+          color="indigo"
           active-color="yellow-darken-3"
           size="x-small"
           density="comfortable"
@@ -388,10 +388,6 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: center;
-  border-top-right-radius: 8px;
-  background-color: #E8EAF6;
-  border-top: 2px solid #E8EAF6;
-  border-right: 2px solid #E8EAF6;
   overflow: hidden;
 }
 
@@ -402,10 +398,6 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-bottom-left-radius: 8px;
-  background-color: #E8EAF6;
-  border-bottom: 2px solid #E8EAF6;
-  border-left: 2px solid #E8EAF6;
   overflow: hidden;
   z-index: 1001;
 }

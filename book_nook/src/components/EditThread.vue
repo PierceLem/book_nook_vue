@@ -52,10 +52,12 @@
               class="align-center justify-center"
               contained
             >
-              <v-card class="py-0 px-4 d-flex flex-column align-center justify-center" position="relative" max-width="275px">
+              <v-card class="py-0 px-5 d-flex flex-column align-center justify-center" position="relative" max-width="275px">
                 <v-btn
                   icon
-                  variant="text"
+                  tile
+                  rounded="0"
+                  variant="tonal"
                   color="indigo"
                   height="18px"
                   width="18px"
@@ -65,7 +67,7 @@
                   <v-icon size="16px">mdi-undo-variant</v-icon>
                 </v-btn>
 
-                <div class="w-100 text-center pt-6 pb-2">
+                <div class="w-100 text-center pt-5 pb-2">
                   <span class="text-indigo">Add "username"</span>
                 </div>
 
@@ -102,10 +104,12 @@
               class="align-center justify-center"
               contained
             >
-              <v-card class="py-0 px-4 d-flex flex-column align-center justify-center" position="relative" max-width="275px">
+              <v-card class="py-0 px-5 d-flex flex-column align-center justify-center" position="relative" max-width="275px">
                 <v-btn
                   icon
-                  variant="text"
+                  tile
+                  rounded="0"
+                  variant="tonal"
                   color="indigo"
                   height="18px"
                   width="18px"
@@ -115,7 +119,7 @@
                   <v-icon size="16px">mdi-undo-variant</v-icon>
                 </v-btn>
 
-                <div class="w-100 text-center pt-6 pb-2">
+                <div class="w-100 text-center pt-5 pb-2">
                   <span class="text-indigo">Kick "username"</span>
                 </div>
 
@@ -232,7 +236,7 @@ export default {
 
 .undo-btn {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 0px;
+  right: 0px;
 }
 </style>

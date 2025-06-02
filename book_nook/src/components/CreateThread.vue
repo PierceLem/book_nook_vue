@@ -37,7 +37,7 @@
             :avatar="user.avatar"
             btnType="tonal"
             icon="mdi-plus"
-            :disabled="selectedUsers.some(u => u.id === user.id)"
+            :disabled="selectedUsers.some(u => u.id === user.id) || selectedUsers.length >= 10"
             @userClick="addUser(user)"
           />
         </template>

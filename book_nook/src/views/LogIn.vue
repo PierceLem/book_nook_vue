@@ -10,10 +10,7 @@
     </v-container>
 
     <v-container class="d-flex justify-center mb-2 px-0">
-      <v-btn block elevation="0" class="px-0">
-        <v-img src="@/assets/google-icon.png" height="25" width="25" class="mr-3"></v-img>
-        Sign in with Google
-      </v-btn>
+      <div id="g_id_signin"></div>
     </v-container>
 
     <div class="d-flex align-center mb-2">
@@ -73,6 +70,7 @@ import axios from "axios";
 
 export default {
   name: "LogIn",
+
   data() {
     return {
       show: false,
@@ -90,7 +88,73 @@ export default {
       },
     };
   },
+
+  mounted() {
+    const waitForGoogle = () => {
+      if (window.google && window.google.accounts && window.google.accounts.id) {
+        console.log('[DEBUG] Google API loaded. Initializing...');
+
+        window.google.accounts.id.initialize({
+          client_id: '1433398408-7ae0hp432t01si9s30igmsehaojkhokb.apps.googleusercontent.com',
+          callback: this.googleLogin,
+        });
+
+        window.google.accounts.id.renderButton(
+          document.getElementById('g_id_signin'),
+          {
+            theme: 'outline',
+            size: 'large',
+          }
+        );
+
+        console.log('[DEBUG] Google Sign-In button rendered.');
+      } else {
+        setTimeout(waitForGoogle, 100);
+      }
+    };
+
+    waitForGoogle();
+  },
+
   methods: {
+    googleLogin(response) {
+      axios.defaults.headers.common["Authorization"] = "";
+      localStorage.removeItem("token");
+
+      const id_token = {
+        id_token: response.credential,
+      };
+
+      axios
+        .post("/api/auth/google/", id_token)
+        .then((response) => {
+          console.log(response);
+
+          const token = response.data.token;
+
+          this.$store.commit("auth/setToken", token);
+
+          axios.defaults.headers.common["Authorization"] = "Token " + token;
+
+          localStorage.setItem("token", token);
+
+          this.$router.push("/");
+        })
+        .catch((error) => {
+          if (error.response) {
+            if (error.response.data.detail) {
+              this.errors = error.response.data.detail;
+            }
+
+            console.log(JSON.stringify(error.response.data));
+          } else if (error.message) {
+            console.log(JSON.stringify(error.message));
+          } else {
+            console.log(JSON.stringify(error));
+          }
+        });
+    },
+
     submitForm() {
       const form = this.$refs.form;
       if (form.validate()) {

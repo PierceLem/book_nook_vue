@@ -120,7 +120,7 @@ export default {
       try {
         const response = await axios.get(`/reviews/${this.bookId}`);
         this.reviews = response.data;
-        this.myReview = this.reviews.length && this.reviews[0].is_owner ? this.reviews[0] : null;
+        this.myReview = this.reviews.find(r => r.is_owner) || null;
       } catch (error) {
         console.error("Error fetching reviews:", error);
         this.reviews = [];
@@ -136,6 +136,7 @@ export default {
           },
         });
         this.reviews = this.reviews.filter(review => review.id !== reviewId);
+        this.myReview = null;
       } catch (error) {
         console.error("Error deleting review:", error);
       }
