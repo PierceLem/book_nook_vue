@@ -38,7 +38,6 @@
           :text="review.review"
           :rating="review.rating"
           :createdAt="review.created_at"
-          :isOwner="review.is_owner"
           @edit-review="overlayValue = true"
           @delete-review="deleteReview"
         />

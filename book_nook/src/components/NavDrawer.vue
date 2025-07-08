@@ -116,7 +116,6 @@
 
 <script>
 import { mapState } from "vuex";
-import axios from "axios";
 
 export default {
   computed: {
@@ -134,21 +133,10 @@ export default {
   },
   methods: {
     logout() {
-      axios
-        .post("/api/v1/token/logout/")
-        .then(() => {
-          localStorage.removeItem("token");
-          this.$store.commit("setToken", "");
-          axios.defaults.headers.common["Authorization"] = "";
-          this.$router.push("/login");
-        })
-        .catch(() => {
-          localStorage.removeItem("token");
-          this.$store.commit("setToken", "");
-          axios.defaults.headers.common["Authorization"] = "";
-          this.$router.push("/login");
-        });
-    },
+      this.$store.dispatch("auth/logout").then(() => {
+        this.$router.push("/login");
+      });
+    }
   },
 };
 </script>

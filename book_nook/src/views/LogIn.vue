@@ -92,8 +92,6 @@ export default {
   mounted() {
     const waitForGoogle = () => {
       if (window.google && window.google.accounts && window.google.accounts.id) {
-        console.log('[DEBUG] Google API loaded. Initializing...');
-
         window.google.accounts.id.initialize({
           client_id: '1433398408-7ae0hp432t01si9s30igmsehaojkhokb.apps.googleusercontent.com',
           callback: this.googleLogin,
@@ -106,8 +104,6 @@ export default {
             size: 'large',
           }
         );
-
-        console.log('[DEBUG] Google Sign-In button rendered.');
       } else {
         setTimeout(waitForGoogle, 100);
       }
@@ -117,40 +113,35 @@ export default {
   },
 
   methods: {
-    googleLogin(response) {
-      axios.defaults.headers.common["Authorization"] = "";
-      localStorage.removeItem("token");
-
-      const id_token = {
-        id_token: response.credential,
+    login() {
+      const formData = {
+        email: this.email.toLowerCase(),
+        password: this.password,
       };
 
-      axios
-        .post("/api/auth/google/", id_token)
-        .then((response) => {
-          console.log(response);
-
-          const token = response.data.token;
-
-          this.$store.commit("auth/setToken", token);
-
-          axios.defaults.headers.common["Authorization"] = "Token " + token;
-
-          localStorage.setItem("token", token);
-
+      this.$store.dispatch("auth/login", formData)
+        .then(() => {
           this.$router.push("/");
         })
         .catch((error) => {
-          if (error.response) {
-            if (error.response.data.detail) {
-              this.errors = error.response.data.detail;
-            }
-
-            console.log(JSON.stringify(error.response.data));
-          } else if (error.message) {
-            console.log(JSON.stringify(error.message));
+          if (error.response?.data?.non_field_errors) {
+            this.errors = error.response.data.non_field_errors.join(" ");
           } else {
-            console.log(JSON.stringify(error));
+            console.error(error);
+          }
+        });
+    },
+
+    googleLogin(response) {
+      this.$store.dispatch("auth/googleLogin", response.credential)
+        .then(() => {
+          this.$router.push("/");
+        })
+        .catch((error) => {
+          if (error.response?.data?.detail) {
+            this.errors = error.response.data.detail;
+          } else {
+            console.error(error);
           }
         });
     },
@@ -162,46 +153,6 @@ export default {
       } else {
         console.log('Form validation failed.');
       }
-    },
-
-    login() {
-      axios.defaults.headers.common["Authorization"] = "";
-
-      localStorage.removeItem("token");
-
-      const formData = {
-        email: this.email,
-        password: this.password,
-      };
-
-      axios
-        .post("/api/v1/token/login/", formData)
-        .then((response) => {
-          console.log(response);
-
-          const token = response.data.auth_token;
-
-          this.$store.commit("auth/setToken", token);
-
-          axios.defaults.headers.common["Authorization"] = "Token " + token;
-
-          localStorage.setItem("token", token);
-
-          this.$router.push("/");
-        })
-        .catch((error) => {
-          if (error.response) {
-            if (error.response.data.non_field_errors) {
-              this.errors = error.response.data.non_field_errors.join(" ");
-            }
-
-            console.log(JSON.stringify(error.response.data));
-          } else if (error.message) {
-            console.log(JSON.stringify(error.message));
-          } else {
-            console.log(JSON.stringify(error));
-          }
-        });
     },
   },
 };

@@ -13,49 +13,60 @@
     >
       <div class="d-flex justify-center align-center flex-grow-1">
         <v-avatar 
-          :image="require('@/assets/avatar-avocado-food-svgrepo-com.jpg')" 
+          :image="user.avatar"
+          :key="user.avatar"
           size="100px" 
           class="elevation-6 border-0"
         ></v-avatar>
       </div>
-      
-      <div class="d-flex flex-row align-center w-100">
-        <v-btn
-          variant="tonal"
-          density="comfortable"
-          color="indigo"
-          rounded="0"
-          min-width="57px"
-          max-width="57px"
-          class="pa-0"
-        >
-          <template v-slot="icon">
-            <v-icon size="25px">mdi-upload</v-icon>
-          </template>
-        </v-btn>
 
-        <v-btn
-          variant="tonal"
-          density="comfortable"
-          color="indigo"
-          rounded="0"
-          min-width="57px"
-          max-width="57px"
-          class="pa-0"
-        >
-          <template v-slot="icon">
-            <v-icon size="25px">mdi-swap-horizontal-bold</v-icon>
-          </template>
-        </v-btn>
-      </div>
+      <v-btn
+        variant="tonal"
+        density="comfortable"
+        color="indigo"
+        rounded="0"
+        width="100%"
+        class="pa-0"
+      >
+        <v-icon size="25px">mdi-swap-horizontal-bold</v-icon>
+
+        <v-menu activator="parent">
+          <v-list density="compact" :lines="false" color="indigo" slim base-color="indigo" class="pa-0">
+            <v-list-item
+              v-if="user.avatar != 'http://127.0.0.1:8000/media/avatars/default-avatar.jpg'"
+              value="delete"
+              key="delete"
+              subtitle="Delete"
+              prepend-icon="mdi-delete"
+              @click="deleteAvatar"
+            >
+            </v-list-item>
+            <v-list-item
+              key="delete"
+              value="upload"
+              subtitle="Upload"
+              prepend-icon="mdi-upload"
+              @click="$refs.avatarInput.click()"
+            >
+            </v-list-item>
+            <v-file-input 
+              v-model="avatar"
+              ref="avatarInput" 
+              style="display: none;"
+              accept="image/*"
+              @change="validateFile"
+            ></v-file-input>
+          </v-list>
+        </v-menu>
+      </v-btn>
     </v-card>
 
     <div class="d-flex flex-column justify-space-between flex-grow-1 h-100 py-5">
       <div class="d-flex flex-column align-self-start bg-white pl-2 pr-7 py-1 fade-right">
-        <div class="text-h5 text-indigo align-self-start">Parcwill</div>
-        <div class="align-self-start">
+        <div class="text-h5 text-indigo align-self-start">{{ user.username }}</div>
+        <div class="d-flex flex-row align-center justify-start">
           <v-icon size="x-small" color="indigo">mdi-email</v-icon>
-          <span class="text-caption text-indigo"> Parcwill@gmail.com</span>
+          <span class="text-caption text-indigo pl-1"> {{ user.email }}</span>
         </div>
       </div>
 
@@ -64,11 +75,8 @@
           class="d-flex flex-column justify-center bg-white px-1 pt-1 rounded-lg elevation-10 bg-indigo" 
           style="width: 52px;"
         >
-          <span class="text-caption text-white align-self-center" style="line-height: 13px;">
-            reviews
-          </span>
-          <span class="text-caption text-white align-self-center" style="line-height: 13px;">
-            Written
+          <span class="text-caption text-white align-self-center" style="line-height: 26px;">
+            Reviews
           </span>
           <span class="text-h6 text-white align-self-center">
             24
@@ -107,11 +115,85 @@
 </template>
 
 <script>
+import axios from 'axios';
+import { mapState } from 'vuex';
+
 export default {
   name: "ProfileCard",
   
   data() {
     return {
+      selectedAvatar: null,
+    }
+  },
+
+  computed: {
+    ...mapState('auth', ['user']),
+  },
+
+  methods: {
+    validateFile(event) {
+      const selectedFile = event.target?.files?.[0];
+      this.validateAvatar(selectedFile);
+    },
+
+    async validateAvatar(file) {
+      console.log(file.type);
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+      const maxSize = 2 * 1024 * 1024;
+
+      if (!file) {
+        console.log('No file selected.');
+        this.selectedAvatar = null;
+        return;
+      }
+
+      if (!allowedTypes.includes(file.type)) {
+        console.log('Only JPG and PNG files are allowed.');
+        this.selectedAvatar = null;
+        return;
+      }
+
+      if (file.size > maxSize) {
+        console.log('File size must be under 2MB.');
+        this.selectedAvatar = null;
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('avatar', file);
+
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post('/upload-avatar/', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Token ${token}`,
+          },
+        });
+
+        console.log('Upload successful:', response.data);
+        this.selectedAvatar = null;
+        this.$store.commit('auth/updateAvatar', response.data.avatar_url);
+      } catch (error) {
+        console.error('Upload failed:', error.response?.data || error.message);
+        this.selectedAvatar = null;
+      }
+    },
+
+    async deleteAvatar() {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.delete('/upload-avatar/', {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        });
+        console.log(response.data);
+        this.$store.commit('auth/updateAvatar', response.data.avatar_url);
+      } catch (error) {
+        console.error('Delete failed:', error.response?.data || error.message);
+      }
     }
   }
 };

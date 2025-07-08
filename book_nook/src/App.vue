@@ -15,10 +15,6 @@ export default {
       return require(`@/layouts/${layout}.vue`).default;
     }
   },
-
-  created() {
-    this.$store.commit("auth/initializeStore");
-  },
 };
 </script>
 

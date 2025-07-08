@@ -33,6 +33,7 @@ const routes = [
     name: 'Discover',
     component: Discover,
     meta: {
+      requireLogin: true,
       layout: 'DefaultLayout',
     },
   },
@@ -42,6 +43,7 @@ const routes = [
     name: 'BookShelf',
     component: BookShelf,
     meta: {
+      requireLogin: true,
       layout: 'DefaultLayout',
     },
   },
@@ -71,6 +73,7 @@ const routes = [
     name: 'WorkShop',
     component: WorkShop,
     meta: {
+      requireLogin: true,
       layout: 'WorkShop',
     }
   },

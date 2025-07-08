@@ -9,7 +9,7 @@
     >
       <template v-slot:prepend>
         <v-avatar size="40" class="my-2">
-          <v-img src="https://randomuser.me/api/portraits/women/85.jpg" />
+          <v-img :src=user.avatar />
         </v-avatar>
       </template>
 
@@ -31,7 +31,11 @@
 
       <div class="d-flex justify-start align-top">
         <div class="review-text pl-1 py-1">
-          <span class="text-user">{{ isOwner ? 'you' : user }}</span>
+          <UserInfoCard
+            :isOwner="isOwner"
+            :user="user"
+          />
+
           <span class="text-review"> - {{ text }}</span>
         </div>
       </div>
@@ -69,12 +73,29 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+import UserInfoCard from './UserInfoCard.vue';
+
 export default {
   name: "Review",
+
+  components: {
+    UserInfoCard,
+  },
 
   data() {
     return {
     }
+  },
+
+  computed: {
+    ...mapState('auth', {
+      currentUser: 'user'
+    }),
+
+    isOwner() {
+      return this.user && this.currentUser && this.user.id === this.currentUser.id;
+    },
   },
 
   props: {
@@ -83,7 +104,7 @@ export default {
       required: true,
     },
     user: {
-      type: String,
+      type: Object,
       required: true,
     },
     text: {
@@ -96,10 +117,6 @@ export default {
     },
     createdAt: {
       type: String,
-      required: true,
-    },
-    isOwner: {
-      type: Boolean,
       required: true,
     },
   },
@@ -116,11 +133,6 @@ export default {
 .text-review {
   opacity: 75%;
   font-weight: 400;
-}
-
-.text-user {
-  color: #3F51B5;
-  font-weight: 500;
 }
 
 .review-option:hover {
