@@ -82,7 +82,7 @@ export default {
     },
     thumbnail: {
       type: String,
-      required: true,
+      required: false,
     },
   },
 
@@ -119,7 +119,7 @@ export default {
         }
 
         const response = await axios.post(
-          "/add-review/",
+          "/review-options/",
           {
             book_data: {
               book_id: this.bookId,

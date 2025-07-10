@@ -34,7 +34,8 @@
           v-if="reviews.length > 0"
           v-for="review in reviews"
           :reviewId="review.id"
-          :user="review.user"
+          :owner="review.user"
+          :isOwner="review.is_owner"
           :text="review.review"
           :rating="review.rating"
           :createdAt="review.created_at"
@@ -70,6 +71,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import axios from 'axios';
 import ReviewCard from './ReviewCard.vue';
 import Review from './Review.vue';
@@ -120,6 +122,7 @@ export default {
         const response = await axios.get(`/reviews/${this.bookId}`);
         this.reviews = response.data;
         this.myReview = this.reviews.find(r => r.is_owner) || null;
+        console.log(this.myReview)
       } catch (error) {
         console.error("Error fetching reviews:", error);
         this.reviews = [];
@@ -129,13 +132,15 @@ export default {
     async deleteReview(reviewId) {
       try {
         const token = localStorage.getItem("token");
-        await axios.delete(`/delete-review/${reviewId}/`, {
+        await axios.delete("/review-options/", {
+          data: { id: reviewId },
           headers: {
             Authorization: `Token ${token}`,
           },
         });
         this.reviews = this.reviews.filter(review => review.id !== reviewId);
         this.myReview = null;
+        console.log('review deleted');
       } catch (error) {
         console.error("Error deleting review:", error);
       }
@@ -144,8 +149,10 @@ export default {
     addNewReview(newReview) {
       if (this.reviews.length > 0 && this.reviews[0].is_owner) {
         this.reviews[0] = newReview;
+        this.myReview = newReview;
       } else {
         this.reviews.unshift(newReview);
+        this.myReview = newReview;
       }
     }
   }

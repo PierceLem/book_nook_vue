@@ -9,7 +9,7 @@
     >
       <template v-slot:prepend>
         <v-avatar size="40" class="my-2">
-          <v-img :src=user.avatar />
+          <v-img :src=owner.avatar />
         </v-avatar>
       </template>
 
@@ -33,7 +33,7 @@
         <div class="review-text pl-1 py-1">
           <UserInfoCard
             :isOwner="isOwner"
-            :user="user"
+            :owner="owner"
           />
 
           <span class="text-review"> - {{ text }}</span>
@@ -73,7 +73,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import UserInfoCard from './UserInfoCard.vue';
 
 export default {
@@ -88,23 +87,19 @@ export default {
     }
   },
 
-  computed: {
-    ...mapState('auth', {
-      currentUser: 'user'
-    }),
-
-    isOwner() {
-      return this.user && this.currentUser && this.user.id === this.currentUser.id;
-    },
-  },
+  emits: ['edit-review', 'delete-review'], 
 
   props: {
     reviewId: {
       type: Number,
       required: true,
     },
-    user: {
+    owner: {
       type: Object,
+      required: true,
+    },
+    isOwner: {
+      type: Boolean,
       required: true,
     },
     text: {

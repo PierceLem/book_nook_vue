@@ -15,12 +15,12 @@
     >
       <v-card class="d-flex flex-column align-center pa-2">
         <v-avatar 
-          :image="user.avatar" 
+          :image="owner.avatar" 
           size="75px" 
           class="mb-1"
         ></v-avatar>
 
-        <span class="text-subtitle-2 text-indigo">{{ user.username }}</span>
+        <span class="text-subtitle-2 text-indigo">{{ owner.username }}</span>
 
         <div class="d-flex flex-row justify-space-around w-100 pt-1 pb-2">
           <v-card class="d-flex flex-column align-center px-1 py-1" variant="outlined" color="indigo">
@@ -46,11 +46,12 @@
         </v-btn>
       </v-card>
     </v-menu>
-    <span class="text-user">{{ isOwner ? 'you' : user.username }}</span>
+    <span class="text-user">{{ isOwner ? 'you' : owner.username }}</span>
   </v-btn>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import axios from 'axios';
 
 export default {
@@ -60,19 +61,24 @@ export default {
     isOwner: {
       type: Boolean,
     },
-    user: {
-      type: String,
+    owner: {
+      type: Object,
     },
+  },
+
+  computed: {
+    ...mapState('auth', ['user']),
   },
 
   methods: {
     async sendFriendRequest() {
       try {
+        const token = localStorage.getItem("token");
         const response = await axios.post(
           "/friend-request/",
           {
-            from_user_id: '',
-            to_user_id: this.user.id,
+            from_user_id: this.user.id,
+            to_user_id: this.owner.id,
           },
           {
             headers: {
