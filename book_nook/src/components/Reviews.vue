@@ -71,7 +71,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import axios from 'axios';
 import ReviewCard from './ReviewCard.vue';
 import Review from './Review.vue';
@@ -122,7 +121,6 @@ export default {
         const response = await axios.get(`/reviews/${this.bookId}`);
         this.reviews = response.data;
         this.myReview = this.reviews.find(r => r.is_owner) || null;
-        console.log(this.myReview)
       } catch (error) {
         console.error("Error fetching reviews:", error);
         this.reviews = [];

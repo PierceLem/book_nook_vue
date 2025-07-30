@@ -60,22 +60,29 @@
       </div>
 
       <div class="ratings-container">
-        <div class="text-h6 mb-1 text-indigo" style="height: 23px;">
-          3.5
-          <span class="text-caption text-indigo">/5</span>
+        <template v-if="rating">
+          <div class="text-h6 mb-1 text-indigo" style="height: 23px;">
+            {{ rating }}
+            <span class="text-caption text-indigo">/5</span>
+          </div>
+
+          <v-rating
+            :model-value="rating"
+            color="indigo"
+            active-color="yellow-darken-3"
+            size="x-small"
+            density="comfortable"
+            half-increments
+            readonly
+            style="height: 20px;"
+          ></v-rating>
+        </template>
+
+        <div v-if="!rating" class="text-h6 my-2 text-indigo" style="height: 23px;">
+          0
+          <span class="text-caption text-indigo">ratings</span>
         </div>
-
-        <v-rating
-          model-value="3.5"
-          color="indigo"
-          active-color="yellow-darken-3"
-          size="x-small"
-          density="comfortable"
-          half-increments
-          readonly
-          style="height: 20px;"
-        ></v-rating>
-
+        
         <v-btn
           variant="text"
           color="indigo"
@@ -84,7 +91,8 @@
           class="px-1 my-1"
           @click="loadReviews"
         >
-          <span class="text-caption">15 ratings</span>
+          <span v-if="reviewsCount > 0" class="text-caption">{{ reviewsCount }} ratings</span>
+          <span v-else class="text-caption">Write a review</span>
         </v-btn>
       </div>
 

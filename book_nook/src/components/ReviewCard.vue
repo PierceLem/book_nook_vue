@@ -31,6 +31,8 @@
         clearable 
         hide-details="auto"
         max-rows="4"
+        :error-messages="errors"
+        @update:focused="errors = ''"
       >
         <template v-slot:append>
           <v-btn
@@ -89,7 +91,8 @@ export default {
   data() {
     return {
       review: '',
-      rating: 0,
+      rating: null,
+      errors: '',
     }
   },
 
@@ -107,15 +110,15 @@ export default {
     async submitReview() {
       try {
         const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("User is not authenticated. No token found.");
-        }
 
-        if (this.myRating === 0) {
-          this.ratingError = 'Rating is required';
+        if (!this.rating) {
+          this.errors = 'Rating is required';
+          return;
+        } else if (!this.review) {
+          this.errors = 'Review is required';
           return;
         } else {
-          this.ratingError = '';
+          this.errors = '';
         }
 
         const response = await axios.post(

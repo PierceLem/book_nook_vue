@@ -66,6 +66,8 @@ export default {
     },
   },
 
+  inject: ['showSnackbar'],
+
   computed: {
     ...mapState('auth', ['user']),
   },
@@ -86,9 +88,20 @@ export default {
             },
           }
         );
+
+        this.showSnackbar({
+          subject: 'Friend request sent to ' + response.data.to_user.username,
+          content: 'You can view friend request data in the profile page',
+          icon: 'mdi-check',
+          color: 'green',
+        })
       } catch (error) {
-        console.error("Error sending friend request:", error);
-        this.reviews = [];
+        this.showSnackbar({
+          subject: 'You have already sent a friend request to this user',
+          content: 'You can view friend request data in the profile page',
+          icon: 'mdi-alpha-x',
+          color: 'red',
+        })
       }
     }
   }
