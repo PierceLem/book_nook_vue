@@ -2,7 +2,7 @@
   <v-snackbar
     v-model="visible"
     vertical
-    timeout="4000"
+    timeout="5000"
     location="bottom end"
     :color="color"
   >

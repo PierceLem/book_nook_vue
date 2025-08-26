@@ -213,7 +213,7 @@ export default {
     linear-gradient(to top, rgba(26, 35, 126, 0.55), transparent 70%),
     linear-gradient(to bottom, rgba(26, 35, 126, 0.55), transparent 70%),
     linear-gradient(to left, rgba(26, 35, 126, 0.3), transparent 40%),
-    url('@/assets/bookshelf_4.jpg');
+    url('@/assets/bookshelf_2.jpg');
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
