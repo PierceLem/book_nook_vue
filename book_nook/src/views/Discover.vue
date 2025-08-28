@@ -18,6 +18,15 @@
           :isSaved="book.is_saved"
         />
       </div>
+
+      <div class="d-flex w-100 align-center justify-center mb-2" v-if="books.length < totalBooks">
+        <v-btn
+          color="indigo"
+          @click="loadMoreBooks"
+        >
+          Load More
+        </v-btn>
+      </div>
     </div>
 
     <div v-if="books.length % 2 !== 0" class="book-card-spacer"></div>
@@ -41,18 +50,23 @@ export default {
     return {
       searched: "Popular on Book Nook",
       books: [],
+      startIndex: 0,
+      maxResults: 20,
+      totalBooks: 0,
     };
   },
 
   mounted() {
-    this.fetchBooks("bestsellers");
+    this.fetchBooks("bestsellers", true);
   },
 
   methods: {
-    async fetchBooks(query) {
-      this.books = [];
-      this.loading = true;
-      this.error = null;
+    async fetchBooks(query, reset=false) {
+      if (reset) {
+        this.startIndex = 0;
+        this.totalBooks = 0;
+        this.books = [];
+      }
 
       try {
         const token = localStorage.getItem("token");
@@ -63,30 +77,39 @@ export default {
         const response = await axios.get(
           "/search-books/",
           {
-            params: { q: query },
+            params: { 
+              q: query,
+              startIndex: this.startIndex,
+              maxResults: this.maxResults
+             },
             headers: {
               Authorization: `Token ${token}`, 
             },
           }
         );
-
-        this.books = response.data;
+        
+        this.books = [...this.books, ...response.data.books];
+        this.totalBooks = response.data.totalBooks;
+        console.log(this.totalBooks);
       } catch (err) {
         this.error = "Failed to fetch books.";
-      } finally {
-        this.loading = false;
       }
+    },
+
+    loadMoreBooks() {
+      this.startIndex += this.maxResults;
+      this.fetchBooks(this.searched);
     },
 
     genreSelection(selectedGenre) {
       this.searched = selectedGenre.title;
-      this.fetchBooks(selectedGenre.value);
+      this.fetchBooks(selectedGenre.value, true);
     },
 
     customQuery(query) {
       if(query) {
         this.searched = query;
-        this.fetchBooks(query);
+        this.fetchBooks(query, true);
       }
     }
   }
