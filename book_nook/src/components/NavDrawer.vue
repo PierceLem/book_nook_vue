@@ -91,11 +91,11 @@
 
       <div class="logout-avatar-container">
         <div class="d-flex flex-column pl-1">
-          <span class="text-username">Pierce_admin</span>
-          <span class="text-email">Parcwill@gmail.com</span>
+          <span class="text-username">{{ user.username }}</span>
+          <span class="text-email">{{ user.email }}</span>
         </div>
 
-        <v-avatar :image="require('@/assets/avatar-avocado-food-svgrepo-com.jpg')"></v-avatar>
+        <v-avatar :image="user.avatar"></v-avatar>
       </div>
 
       <v-btn 
@@ -122,6 +122,9 @@ export default {
     ...mapState("ui", {
       navDrawerState: (state) => state.navDrawer,
     }),
+
+    ...mapState('auth', ['user']),
+
     navDrawer: {
       get() {
         return this.navDrawerState;

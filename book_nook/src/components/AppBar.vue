@@ -3,7 +3,7 @@
     <div class="w-100 h-100 pt-2 pb-0 px-2">
       <div class="nav-wrapper">
         <div class="d-flex align-center">
-          <v-app-bar-nav-icon tile rounded="lg" size="52px" color="indigo" @click.prevent="toggleDrawer" class="mr-4" />
+          <v-app-bar-nav-icon tile rounded="lg" size="56px" color="indigo" @click.prevent="toggleDrawer" class="mr-4" />
         </div>
 
         <div class="d-flex align-center">
@@ -11,11 +11,9 @@
 
           <v-divider color="indigo" vertical class="mx-2 my-2" />
 
-          <span class="text-indigo text-body-2 mx-2">Username</span>
+          <span class="text-indigo text-body-2 mx-2">{{ user.username }}</span>
 
-          <v-btn icon tile rounded="lg" size="52px" color="indigo">
-            <v-avatar :image="require('@/assets/avatar-avocado-food-svgrepo-com.jpg')"></v-avatar>
-          </v-btn>
+          <v-avatar :image="user.avatar" size="48px" class="mr-1"></v-avatar>
         </div>
       </div>
     </div>
@@ -46,6 +44,8 @@ export default {
     ...mapState("ui", {
       navDrawerState: (state) => state.navDrawer,
     }),
+
+    ...mapState('auth', ['user']),
   },
 
   methods: {

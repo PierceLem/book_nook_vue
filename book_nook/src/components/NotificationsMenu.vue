@@ -9,7 +9,7 @@
         stacked
         tile 
         rounded="lg" 
-        size="52px" 
+        size="56px" 
         color="indigo" 
         v-bind="props"
         class="text-none"
