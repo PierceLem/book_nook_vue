@@ -88,6 +88,8 @@ export default {
 
   inject: ['showSnackbar'],
 
+  emits: ["friend-request-sent"],
+
   computed: {
     ...mapState('auth', ['user']),
   },

@@ -55,6 +55,35 @@
             class="mr-1"
           >
             <v-icon size="x-small">mdi-account-minus-outline</v-icon>
+            <v-menu activator="parent">
+              <v-card 
+                variant="elevated"
+                color="indigo"
+                density="compact"
+                title="Unfriend this user?"
+                :subtitle="friend.other_user.username"
+              >
+                <template v-slot:actions>
+                  <v-btn 
+                    density="compact" 
+                    prepend-icon="mdi-check"
+                    variant="tonal"
+                    color="green"
+                    @click="unfriend(friend.id, friend.other_user.username)"
+                  >
+                    Confirm
+                  </v-btn>
+                  <v-btn 
+                    density="compact" 
+                    prepend-icon="mdi-undo"
+                    variant="tonal"
+                    color="red"
+                  >
+                    Cancel
+                  </v-btn>
+                </template>
+              </v-card>
+            </v-menu>
           </v-btn>
         </template>
       </v-list-item>
@@ -65,6 +94,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import UserInfoCard from './UserInfoCard.vue';
 
 export default {
@@ -87,6 +117,10 @@ export default {
     }
   },
 
+  emits: ["delete-friendship"],
+
+  inject: ['showSnackbar'],
+
   computed: {
     filteredFriends() {
       if (!this.searchQuery) return this.friends;
@@ -99,6 +133,25 @@ export default {
           email.toLowerCase().includes(q)
         )
       })
+    }
+  },
+
+  methods: {
+    async unfriend(id, username) {
+      try {
+        const response = await axios.delete('/friend-request/', {data: {'id': id}});
+
+        this.showSnackbar({
+          subject: 'Unfriended ' + username,
+          content: 'You can view friendship data in the profile page',
+          icon: 'mdi-check',
+          color: 'green',
+        });
+
+        this.$emit('delete-friendship', id)
+      } catch (error) {
+        console.log("error deleting frindship", error);
+      }
     }
   }
 }

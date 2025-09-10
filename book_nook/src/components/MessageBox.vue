@@ -1,5 +1,5 @@
 <template>
-  <div class="chat-container">
+  <div class="chat-container" v-if="threadId">
     <ThreadAppBar />
 
     <div class="messages-container">
@@ -8,6 +8,9 @@
         :key="index"
         v-bind="message"
       />
+      <div class="d-flex align-center justify-center w-100 h-100" v-if="messages.length == 0">
+        <span class="text-indigo">no data</span>
+      </div>
     </div>
 
     <div class="message-field-container">
@@ -29,6 +32,13 @@
       </v-textarea>
     </div>
   </div>
+
+  <template v-if="!threadId">
+    <div class="message-box-placeholder">
+      <img :src="require('@/assets/undraw_chatting.svg')" class="placeholder-img"></img>
+      <span class="text-h6 text-indigo opacity-50 mt-8">Select a Thread</span>
+    </div>
+  </template>
 </template>
 
 <script>
@@ -45,6 +55,7 @@ export default {
 
   data() {
     return {
+      threadId: '1',
       messages: [
         { text: "Hello! How are you?", sent: false, date: 'today', sender: 'insert username 2', type: 'text' },
         { text: "I'm doing well, thanks! How about you?", sent: true, date: 'today', sender: 'insert username 1', type: 'text' },
@@ -103,6 +114,20 @@ export default {
 
 .send-message {
   margin: 0 22px;
+}
+
+.message-box-placeholder {
+  height: calc(100vh - 64px);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.placeholder-img {
+  width: 90%;
+  max-width: 400px;
 }
 
 :deep(.v-field) {

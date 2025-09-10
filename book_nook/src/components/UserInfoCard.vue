@@ -2,7 +2,7 @@
   <v-menu 
     :close-on-content-click="false" 
     activator="parent"
-    location="top"
+    location="bottom"
   >
     <v-card class="d-flex flex-column align-center pa-2">
       <v-avatar 
@@ -13,13 +13,13 @@
 
       <span class="text-subtitle-2 text-indigo">{{ owner.username }}</span>
 
-      <div class="d-flex flex-row justify-space-around w-100 pt-1 pb-2">
-        <v-card class="d-flex flex-column align-center px-1 py-1 my-1" variant="outlined" color="indigo">
+      <div class="d-flex flex-row justify-space-around w-100 pt-1">
+        <v-card class="d-flex flex-column align-center px-1 mr-1" variant="outlined" color="indigo">
           <span class="text-h6" style="line-height: 20px;">44</span>
           <span class="text-caption" style="line-height: 12px;">friends</span>
         </v-card>
 
-        <v-card class="d-flex flex-column align-center px-1 py-1 my-1" variant="outlined" color="indigo">
+        <v-card class="d-flex flex-column align-center px-1" variant="outlined" color="indigo">
           <span class="text-h6" style="line-height: 20px;">25</span>
           <span class="text-caption" style="line-height: 12px;">reviews</span>
         </v-card>
@@ -32,6 +32,7 @@
         size="x-small"
         height="18px"
         density="comfortable"
+        class="mt-2"
         @click="sendFriendRequest"
       >
         Friend Request

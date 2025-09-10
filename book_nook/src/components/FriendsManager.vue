@@ -19,6 +19,7 @@
       >
         <ManageFriends 
           :friends="friends"
+          @delete-friendship="removeFriend"
         />
       </v-tabs-window-item>
 
@@ -37,6 +38,7 @@
         <ManageRequests
           :sent-requests="sentRequests"
           :received-requests="receivedRequests"
+          @accept-request="addFriend"
         />
       </v-tabs-window-item>
     </v-tabs-window>
@@ -75,6 +77,7 @@ export default {
     async fetchFriends() {
       try {
         const response = await axios.get('/my-friends/');
+        console.log(response.data);
         this.friends = response.data.friends;
         this.sentRequests = response.data.sent_requests;
         this.receivedRequests = response.data.received_requests;
@@ -85,6 +88,17 @@ export default {
 
     addNewRequest(newRequest) {
       this.sentRequests.push(newRequest);
+    },
+
+    addFriend(friend) {
+      this.friends.push(friend);
+    },
+
+    removeFriend(id) {
+      const index = this.friends.findIndex(friend => friend.id === id);
+      if (index !== -1) {
+        this.friends.splice(index, 1);
+      }
     }
   }
 };

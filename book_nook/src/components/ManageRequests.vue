@@ -185,6 +185,8 @@ export default {
 
   inject: ['showSnackbar'],
 
+  emits: ["accept-request"],
+
   methods: {
     async deleteRequest(id, username) {
       try {
@@ -222,7 +224,7 @@ export default {
         );
         console.log(response.data);
         if (action == 'accept') {
-          this.friends.push(response.data.friendship);
+          this.$emit('accept-request', response.data.friendship);
           this.showSnackbar({
             subject: 'You are now friends with ' + response.data.friendship.other_user.username,
             content: 'You can view friend request data in the profile page',
@@ -231,7 +233,7 @@ export default {
           })
         } else {
           this.showSnackbar({
-            subject: "Friend request declined",
+            subject: "Friend request from " + response.data.user + " declined",
             content: 'You can view friend request data in the profile page',
             icon: 'mdi-check',
             color: 'green',
@@ -241,7 +243,7 @@ export default {
         if (index !== -1) {
           this.receivedRequests.splice(index, 1);
         }
-      } catch {
+      } catch (error) {
         console.error(error)
       }
     },
