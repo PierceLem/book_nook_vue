@@ -4,7 +4,7 @@ import LogIn from '../views/LogIn.vue'
 import Discover from '../views/Discover.vue'
 import BookShelf from '@/views/BookShelf.vue'
 import MyProfile from '@/views/MyProfile.vue'
-import Chat from '../views/Chat.vue'
+import Threads from '../views/Threads.vue'
 import WorkShop from '../layouts/WorkShop.vue'
 
 import store from '../store'
@@ -59,9 +59,9 @@ const routes = [
   },
   
   {
-    path: '/chat',
-    name: 'Chat',
-    component: Chat,
+    path: '/threads',
+    name: 'Threads',
+    component: Threads,
     meta: {
       requireLogin: true,
       layout: 'DefaultLayout',

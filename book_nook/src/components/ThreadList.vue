@@ -36,7 +36,7 @@
             <span class="text-caption">Create Thread</span>
           </v-tooltip>
 
-          <CreateThread @menuStateChange="toggleMenu" />
+          <CreateThread @menuStateChange="toggleMenu" @new-thread="addThread" />
         </v-btn>
       </div>
 
@@ -61,8 +61,8 @@
         class="thread-list py-0 px-1"
       >
         <v-list-item 
-          v-for="n in 12"
-          :key="n"
+          v-for="thread in threads"
+          :key="thread.id"
           color="indigo"
           slim
           subtitle="Insert last received message here."
@@ -73,14 +73,14 @@
               dot
               color="red"
             >
-              <v-avatar :image="require('@/assets/avatar-avocado-food-svgrepo-com.jpg')"></v-avatar>
+              <v-avatar :image="thread.thread_avatar"></v-avatar>
             </v-badge>
           </template>
 
           <template v-slot:title>
-            <div class="d-flex flex-row justify-space-between">
-              <span>Thread Name</span>
-              <span style="opacity: 50%;">date</span>
+            <div class="d-flex flex-column">
+              <span class="text-end date-text pr-1">date</span>
+              <span>{{ thread.name }}</span>
             </div>
           </template>
         </v-list-item>
@@ -90,6 +90,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import { mapGetters, mapActions } from "vuex";
 import CreateThread from './CreateThread.vue';
 
@@ -102,7 +103,12 @@ export default {
   data() {
     return {
       menuState: false,
+      threads: [],
     }
+  },
+
+  mounted() {
+    this.getThreads();
   },
 
   computed: {
@@ -118,9 +124,24 @@ export default {
   },
 
   methods: {
+    async getThreads() {
+      try {
+        const response = await axios.get('/threads/');
+        this.threads = response.data;
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
     toggleMenu(newState) {
       this.menuState = newState
     },
+
+    addThread(threadData) {
+      this.threads.push(threadData);
+    },
+
     ...mapActions("ui", ["setChatDrawer"]),
   },
 }
@@ -164,19 +185,25 @@ export default {
 }
 
 .thread-list {
-  max-height: calc(100vh - 172px);
-  overflow-y: scroll;
+  height: calc(100vh - 172px);
+  overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: rgba(63, 81, 181, 0.5) transparent;
 }
 
 .thread-item {
   transition: background-color 0.3s ease;
-  border-radius: 24px;
+  border-radius: 25px;
 }
 
 .thread-item:hover {
   background-color: white;
   cursor: pointer;
+}
+
+.date-text {
+  font-size: x-small;
+  opacity: 0.5;
+  line-height: 10px;
 }
 </style>

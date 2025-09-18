@@ -68,9 +68,9 @@
 
         <v-list-item
           base-color="indigo"
-          title="Chat"
-          value="Chat"
-          to="/chat"
+          title="Threads"
+          value="Threads"
+          to="/threads"
         >
           <template v-slot:prepend>
             <v-badge

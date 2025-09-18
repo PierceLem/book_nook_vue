@@ -1,16 +1,16 @@
 <template>
-  <ChatList />
+  <ThreadList />
   <MessageBox />
 </template>
 
 <script>
-import ChatList from '@/components/ChatList.vue';
+import ThreadList from '@/components/ThreadList.vue';
 import MessageBox from '@/components/MessageBox.vue';
 
 export default {
   name: "Chat",
   components: {
-    ChatList,
+    ThreadList,
     MessageBox,
   },  
 };
