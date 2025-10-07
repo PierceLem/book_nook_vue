@@ -54,7 +54,7 @@ export default {
     },
 
     cachedComponents() {
-      return ["Discover", "Chat"];
+      return ["Discover", "Threads"];
     },
   },
 };

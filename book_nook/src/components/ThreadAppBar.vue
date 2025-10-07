@@ -27,12 +27,13 @@
             </v-tooltip>
           </v-btn>
 
-          <ThreadParticipants />
+          <ThreadParticipants
+            :participants="threadDetail.participants_detail"
+          />
 
           <v-container class="d-flex flex-column pl-2">
             <div>
               <v-tooltip 
-                :open-on-hover="!menuState"
                 location="bottom" 
                 activator="parent" 
                 open-delay="800"
@@ -60,8 +61,8 @@
                 </span>
               </v-tooltip>
 
-              <span class="text-body-1 text-indigo">
-                Group Chat
+              <span class="text-body-1 text-indigo ml-1">
+                {{ threadDetail.name }}
               </span>
             </div>
 
@@ -115,6 +116,13 @@ export default {
     EditThread,
     ThreadParticipants,
     ThreadRename,
+  },
+
+  props: {
+    threadDetail: {
+      type: Object,
+      required: true,
+    }
   },
 
   data() {

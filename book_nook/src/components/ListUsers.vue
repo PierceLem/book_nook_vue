@@ -1,5 +1,8 @@
 <template>
-  <v-list-item class="participant-list mx-2 pa-0">
+  <v-list-item 
+    slim
+    class="participant-list mx-2 pa-0"
+  >
     <template v-slot:prepend>
       <v-avatar 
         size="28px" 

@@ -1,73 +1,69 @@
 <template>
   <v-container 
     class="bubble-container px-2 py-0" 
-    :class="sent ? 'align-end' : 'align-start'"
+    :class="message.is_owner ? 'align-end' : 'align-start'"
   >
     <v-card 
-      v-if="type === 'text'"
+      v-if="message.content"
       rounded="lg" 
       variant="tonal"
-      :color="sent ? 'indigo' : 'teal'"
+      :color="message.is_owner ? 'indigo' : 'teal'"
       class="pa-0 message-card" 
-      :class="sent ? 'ml-0' : 'ml-2 pl-3'"
+      :class="message.is_owner ? 'ml-0' : 'ml-2 pl-3'"
       position="relative"
       max-width="75%"
-      :text="text"
+      :text="message.content"
     >
-      <v-tooltip location="right" offset="-8px" transition="fade-transition" class="username-tooltip">
-        <template v-slot:activator="{ props }">
-          <v-avatar 
-            v-if="!sent"
-            v-bind="props"
-            class="message-avatar custom-avatar" 
-            size="40px" 
-            image="https://randomuser.me/api/portraits/women/85.jpg"
-          >
-          </v-avatar>
-        </template>
-        <span class="text-caption">{{ sender }}</span>
-      </v-tooltip>
+      <v-avatar 
+        v-if="!message.is_owner"
+        class="message-avatar custom-avatar" 
+        size="40px" 
+        :image="message.sender.avatar"
+      >
+      </v-avatar>
+
+      <div class="sender-username">
+        <span class="text-teal username-text">{{ message.sender.username }}</span>
+      </div>
     </v-card>
 
     <v-card
-      v-if="type === 'book'"
+      v-if="message.book"
       height="175px"
       :width="smAndDown ? '100%' : '75%'"
       rounded="lg" 
       variant="flat"
       class="d-flex flex-row book-card-border message-card"
-      :class="sent ? 'ml-0 sent-color-scheme' : 'ml-2 received-color-scheme'"
+      :class="message.is_owner ? 'ml-0 sent-color-scheme' : 'ml-2 received-color-scheme'"
       position="relative"
     >
-      <v-tooltip location="right" offset="-8px" transition="fade-transition" class="username-tooltip">
-        <template v-slot:activator="{ props }">
-          <v-avatar 
-            v-if="!sent"
-            v-bind="props"
-            class="message-avatar custom-avatar" 
-            size="40px" 
-            image="https://randomuser.me/api/portraits/women/85.jpg"
-          >
-          </v-avatar>
-        </template>
-        <span class="text-caption">{{ sender }}</span>
-      </v-tooltip>
+      <v-avatar 
+        v-if="!message.is_owner"
+        class="message-avatar custom-avatar" 
+        size="40px" 
+        :image="message.sender.avatar"
+      >
+      </v-avatar>
 
-      <img :src="metadata.thumbnail" alt="" min-height="100%" :class="sent ? 'indigo-book-thumbnail' : 'teal-book-thumbnail'">
+      <div class="sender-username">
+        <span class="text-teal username-text">{{ message.sender.username }}</span>
+      </div>
 
-      <div class="d-flex flex-column align-start flex-grow-1 pl-1">
-        <h4 :class="sent ? 'text-indigo' : 'text-teal'">{{ metadata.title }}</h4>
-        <h5 :class="sent ? 'text-indigo' : 'text-teal'" style="opacity: 0.75;">{{ metadata.authors }}</h5>
-        <v-divider :color="sent ? 'indigo' : 'teal'" opacity="0.25" class="w-100"></v-divider>
-        <p class="book-desc" :class="sent ? 'indigo-scroll' : 'teal-scroll'">{{ metadata.description }}</p>
+      <img :src="message.book.thumbnail" alt="" min-height="100%" :class="message.is_owner ? 'indigo-book-thumbnail' : 'teal-book-thumbnail'">
+
+      <div class="d-flex flex-column align-start flex-grow-1 pl-1 pt-1">
+        <h4 :class="message.is_owner ? 'text-indigo' : 'text-teal'">{{ message.book.title }}</h4>
+        <h5 :class="message.is_owner ? 'text-indigo' : 'text-teal'" style="opacity: 0.75;">{{ message.book.authors.join(', ') }}</h5>
+        <v-divider :color="message.is_owner ? 'indigo' : 'teal'" opacity="0.25" class="w-100 mt-1"></v-divider>
+        <p class="book-desc" :class="message.is_owner ? 'indigo-scroll' : 'teal-scroll'">{{ message.book.description }}</p>
       </div>
     </v-card>
 
     <span 
       class="message-date" 
-      :class="sent ? 'ml-0' : 'ml-2'"
+      :class="message.is_owner ? 'ml-0' : 'ml-2'"
     >
-      {{ date }}
+      {{ message.created_at }}
     </span>
   </v-container>
 </template>
@@ -79,31 +75,9 @@ export default {
   name: "MessageBubble",
 
   props: {
-    text: {
-      type: String,
-      required: false,
-    },
-    type: {
-      type: String,
-      required: true,
-    },
-    sent: {
-      type: Boolean,
-      default: false,
-    },
-    date: {
-      type: String,
-      required: true,
-    },
-    sender: {
-      type: String,
-      required: true,
-    },
-    metadata: {
+    message: {
       type: Object,
-      required: false,
-      default: () => ({}),
-    },
+    }
   },
 
   setup() {
@@ -120,6 +94,19 @@ export default {
   width: 100%;
 }
 
+.message-card {
+  overflow: visible;
+  z-index: 2;
+}
+
+.message-card:hover + .message-date {
+  opacity: 1;
+}
+
+.message-card:hover .sender-username {
+  opacity: 1;
+}
+
 .message-date {
   font-size: 0.75rem;
   font-weight: 400;
@@ -129,13 +116,28 @@ export default {
   transition: opacity 0.3s ease;
 }
 
-.message-card {
-  overflow: visible;
-  z-index: 2;
+.sender-username {
+  background: white;
+  padding-inline: 4px;
+  border-radius: 4px;
+  border: solid 2px #E0F2F1;
+  position: absolute;
+  top: -10px;
+  left: 15px;
+  z-index: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 18px; 
+
+  opacity: 0;
+  transition: opacity 0.3s ease; 
 }
 
-.message-card:hover + .message-date {
-  opacity: 1;
+.username-text {
+  line-height: 8px;
+  font-size: x-small;
 }
 
 .book-card-border {
@@ -176,14 +178,6 @@ export default {
   border-width: 3px;
   border-radius: 50%;
   border-color: white;
-}
-
-.username-tooltip::v-deep(.v-overlay__content) {
-  padding: 0px 10px;
-}
-
-.username-tooltip::v-deep(.v-overlay__content) {
-  transform: translateY(-26px);
 }
 
 .book-desc {

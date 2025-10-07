@@ -36,7 +36,7 @@
             <span class="text-caption">Create Thread</span>
           </v-tooltip>
 
-          <CreateThread @menuStateChange="toggleMenu" @new-thread="addThread" />
+          <CreateThread @menu-state-change="toggleMenu" @new-thread="newThread" />
         </v-btn>
       </div>
 
@@ -67,6 +67,7 @@
           slim
           subtitle="Insert last received message here."
           class="thread-item py-1 pr-2 pl-1 my-1"
+          @click="$emit('fetchThread', thread)"
         >
           <template v-slot:prepend>
             <v-badge
@@ -90,7 +91,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import { mapGetters, mapActions } from "vuex";
 import CreateThread from './CreateThread.vue';
 
@@ -103,13 +103,17 @@ export default {
   data() {
     return {
       menuState: false,
-      threads: [],
+      searchQuery: '',
     }
   },
 
-  mounted() {
-    this.getThreads();
+  props: {
+    threads: {
+      type: Array,
+    }
   },
+
+  emits: ['fetchThread'],
 
   computed: {
     ...mapGetters("ui", ["isChatDrawerOpen"]),
@@ -124,22 +128,12 @@ export default {
   },
 
   methods: {
-    async getThreads() {
-      try {
-        const response = await axios.get('/threads/');
-        this.threads = response.data;
-        console.log(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    },
-
     toggleMenu(newState) {
       this.menuState = newState
     },
 
-    addThread(threadData) {
-      this.threads.push(threadData);
+    newThread(threadData) {
+      this.$emit('newThread', threadData)
     },
 
     ...mapActions("ui", ["setChatDrawer"]),

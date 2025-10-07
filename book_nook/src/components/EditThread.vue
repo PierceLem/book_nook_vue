@@ -134,7 +134,6 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 import ListUsers from './ListUsers.vue';
 
 export default {
@@ -151,7 +150,6 @@ export default {
       addOverlay: false,
       kickOverlay: false,
       searchQuery: "",
-      filteredUsers: [],
       allUsers: [
         { id: 1, name: "Alice Johnson", email: "alice.johnson@example.com", avatar: "https://randomuser.me/api/portraits/women/85.jpg" },
         { id: 2, name: "Bob Smith", email: "bob.smith@example.com", avatar: "https://randomuser.me/api/portraits/men/85.jpg" },
@@ -192,8 +190,6 @@ export default {
   },
 
   computed: {
-    ...mapGetters("auth", ["allUsers"]),
-
     filteredUsers() {
       if (!this.searchQuery) return this.allUsers;
 
