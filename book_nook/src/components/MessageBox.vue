@@ -4,7 +4,7 @@
       :threadDetail="threadDetail"
     />
 
-    <div class="messages-container">
+    <div class="messages-container" ref="messagesContainer">
       <MessageBubble
         v-for="message in messages"
         :message="message"
@@ -16,8 +16,8 @@
 
     <div class="message-field-container">
       <v-textarea 
+        v-model="message"
         class="send-message"
-        prepend-inner-icon="mdi-send"
         label="send message"
         variant="outlined"
         density="compact"
@@ -30,6 +30,18 @@
         hide-details="auto"
         max-rows="4"
       >
+        <template v-slot:prepend-inner>
+          <v-btn
+            color="indigo"
+            rounded="sm"
+            variant="plain"
+            icon="mdi-send"
+            density="compact"
+            :disabled="!message"
+            @click="sendMessage()"
+          >
+          </v-btn>
+        </template>
       </v-textarea>
     </div>
   </div>
@@ -43,6 +55,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import MessageBubble from './MessageBubble.vue';
 import ThreadAppBar from './ThreadAppBar.vue';
 
@@ -52,6 +65,12 @@ export default {
   components: {
     MessageBubble,
     ThreadAppBar,
+  },
+
+  data (){
+    return {
+      message: '',
+    }
   },
 
   props: {
@@ -64,6 +83,43 @@ export default {
       default: {},
     }
   },
+
+  watch: {
+    messages: {
+      handler() {
+        // Wait until Vue has rendered the updated messages
+        this.$nextTick(() => {
+          const container = this.$refs.messagesContainer;
+          if (container) {
+            container.scrollTop = container.scrollHeight;
+          }
+        });
+      },
+      deep: true,  // ensures the watcher triggers on changes to array contents
+      immediate: true, // optional: scroll if messages are already loaded
+    },
+    threadDetail() {
+      // Whenever a new thread is selected, scroll to bottom as well
+      this.$nextTick(() => {
+        const container = this.$refs.messagesContainer;
+        if (container) {
+          container.scrollTop = container.scrollHeight;
+        }
+      });
+    }
+  },
+
+  methods: {
+    async sendMessage() {
+      try {
+        const response = await axios.post(`/thread/${this.threadDetail.id}/`, {'content': this.message});
+        this.$emit('newMessage', response.data);
+        this.message = '';
+      } catch(error) {
+        console.error(error);
+      }
+    }
+  }
 }
 </script>
 

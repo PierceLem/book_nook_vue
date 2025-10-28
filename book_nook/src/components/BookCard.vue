@@ -32,6 +32,8 @@
           </v-tooltip>
 
           <v-icon size="18px" class="pt-1">mdi-message-arrow-left-outline</v-icon>
+
+          <ThreadSelector @selectedBook="sendBook" />
         </v-btn>
 
         <v-btn 
@@ -150,6 +152,7 @@
 
 <script>
 import axios from 'axios';
+import ThreadSelector from './ThreadSelector.vue';
 import Reviews from './Reviews.vue';
 
 export default {
@@ -157,6 +160,7 @@ export default {
 
   components: {
     Reviews,
+    ThreadSelector,
   },
 
   data() {
@@ -205,6 +209,8 @@ export default {
     }
   },
 
+  inject: ['showSnackbar'],
+
   mounted() {
     this.checkOverflow();
     window.addEventListener('resize', this.checkOverflow);
@@ -232,10 +238,10 @@ export default {
         this.isTitleOverflowing = true;
 
         const titleDistance = title.scrollWidth - title.clientWidth;
-        const titleSpeed = titleDistance / scrollSpeed;
+        const titleDuration = titleDistance / scrollSpeed;
 
         title.style.setProperty('--title-scroll-distance', `-${titleDistance}px`);
-        title.style.setProperty('--title-scroll-duration', `${titleSpeed}s`);
+        title.style.setProperty('--title-scroll-duration', `${titleDuration}s`);
       } else {
         this.isTitleOverflowing = false;
       }
@@ -244,10 +250,10 @@ export default {
         this.isAuthorOverflowing = true;
 
         const authorsDistance = authors.scrollWidth - authors.clientWidth;
-        const authorsSpeed = authorsDistance / scrollSpeed;
+        const authorsDuration = authorsDistance / scrollSpeed;
 
         authors.style.setProperty('--author-scroll-distance', `-${authorsDistance}px`);
-        authors.style.setProperty('--author-scroll-duration', `${authorsSpeed}s`);
+        authors.style.setProperty('--author-scroll-duration', `${authorsDuration}s`);
       } else {
         this.isAuthorOverflowing = false;
       }
@@ -281,6 +287,30 @@ export default {
         this.localIsSaved = response.data.is_saved;
       } catch (error) {
         console.error("Error liking/unliking book:", error);
+      }
+    },
+
+    async sendBook({ threadId, threadName }) {
+      try {
+        const response = await axios.post(`/thread/${threadId}/`, 
+          {
+            book_data: {
+              book_id: this.bookId,
+              title: this.title,
+              thumbnail: this.thumbnail,
+              description: this.description,
+              authors: this.authors,
+            }
+          }
+        );
+        this.showSnackbar({
+          subject: 'Message Sent',
+          content: 'Your book was went to ' + threadName,
+          icon: 'mdi-check',
+          color: 'green',
+        })
+      } catch(error) {
+        console.error(error);
       }
     },
 

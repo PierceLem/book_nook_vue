@@ -8,6 +8,7 @@
   <MessageBox
     :messages="messages"
     :threadDetail="threadDetail"
+    @new-message="addNewMessage"
   />
 </template>
 
@@ -33,7 +34,7 @@ export default {
   },
 
   mounted() {
-    this.getThreads();
+    this.fetchThreads();
   },
 
   methods: {
@@ -48,7 +49,7 @@ export default {
       }
     },
 
-    async getThreads() {
+    async fetchThreads() {
       try {
         const response = await axios.get('/threads/');
         this.threadList = response.data;
@@ -58,7 +59,11 @@ export default {
     },
 
     addNewThread(threadData) {
-      this.threadList.push(threadData)
+      this.threadList.push(threadData);
+    },
+
+    addNewMessage(message) {
+      this.messages.push(message);
     }
   }
 };

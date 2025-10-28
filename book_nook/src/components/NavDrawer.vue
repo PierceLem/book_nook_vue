@@ -89,27 +89,24 @@
 
       <div class="filler"></div>
 
-      <div class="logout-avatar-container">
+      <div class="logout-container">
         <div class="d-flex flex-column pl-1">
           <span class="text-username">{{ user.username }}</span>
           <span class="text-email">{{ user.email }}</span>
         </div>
 
-        <v-avatar :image="user.avatar"></v-avatar>
+        <v-btn 
+          icon
+          size="25px" 
+          color="indigo" 
+          variant="text" 
+          @click="logout"
+        >
+          <template v-slot="icon">
+            <v-icon size="20px">mdi-logout</v-icon>
+          </template>
+        </v-btn>
       </div>
-
-      <v-btn 
-        tile rounded="md" 
-        size="22px" 
-        color="indigo" 
-        variant="text" 
-        class="logout-btn" 
-        @click="logout"
-      >
-        <template v-slot="icon">
-          <v-icon size="20px">mdi-logout</v-icon>
-        </template>
-      </v-btn>
     </div>
   </v-navigation-drawer>
 </template>
@@ -173,7 +170,7 @@ export default {
   display: block;
 }
 
-.logout-avatar-container {
+.logout-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -182,7 +179,7 @@ export default {
   bottom: 20px;
   left: 21px;
   height: 48px;
-  width: 160px;
+  width: 180px;
   border-top-right-radius: 24px;
   border-bottom-right-radius: 24px;
   background-color: #E8EAF6;
@@ -192,12 +189,20 @@ export default {
   font-size: x-small;
   opacity: 75%;
   color: #3F51B5;
+  max-width: 150px;
+  overflow: hidden;
+  white-space: nowrap; 
+  text-overflow: ellipsis;
 }
 
 .text-username {
   font-size: small;
   color: #3F51B5;
   font-weight: 600;
+  max-width: 150px;
+  overflow: hidden;
+  white-space: nowrap; 
+  text-overflow: ellipsis;
 }
 
 .filler {
@@ -207,12 +212,6 @@ export default {
   width: 160px;
   height: 65px;
   background-color: white;
-}
-
-.logout-btn {
-  position: absolute;
-  bottom: 33px;
-  left: 183px;
 }
 
 .drawer-content {

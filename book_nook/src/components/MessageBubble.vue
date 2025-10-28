@@ -12,17 +12,20 @@
       :class="message.is_owner ? 'ml-0' : 'ml-2 pl-3'"
       position="relative"
       max-width="75%"
-      :text="message.content"
     >
+      <v-card-text style="padding: 10px 16px 10px 16px;">
+        {{ message.content }}
+      </v-card-text>
+
       <v-avatar 
         v-if="!message.is_owner"
-        class="message-avatar custom-avatar" 
+        class="text-message-avatar custom-avatar" 
         size="40px" 
         :image="message.sender.avatar"
       >
       </v-avatar>
 
-      <div class="sender-username">
+      <div class="sender-username" v-if="!message.is_owner">
         <span class="text-teal username-text">{{ message.sender.username }}</span>
       </div>
     </v-card>
@@ -39,13 +42,13 @@
     >
       <v-avatar 
         v-if="!message.is_owner"
-        class="message-avatar custom-avatar" 
+        class="book-message-avatar custom-avatar" 
         size="40px" 
         :image="message.sender.avatar"
       >
       </v-avatar>
 
-      <div class="sender-username">
+      <div class="sender-username" v-if="!message.is_owner">
         <span class="text-teal username-text">{{ message.sender.username }}</span>
       </div>
 
@@ -60,7 +63,7 @@
     </v-card>
 
     <span 
-      class="message-date" 
+      class="message-date mb-1" 
       :class="message.is_owner ? 'ml-0' : 'ml-2'"
     >
       {{ message.created_at }}
@@ -108,10 +111,8 @@ export default {
 }
 
 .message-date {
-  font-size: 0.75rem;
+  font-size: 0.6rem;
   font-weight: 400;
-  line-height: 1.667;
-  letter-spacing: 0.0333333333em;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -166,7 +167,14 @@ export default {
   border-right: solid 2px #B2DFDB;
 }
 
-.message-avatar {
+.text-message-avatar {
+  position: absolute;
+  top: 0px;
+  left: -20px;
+  z-index: 3;
+}
+
+.book-message-avatar {
   position: absolute;
   top: 6px;
   left: -20px;
