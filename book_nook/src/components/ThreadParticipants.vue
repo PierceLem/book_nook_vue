@@ -6,15 +6,10 @@
   >
     <template v-slot:activator="{ props }">
       <v-avatar 
-        color="indigo" 
         size="36"
         v-bind="props"
+        :image="avatar"
       >
-        <v-icon  
-          color="white"
-        >
-          mdi-account-group
-        </v-icon>
       </v-avatar>
     </template>
 
@@ -52,10 +47,8 @@ export default {
   },
 
   props: {
-    participants: {
-      type: Array,
-      required: true,
-    }
+    participants: Array,
+    avatar: String,
   },
 };
 </script>

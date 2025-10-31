@@ -73,6 +73,8 @@ export default {
     }
   },
 
+  emits: ["newMessage"],
+
   props: {
     messages: {
       type: Array,
@@ -87,7 +89,6 @@ export default {
   watch: {
     messages: {
       handler() {
-        // Wait until Vue has rendered the updated messages
         this.$nextTick(() => {
           const container = this.$refs.messagesContainer;
           if (container) {
@@ -95,11 +96,10 @@ export default {
           }
         });
       },
-      deep: true,  // ensures the watcher triggers on changes to array contents
-      immediate: true, // optional: scroll if messages are already loaded
+      deep: true,
+      immediate: true,
     },
     threadDetail() {
-      // Whenever a new thread is selected, scroll to bottom as well
       this.$nextTick(() => {
         const container = this.$refs.messagesContainer;
         if (container) {

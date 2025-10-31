@@ -7,41 +7,66 @@
     location="bottom"
   >
     <v-card class="px-1 pb-1 pt-2">
-      <v-text-field 
-        label="New Thread Name" 
-        density="compact"
-        variant="underlined" 
-        hide-details="auto"
-        width="200px"
-        v-model="threadName"
-        :rules="[validateRequired, validateMaxLength]"
-      >
-        <template v-slot:append-inner>
-          <v-btn 
-            height="20px" 
-            width="20px" 
-            size="x-small" 
-            icon="mdi-check" 
-            variant="tonal"
-          >
-          </v-btn>
-        </template>
-      </v-text-field>
+      <v-form ref="threadRename">
+        <v-text-field 
+          label="New Thread Name" 
+          density="compact"
+          variant="underlined" 
+          hide-details="auto"
+          width="200px"
+          v-model="newName"
+          :rules="[validateRequired, validateMaxLength]"
+        >
+          <template v-slot:append-inner>
+            <v-btn 
+              height="20px" 
+              width="20px" 
+              size="x-small" 
+              icon="mdi-check" 
+              variant="tonal"
+              @click="renameSubmit"
+            >
+            </v-btn>
+          </template>
+        </v-text-field>
+      </v-form>
     </v-card>
   </v-menu>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: "ThreadRename",
   data() {
     return {
-      threadName: "",
+      newName: "",
       isOpen: false,
     };
   },
 
+  props: {
+    id: Number,
+  },
+
+  inject: ['changeThreadName'],
+
   methods: {
+    async renameSubmit() {
+      this.$refs.threadRename.resetValidation();
+      const { valid } = await this.$refs.threadRename.validate();
+      console.log(valid);
+      if (valid) {
+        try {
+          const response = await axios.patch(`threads/${this.id}/`, {'name': this.newName});
+          this.changeThreadName(response.data.name);
+          this.isOpen = false;
+        } catch(error) {
+          console.error(error);
+        }
+      }
+    },
     validateRequired(value) {
       return value.trim().length > 0 || "Thread name can't be empty";
     },

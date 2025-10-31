@@ -29,11 +29,13 @@
 
           <ThreadParticipants
             :participants="threadDetail.participants_detail"
+            :avatar="threadDetail.thread_avatar"
           />
 
           <v-container class="d-flex flex-column pl-2">
             <div>
               <v-tooltip 
+                v-if="threadDetail.participants_detail.length > 2"
                 location="bottom" 
                 activator="parent" 
                 open-delay="800"
@@ -52,7 +54,10 @@
                     v-bind="props"
                   >
                     <v-icon>mdi-pencil</v-icon>
-                    <ThreadRename @menuStateChange="renameMenuState = $event" />
+                    <ThreadRename 
+                      :id="threadDetail.id"
+                      @menuStateChange="renameMenuState = $event" 
+                    />
                   </v-btn>
                 </template>
 

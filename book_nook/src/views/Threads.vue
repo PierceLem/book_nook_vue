@@ -1,5 +1,5 @@
 <template>
-  <ThreadList 
+  <ThreadList
     @fetch-thread="fetchMessages"
     @new-thread="addNewThread"
     :threads="threadList"
@@ -23,7 +23,7 @@ export default {
   components: {
     ThreadList,
     MessageBox,
-  },  
+  },
 
   data() {
     return {
@@ -37,11 +37,16 @@ export default {
     this.fetchThreads();
   },
 
+  provide() {
+    return {
+      changeThreadName: this.changeThreadName,
+    }
+  },
+
   methods: {
     async fetchMessages(thread) {
       try {
         const response = await axios.get(`/thread/${thread.id}`);
-        console.log(response.data);
         this.messages = response.data;
         this.threadDetail = thread
       } catch(error) {
@@ -64,6 +69,10 @@ export default {
 
     addNewMessage(message) {
       this.messages.push(message);
+    },
+
+    changeThreadName(newName) {
+      this.threadDetail.name = newName
     }
   }
 };
