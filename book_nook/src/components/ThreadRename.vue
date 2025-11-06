@@ -59,7 +59,7 @@ export default {
       console.log(valid);
       if (valid) {
         try {
-          const response = await axios.patch(`threads/${this.id}/`, {'name': this.newName});
+          const response = await axios.patch(`threads/${this.id}/`, {'rename': this.newName});
           this.changeThreadName(response.data.name);
           this.isOpen = false;
         } catch(error) {

@@ -94,7 +94,11 @@
                   >mdi-account-edit-outline
                 </v-icon>
 
-                <EditThread @menuStateChange="editThreadMenuState = $event" />
+                <EditThread 
+                  :participants="threadDetail.participants_detail"
+                  :threadId="threadDetail.id"
+                  @menuStateChange="editThreadMenuState = $event" 
+                />
               </v-btn>
             </template>
 

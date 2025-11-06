@@ -40,6 +40,7 @@ export default {
   provide() {
     return {
       changeThreadName: this.changeThreadName,
+      editThreadParticipants: this.editThreadParticipants,
     }
   },
 
@@ -73,6 +74,14 @@ export default {
 
     changeThreadName(newName) {
       this.threadDetail.name = newName
+    },
+
+    editThreadParticipants(editedThreadData) {
+      const index = this.threadList.findIndex(t => t.id === editedThreadData.id);
+      if (index !== -1) {
+        this.threadList.splice(index, 1, editedThreadData)
+      }
+      this.threadDetail = editedThreadData;
     }
   }
 };
