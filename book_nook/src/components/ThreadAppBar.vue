@@ -1,6 +1,7 @@
 <template>
   <v-app-bar 
-    elevation="0" 
+    elevation="0"
+    style="min-width: 466px;"
   >
     <div class="w-100 h-100 pt-2 px-2">
       <div class="nav-wrapper">
@@ -37,8 +38,9 @@
               <v-tooltip 
                 v-if="threadDetail.participants_detail.length > 2"
                 location="bottom" 
-                activator="parent" 
                 open-delay="800"
+                max-width="300px"
+                open-on-hover
                 :disabled="renameMenuState"
               >
                 <template v-slot:activator="{ props }">
@@ -61,13 +63,13 @@
                   </v-btn>
                 </template>
 
-                <span class="text-caption">
-                  edit thread name
+                <span class="text-caption text-center d-block">
+                  Rename thread
                 </span>
               </v-tooltip>
 
               <span class="text-body-1 text-indigo ml-1">
-                {{ threadDetail.name }}
+                {{ threadDetail.display_name }}
               </span>
             </div>
 
@@ -90,8 +92,8 @@
                 class="mr-2"
                 v-bind="props"
               >
-                <v-icon size="25px"
-                  >mdi-account-edit-outline
+                <v-icon size="25px">
+                  mdi-account-edit-outline
                 </v-icon>
 
                 <EditThread 

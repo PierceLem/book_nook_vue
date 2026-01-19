@@ -8,7 +8,6 @@
   <MessageBox
     :messages="messages"
     :threadDetail="threadDetail"
-    @new-message="addNewMessage"
   />
 </template>
 
@@ -41,6 +40,8 @@ export default {
     return {
       changeThreadName: this.changeThreadName,
       editThreadParticipants: this.editThreadParticipants,
+      addNewMessage: this.addNewMessage,
+      removeThread: this.removeThread,
     }
   },
 
@@ -73,7 +74,7 @@ export default {
     },
 
     changeThreadName(newName) {
-      this.threadDetail.name = newName
+      this.threadDetail.display_name = newName
     },
 
     editThreadParticipants(editedThreadData) {
@@ -82,6 +83,14 @@ export default {
         this.threadList.splice(index, 1, editedThreadData)
       }
       this.threadDetail = editedThreadData;
+    },
+
+    removeThread(threadId) {
+      const index = this.threadList.findIndex(t => t.id === threadId);
+      if (index !== -1) {
+        this.threadList.splice(index, 1)
+      }
+      this.threadDetail = null;
     }
   }
 };

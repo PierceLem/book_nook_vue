@@ -81,7 +81,7 @@
           <template v-slot:title>
             <div class="d-flex flex-column">
               <span class="text-end date-text pr-1">date</span>
-              <span>{{ thread.name }}</span>
+              <span>{{ thread.display_name }}</span>
             </div>
           </template>
         </v-list-item>

@@ -3,8 +3,18 @@
     <ThreadAppBar 
       :threadDetail="threadDetail"
     />
-
+    
     <div class="messages-container" ref="messagesContainer">
+      <v-alert
+        v-if="renameAlert"
+        density="compact"
+        closable
+        text="Consider naming this thread."
+        class="rename-alert"
+        type="warning"
+      >
+      </v-alert>
+
       <MessageBubble
         v-for="message in messages"
         :message="message"
@@ -75,6 +85,8 @@ export default {
 
   emits: ["newMessage"],
 
+  inject: ['addNewMessage'],
+
   props: {
     messages: {
       type: Array,
@@ -83,6 +95,15 @@ export default {
     threadDetail: {
       type: Object,
       default: {},
+    }
+  },
+
+  computed: {
+    renameAlert() {
+      return (
+        this.threadDetail.participants_detail.length > 2 && 
+        this.threadDetail.display_name === "Group chat"
+      )
     }
   },
 
@@ -113,7 +134,7 @@ export default {
     async sendMessage() {
       try {
         const response = await axios.post(`/thread/${this.threadDetail.id}/`, {'content': this.message});
-        this.$emit('newMessage', response.data);
+        this.addNewMessage(response.data);
         this.message = '';
       } catch(error) {
         console.error(error);
@@ -127,6 +148,7 @@ export default {
 .chat-container {
   height: calc(100vh - 136px);
   width: calc(100% - 16px);
+  min-width: 450px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -148,6 +170,15 @@ export default {
   margin: 0;
   border-radius: 8px;
   background-color: white;
+  position: relative;
+}
+
+.rename-alert {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
 }
 
 .message-field-container {

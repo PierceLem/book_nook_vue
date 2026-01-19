@@ -181,6 +181,7 @@ export default {
         console.log(response.data);
         this.$emit("new-thread", response.data);
         this.isOpen = false;
+        this.selectedUsers = [];
       } catch (error) {
         console.error(error.response.data);
         this.showSnackbar({

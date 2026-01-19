@@ -50,7 +50,7 @@ export default {
     id: Number,
   },
 
-  inject: ['changeThreadName'],
+  inject: ['changeThreadName', 'addNewMessage'],
 
   methods: {
     async renameSubmit() {
@@ -59,8 +59,10 @@ export default {
       console.log(valid);
       if (valid) {
         try {
-          const response = await axios.patch(`threads/${this.id}/`, {'rename': this.newName});
-          this.changeThreadName(response.data.name);
+          const response = await axios.patch(`threads/${this.id}/`, {'name': this.newName});
+          console.log(response.data);
+          this.changeThreadName(response.data.thread.display_name);
+          this.addNewMessage(response.data.message);
           this.isOpen = false;
         } catch(error) {
           console.error(error);

@@ -62,6 +62,15 @@
       </div>
     </v-card>
 
+    <div 
+      v-if="message.thread_update"
+      class="d-flex flex-row align-center justify-center w-100 update-message"
+    >
+      <v-divider class="flex-grow-1"></v-divider>
+        <span class="text-caption flex-shrink-0 opacity-50">{{ message.thread_update }}</span>
+      <v-divider class="flex-grow-1"></v-divider>
+    </div>
+
     <span 
       class="message-date mb-1" 
       :class="message.is_owner ? 'ml-0' : 'ml-2'"
@@ -102,12 +111,16 @@ export default {
   z-index: 2;
 }
 
+.update-message:hover + .message-date {
+  opacity: 0.5;
+}
+
 .message-card:hover + .message-date {
-  opacity: 1;
+  opacity: 0.5;
 }
 
 .message-card:hover .sender-username {
-  opacity: 1;
+  opacity: 0.5;
 }
 
 .message-date {

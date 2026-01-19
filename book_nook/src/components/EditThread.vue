@@ -7,34 +7,56 @@
     @update:modelValue="emitMenuState"
   >
     <v-card width="300px" max-height="400px">
-      <v-tabs
-        v-model="tab"
-      >
-        <v-tab value="add" color="indigo" width="150px">Add Users</v-tab>
-        <v-tab value="remove" color="indigo" width="150px">Remove Users</v-tab>
-      </v-tabs>
+      <div class="d-flex flex-row justify-space-evenly my-1">
+        <template
+          v-for="btn in btns"
+          :key="btn.key"
+        >
+          <v-tooltip
+            open-delay="500"
+            location="top"
+            v-if="btn.show()"
+            :text="btn.tooltip"
+          >
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                :icon="btn.icon"
+                variant="text"
+                color="indigo"
+                rounded="lg"
+                tile
+                :active="activeSection === btn.key"
+                :active-color="btn.activeColor"
+                @click="toggleSection(btn.key)"
+              ></v-btn>
+            </template>
+          </v-tooltip>
+        </template>
+      </div>
 
-      <v-tabs-window v-model="tab">
-        <v-tabs-window-item value="add">
-          <v-text-field 
-            v-model="searchQuery"
-            label="Search Friends" 
-            variant="outlined" 
-            density="compact" 
-            color="indigo"
-            base-color="indigo"
-            hide-details 
-            prepend-inner-icon="mdi-magnify" 
-            rounded="lg"
-            class="px-2 pt-2 pb-0"
-          ></v-text-field>
-
+      <v-expand-transition>
+        <div v-show="activeSection === 'add'">
           <v-list 
             density="compact" 
-            class="px-1 pt-1 pb-0 list-users" 
+            class="px-1 pb-0 list-users" 
             max-height="304px" 
+            min-height="304px"
             style="scrollbar-width: thin;"
           >
+            <v-text-field 
+              v-model="searchQuery"
+              label="Search Friends" 
+              variant="outlined" 
+              density="compact" 
+              color="indigo"
+              base-color="indigo"
+              hide-details 
+              prepend-inner-icon="mdi-magnify" 
+              rounded="lg"
+              class="px-0 pb-2 mt-1"
+            ></v-text-field>
+
             <template v-for="friend in friends">
               <ListUsers
                 :name="friend.other_user.username"
@@ -45,60 +67,32 @@
                 :disabled="false"
                 @user-click="openAddOverlay(friend.other_user)"
               />
-
-              <v-overlay
-                v-model="addOverlay"
-                class="align-center justify-center"
-                contained
-              >
-                <v-card class="py-0 px-5 d-flex flex-column align-center justify-center" position="relative" max-width="275px">
-                  <v-btn
-                    icon
-                    tile
-                    rounded="0"
-                    variant="tonal"
-                    color="indigo"
-                    height="18px"
-                    width="18px"
-                    class="undo-btn"
-                    @click="addOverlay = false"
-                  >
-                    <v-icon size="16px">mdi-undo-variant</v-icon>
-                  </v-btn>
-
-                  <div class="w-100 text-center pt-5 pb-2">
-                    <v-avatar 
-                      size="24"
-                      class="mr-2"
-                      :image="addedParticipant.avatar"
-                    ></v-avatar>
-                    <span class="text-indigo">{{ addedParticipant.username }}</span>
-                  </div>
-
-                  <v-btn 
-                    density="compact" 
-                    variant="tonal" 
-                    color="green" 
-                    class="mb-2" 
-                    @click="addParticipant()"
-                  >add</v-btn>
-                </v-card>
-              </v-overlay>
             </template>
+
+            <ConfirmOverlay 
+              v-model="addOverlay"
+              :avatar="addedParticipant.avatar"
+              :username="addedParticipant.username"
+              :action="'add'"
+              @confirm="addParticipant()"
+            />
           </v-list>
-        </v-tabs-window-item>
+        </div>
+      </v-expand-transition>
 
-        <v-tabs-window-item value="remove">
-          <div class="text-center py-2 bg-indigo">
-              <span class="text-h6">Current Participants</span>
-          </div>
-
+      <v-expand-transition>
+        <div v-show="activeSection === 'kick'">
           <v-list 
             density="compact" 
             class="px-1 pt-1 pb-0 list-users" 
             max-height="304px"
+            min-height="304px"
           >
-            <template v-for="participant in participants">
+            <div class="text-center pb-2">
+                <span class="text-h6 text-indigo">Current Participants</span>
+            </div>
+
+            <template v-for="participant in kickableParticipants">
               <ListUsers
                 :name="participant.username"
                 :email="participant.email"
@@ -110,59 +104,63 @@
               />
             </template>
 
-            <v-overlay
+            <ConfirmOverlay
               v-model="kickOverlay"
-              class="align-center justify-center"
-              contained
-            >
-              <v-card class="py-0 px-5 d-flex flex-column align-center justify-center" position="relative" max-width="275px">
-                <v-btn
-                  icon
-                  tile
-                  rounded="0"
-                  variant="tonal"
-                  color="indigo"
-                  height="18px"
-                  width="18px"
-                  class="undo-btn"
-                  @click="kickOverlay = false"
-                >
-                  <v-icon size="16px">mdi-undo-variant</v-icon>
-                </v-btn>
-
-                <div class="w-100 text-center pt-5 pb-2">
-                  <v-avatar 
-                    size="24"
-                    class="mr-2"
-                    :image="kickedParticipant.avatar"
-                  ></v-avatar>
-                  <span class="text-indigo">{{ kickedParticipant.username }}</span>
-                </div>
-
-                <v-btn 
-                  density="compact" 
-                  variant="tonal"
-                  color="error" 
-                  class="mb-2" 
-                  @click="kickParticipant()"
-                >kick</v-btn>
-              </v-card>
-            </v-overlay>
+              :avatar="kickedParticipant.avatar"
+              :username="kickedParticipant.username"
+              :action="'kick'"
+              @confirm="kickParticipant()"
+            />
           </v-list>
-        </v-tabs-window-item>
-      </v-tabs-window>
+        </div>
+      </v-expand-transition>
+
+      <v-expand-transition>
+        <div 
+          v-show="activeSection === 'leave'"
+          style="height: 84px;"
+        >
+          <div class="text-center pb-2 w-100">
+            <span class="text-h6 text-indigo opacity-70 pb-2 d-block">Leave this thread?</span>
+            <v-btn
+              variant="tonal"
+              color="red"
+              @click="leaveThread()"
+            >Confirm</v-btn> 
+          </div>
+        </div>
+      </v-expand-transition>
+
+      <v-expand-transition>
+        <div 
+          v-show="activeSection === 'delete'"
+          style="height: 84px;"  
+        >
+          <div class="text-center pb-2 w-100">
+            <span class="text-h6 text-indigo opacity-70 pb-2 d-block">Delete this thread?</span>
+            <v-btn
+              variant="tonal"
+              color="red"
+              @click="deleteThread()"
+            >Confirm</v-btn> 
+          </div>
+        </div>
+      </v-expand-transition>
     </v-card>
   </v-menu>
 </template>
 
 <script>
 import axios from 'axios';
+import ConfirmOverlay from './ConfirmOverlay.vue';
 import ListUsers from './ListUsers.vue';
+import { mapState } from 'vuex';
 
 export default {
   name: "EditThread",
 
   components: {
+    ConfirmOverlay,
     ListUsers,
   },
 
@@ -173,8 +171,38 @@ export default {
 
   data() {
     return {
+      btns: [
+        {
+          key: 'add',
+          icon: 'mdi-account-plus-outline',
+          tooltip: 'add user',
+          activeColor: 'green',
+          show: () => true,
+        },
+        {
+          key: 'kick',
+          icon: 'mdi-account-remove-outline',
+          tooltip: 'kick user',
+          activeColor: 'red',
+          show: () => this.participants.length > 2,
+        },
+        {
+          key: 'leave',
+          icon: 'mdi-exit-run',
+          tooltip: 'leave thread',
+          activeColor: 'red',
+          show: () => this.participants.length > 2,
+        },
+        {
+          key: 'delete',
+          icon: 'mdi-delete-outline',
+          tooltip: 'delete thread',
+          activeColor: 'red',
+          show: () => this.participants.length === 2,
+        },
+      ],
       menu: false,
-      tab: null,
+      activeSection: null,
       addOverlay: false,
       kickOverlay: false,
       searchQuery: "",
@@ -184,10 +212,22 @@ export default {
     }
   },
 
-  inject: ['editThreadParticipants'],
+  inject: ['editThreadParticipants', 'addNewMessage', 'showSnackbar', 'removeThread'],
 
   mounted() {
     this.fetchUsers();
+  },
+
+  computed: {
+    ...mapState('auth', ['user']),
+
+    kickableParticipants() {
+      const currentUserId = this.user.id
+
+      return this.participants.filter(
+        participant => participant.id !== currentUserId
+      )
+    }
   },
 
   methods: {
@@ -197,6 +237,21 @@ export default {
         this.friends = response.data.friends;
       } catch(error) {
         console.error(error);
+      }
+    },
+
+    toggleSection(section) {
+      if (this.activeSection === section) {
+        this.activeSection = null;
+        return;
+      }
+      if (this.activeSection) {
+        this.activeSection = null;
+        setTimeout(() => {
+          this.activeSection = section;
+        }, 320)
+      } else {
+        this.activeSection = section;
       }
     },
 
@@ -210,28 +265,60 @@ export default {
       this.addOverlay = true;
     },
 
-    addParticipant() {
-      const ids = this.participants.map(participant => participant.id);
-      ids.push(this.addedParticipant.id);
-      this.editParticipants(ids);
+    leaveThread() {
+      this.kickedParticipant = this.user;
+      this.kickParticipant('leave');
+      this.removeThread(this.threadId);
     },
 
-    kickParticipant() {
+    addParticipant() {
+      const action = 'added';
+      const ids = this.participants.map(participant => participant.id);
+      ids.push(this.addedParticipant.id);
+      this.editParticipants(ids, action);
+    },
+
+    kickParticipant(type = null) {
+      const action = type ? type : 'kicked';
       const ids = this.participants.map(participant => participant.id);
       const index = ids.findIndex(id => id === this.kickedParticipant.id);
       if (index !== -1) {
         ids.splice(index, 1);
       }
-      this.editParticipants(ids);
+      this.editParticipants(ids, action);
     },
 
-    async editParticipants(ids) {
+    async editParticipants(ids, action) {
       try {
         const response = await axios.patch(`threads/${this.threadId}/`, {'participants': ids});
-        this.editThreadParticipants(response.data);
-        this.kickOverlay = false;
-        this.addOverlay = false;
+        if (action != 'leave') {
+          this.editThreadParticipants(response.data.thread);
+          this.addNewMessage(response.data.message);
+          this.showSnackbar({
+            subject: 'Thread Updated Successfully',
+            content: '',
+            icon: 'mdi-check',
+            color: 'green',
+          });
+          this.kickOverlay = false;
+          this.addOverlay = false;
+        }
         this.menu = false;
+      } catch(error) {
+        console.error(error);
+        this.showSnackbar({
+          subject: error.response?.data?.participants?.[0],
+          content: '',
+          icon: 'mdi-close',
+          color: 'red',
+        })
+      }
+    },
+
+    async deleteThread() {
+      try {
+        await axios.delete(`threads/${this.threadId}/`);
+        this.removeThread(this.threadId);
       } catch(error) {
         console.error(error);
       }
