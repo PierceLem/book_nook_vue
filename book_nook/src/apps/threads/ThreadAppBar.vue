@@ -118,7 +118,7 @@
 import { mapActions } from 'vuex';
 import EditThread from './EditThread.vue';
 import ThreadRename from './ThreadRename.vue';
-import ThreadParticipants from './ThreadParticipants.vue';
+import ThreadParticipants from './components/ThreadParticipants.vue';
 
 export default {
   name:"ThreadAppBar",

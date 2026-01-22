@@ -48,7 +48,7 @@
 <script>
 import axios from 'axios';
 import ManageFriends from './ManageFriends.vue';
-import SearchUsers from './SearchUsers.vue';
+import SearchUsers from './components/SearchUsers.vue';
 import ManageRequests from './ManageRequests.vue';
 
 export default {

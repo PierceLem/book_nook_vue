@@ -35,8 +35,8 @@
 
 <script>
 import axios from 'axios';
-import BookCard from '@/components/BookCard.vue';
-import DiscoverDrawer from '@/components/DiscoverDrawer.vue';
+import BookCard from '@/apps/main/components/BookCard.vue';
+import DiscoverDrawer from '@/apps/books/DiscoverDrawer.vue';
 
 export default {
   name: "Discover",

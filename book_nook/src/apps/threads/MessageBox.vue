@@ -66,7 +66,7 @@
 
 <script>
 import axios from 'axios';
-import MessageBubble from './MessageBubble.vue';
+import MessageBubble from './components/MessageBubble.vue';
 import ThreadAppBar from './ThreadAppBar.vue';
 
 export default {

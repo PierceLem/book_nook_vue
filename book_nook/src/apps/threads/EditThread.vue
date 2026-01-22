@@ -152,8 +152,8 @@
 
 <script>
 import axios from 'axios';
-import ConfirmOverlay from './ConfirmOverlay.vue';
-import ListUsers from './ListUsers.vue';
+import ConfirmOverlay from './components/ConfirmOverlay.vue';
+import ListUsers from '@/apps/main/components/ListUsers.vue';
 import { mapState } from 'vuex';
 
 export default {

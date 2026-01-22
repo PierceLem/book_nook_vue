@@ -70,7 +70,7 @@
 import { mapState } from 'vuex';
 import axios from 'axios';
 import _ from "lodash";
-import UserInfoCard from './UserInfoCard.vue';
+import UserInfoCard from '@/apps/main/components/UserInfoCard.vue';
 
 export default {
   name: "SearchUsers",

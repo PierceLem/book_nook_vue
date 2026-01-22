@@ -65,7 +65,7 @@
 
 <script>
 import axios from 'axios';
-import BookCard from '@/components/BookCard.vue';
+import BookCard from '@/apps/main/components/BookCard.vue';
 
 export default {
   name: "BookShelf",

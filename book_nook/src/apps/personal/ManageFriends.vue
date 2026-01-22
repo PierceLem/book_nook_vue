@@ -95,7 +95,7 @@
 
 <script>
 import axios from 'axios';
-import UserInfoCard from './UserInfoCard.vue';
+import UserInfoCard from '@/apps/main/components/UserInfoCard.vue';
 
 export default {
   name: "ManageFriends",

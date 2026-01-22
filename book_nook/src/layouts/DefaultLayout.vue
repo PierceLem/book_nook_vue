@@ -20,9 +20,9 @@
 </template>
 
 <script>
-import NavDrawer from "@/components/NavDrawer.vue";
-import AppBar from "@/components/AppBar.vue";
-import Snackbar from "@/components/Snackbar.vue";
+import NavDrawer from "@/apps/main/NavDrawer.vue";
+import AppBar from "@/apps/main/AppBar.vue";
+import Snackbar from "@/apps/main/components/Snackbar.vue";
 import { mapState } from "vuex";
 
 export default {

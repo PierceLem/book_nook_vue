@@ -22,10 +22,10 @@
 </template>
 
 <script>
-import ProfileCard from '@/components/ProfileCard.vue';
-import AboutProfile from '@/components/AboutProfile.vue';
-import ProfileSettings from '@/components/ProfileSettings.vue';
-import FriendsManager from '@/components/FriendsManager.vue';
+import ProfileCard from '@/apps/personal/components/ProfileCard.vue';
+import AboutProfile from '@/apps/personal/AboutProfile.vue';
+import ProfileSettings from '@/apps/personal/ProfileSettings.vue';
+import FriendsManager from '@/apps/personal/FriendsManager.vue';
 
 export default {
   name: "MyProfile",

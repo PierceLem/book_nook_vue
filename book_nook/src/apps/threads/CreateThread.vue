@@ -121,7 +121,7 @@
 <script>
 import axios from "axios";
 import { mapState } from "vuex";
-import ListUsers from './ListUsers.vue';
+import ListUsers from '@/apps/main/components/ListUsers.vue';
 
 export default {
   name: "CreateThread",

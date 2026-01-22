@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import ListUsers from './ListUsers.vue';
+import ListUsers from '@/apps/main/components/ListUsers.vue';
 
 export default {
   name: "ThreadParticipants",

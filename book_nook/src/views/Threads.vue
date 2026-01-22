@@ -12,9 +12,10 @@
 </template>
 
 <script>
+import { connectToThread } from "@/sockets/threadSocket";
 import axios from 'axios';
-import ThreadList from '@/components/ThreadList.vue';
-import MessageBox from '@/components/MessageBox.vue';
+import ThreadList from '@/apps/threads/ThreadList.vue';
+import MessageBox from '@/apps/threads/MessageBox.vue';
 
 export default {
   name: "Chat",
@@ -29,11 +30,16 @@ export default {
       messages: [],
       threadDetail: null,
       threadList: [],
+      socket: null,
     }
   },
 
   mounted() {
     this.fetchThreads();
+  },
+
+  beforeUnmount() {
+    if (this.socket) this.socket.close();
   },
 
   provide() {
@@ -48,10 +54,20 @@ export default {
   methods: {
     async fetchMessages(thread) {
       try {
+        if (this.socket) {
+          this.socket.close();
+          this.socket = null;
+        }
+
+        this.threadDetail = thread;
+
         const response = await axios.get(`/thread/${thread.id}`);
         this.messages = response.data;
-        this.threadDetail = thread
-      } catch(error) {
+
+        this.socket = connectToThread(thread.id, (message) => {
+          this.messages.push(message);
+        });
+      } catch (error) {
         console.error(error);
       }
     },

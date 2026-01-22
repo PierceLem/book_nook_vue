@@ -152,8 +152,8 @@
 
 <script>
 import axios from 'axios';
-import ThreadSelector from './ThreadSelector.vue';
-import Reviews from './Reviews.vue';
+import ThreadSelector from '@/apps/books/components/ThreadSelector.vue';
+import Reviews from '@/apps/books/components/Reviews.vue';
 
 export default {
   name: "BookCard",

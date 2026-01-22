@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import UserInfoCard from './UserInfoCard.vue';
+import UserInfoCard from '@/apps/main/components/UserInfoCard.vue';
 
 export default {
   name: "Review",
