@@ -57,6 +57,7 @@ export default {
       const index = state.threads.findIndex(
         (t) => t.id === updatedThread.id
       );
+
       if (index !== -1) {
         state.threads.splice(index, 1, updatedThread);
       }
@@ -85,8 +86,9 @@ export default {
       commit("SET_THREADS", response.data);
     },
 
-    addNewThread({ commit }, thread) {
-      commit("ADD_THREAD", thread);
+    async addNewThread({ commit }, participants) {
+      const response  = await axios.post('/threads/', {'participants': participants});
+      commit("ADD_THREAD", response.data);
     },
 
     /* ------------------------------
@@ -116,27 +118,19 @@ export default {
 
     /* ------------------------------
        MESSAGING
-    ------------------------------ */
+    ------------------------------ */ 
 
-    sendMessage({ state }, content) {
-      if (!state.socket || state.socket.readyState !== WebSocket.OPEN) {
-        console.warn("WebSocket not connected");
-        return;
-      }
-
-      state.socket.send(
-        JSON.stringify({
-          content,
-        })
-      );
+    async sendMessage({ state }, payload) {
+      await axios.post(`/thread/${state.activeThread.id}/`, payload);
     },
 
     /* ------------------------------
        THREAD UPDATES
     ------------------------------ */
 
-    updateThread({ commit }, updatedThread) {
-      commit("UPDATE_THREAD", updatedThread);
+    async updateThread({ state, commit }, updatedThread) {
+      const response = await axios.patch(`/threads/${state.activeThread.id}/`, updatedThread);
+      commit("UPDATE_THREAD", response.data);
     },
 
     removeThread({ commit }, threadId) {

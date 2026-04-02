@@ -1,8 +1,6 @@
 <template>
-  <div class="chat-container" v-if="threadDetail">
-    <ThreadAppBar 
-      :threadDetail="threadDetail"
-    />
+  <div class="chat-container" v-if="activeThread">
+    <ThreadAppBar />
     
     <div class="messages-container" ref="messagesContainer">
       <v-alert
@@ -56,7 +54,7 @@
     </div>
   </div>
 
-  <template v-if="!threadDetail">
+  <template v-if="!activeThread">
     <div class="message-box-placeholder">
       <img :src="require('@/assets/undraw_chatting.svg')" class="placeholder-img"></img>
       <span class="text-h6 text-indigo opacity-50 mt-8">Select a Thread</span>
@@ -65,7 +63,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { mapState } from "vuex";
 import MessageBubble from './components/MessageBubble.vue';
 import ThreadAppBar from './ThreadAppBar.vue';
 
@@ -83,26 +81,13 @@ export default {
     }
   },
 
-  emits: ["newMessage"],
-
-  inject: ['addNewMessage'],
-
-  props: {
-    messages: {
-      type: Array,
-      default: [],
-    },
-    threadDetail: {
-      type: Object,
-      default: {},
-    }
-  },
-
   computed: {
+    ...mapState('threadStore', ['messages', 'activeThread']),
+
     renameAlert() {
       return (
-        this.threadDetail.participants_detail.length > 2 && 
-        this.threadDetail.display_name === "Group chat"
+        this.activeThread.participants_detail.length > 2 && 
+        this.activeThread.display_name === "Group chat"
       )
     }
   },
@@ -120,6 +105,7 @@ export default {
       deep: true,
       immediate: true,
     },
+
     threadDetail() {
       this.$nextTick(() => {
         const container = this.$refs.messagesContainer;
@@ -131,14 +117,8 @@ export default {
   },
 
   methods: {
-    async sendMessage() {
-      try {
-        const response = await axios.post(`/thread/${this.threadDetail.id}/`, {'content': this.message});
-        this.addNewMessage(response.data);
-        this.message = '';
-      } catch(error) {
-        console.error(error);
-      }
+    sendMessage() {
+      this.$store.dispatch('threadStore/sendMessage', {'content': this.message});
     }
   }
 }

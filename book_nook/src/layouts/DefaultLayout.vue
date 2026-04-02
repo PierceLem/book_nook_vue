@@ -15,7 +15,7 @@
       </router-view>
     </v-main>
 
-    <Snackbar ref="snackbar" />
+    <Snackbar />
   </v-app>
 </template>
 
@@ -30,18 +30,6 @@ export default {
     NavDrawer,
     AppBar,
     Snackbar,
-  },
-
-  provide() {
-    return {
-      showSnackbar: this.showSnackbar
-    }
-  },
-
-  methods: {
-    showSnackbar(snackbarData) {
-      this.$refs.snackbar.show(snackbarData);
-    },
   },
 
   computed: {

@@ -129,17 +129,16 @@ export default {
     ThreadRename,
   },
 
-  props: {
-    threadDetail: {
-      type: Object,
-      required: true,
-    }
-  },
-
   data() {
     return {
       renameMenuState: false,
       editThreadMenuState: false,
+    }
+  },
+
+  computed: {
+    threadDetail() {
+      return this.$store.state.threadStore.activeThread;
     }
   },
 

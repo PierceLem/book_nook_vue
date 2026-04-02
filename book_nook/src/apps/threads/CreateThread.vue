@@ -30,9 +30,9 @@
         max-height="300px" 
         style="scrollbar-width: thin;"
       >
-        <template v-if="filteredUsers">
+        <template v-if="filteredFriends">
           <ListUsers 
-            v-for="user in filteredUsers"
+            v-for="user in filteredFriends"
             :name="user.other_user.username"
             :email="user.other_user.email"
             :avatar="user.other_user.avatar"
@@ -119,8 +119,7 @@
 </template>
 
 <script>
-import axios from "axios";
-import { mapState } from "vuex";
+import { mapState } from 'vuex';
 import ListUsers from '@/apps/main/components/ListUsers.vue';
 
 export default {
@@ -136,16 +135,7 @@ export default {
       searchQuery: "",
       selectedUsers: [],
       maxUsers: 10,
-      allUsers: [],
     };
-  },
-
-  emits: ["new-thread"],
-
-  inject: ['showSnackbar'],
-
-  mounted() {
-    this.fetchFriends();
   },
 
   methods: {
@@ -164,49 +154,29 @@ export default {
       this.$emit('menuStateChange', newState);
     },
 
-    async fetchFriends() {
-      try {
-        const response = await axios.get('/my-friends/');
-        this.allUsers = response.data.friends;
-      } catch {
-        console.error()
-      }
-    },
-
-    async createThread() {
-      try {
-        const participantIds = this.selectedUsers.map((participant) => participant.other_user.id);
-        participantIds.push(this.user.id);
-        const response = await axios.post('/threads/', {'participants': participantIds});
-        console.log(response.data);
-        this.$emit("new-thread", response.data);
-        this.isOpen = false;
-        this.selectedUsers = [];
-      } catch (error) {
-        console.error(error.response.data);
-        this.showSnackbar({
-          subject: 'Error creating thread',
-          content: error.response.data['participants'][0],
-          icon: 'mdi-close',
-          color: 'red',
-        });
-        this.selectedUsers = [];
-      }
-    },
+    createThread() {
+      const participantIds = this.selectedUsers.map((participant) => participant.other_user.id);
+      participantIds.push(this.$store.state.auth.user.id);
+      this.$store.dispatch("threadStore/addNewThread", participantIds);
+    }
   },
 
   computed: {
-    ...mapState("auth", ["user"]),
+    ...mapState('social', [
+      'friends'
+    ]),
 
-    filteredUsers() {
-      if (!this.searchQuery) return this.allUsers;
+    filteredFriends() {
+      if (!this.searchQuery) return this.friends;
 
-      const query = this.searchQuery.toLowerCase();
-
-      return this.allUsers.filter(user =>
-        user.other_user.username.toLowerCase().includes(query) ||
-        user.other_user.email.toLowerCase().includes(query)
-      );
+      const q = this.searchQuery.toLowerCase();
+      return this.friends.filter(friend => {
+        const { username, email } = friend.other_user;
+        return (
+          username.toLowerCase().includes(q) ||
+          email.toLowerCase().includes(q)
+        )
+      })
     }
   },
 };

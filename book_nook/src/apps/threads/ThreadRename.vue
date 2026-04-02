@@ -35,10 +35,9 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
   name: "ThreadRename",
+  
   data() {
     return {
       newName: "",
@@ -50,31 +49,20 @@ export default {
     id: Number,
   },
 
-  inject: ['changeThreadName', 'addNewMessage'],
-
   methods: {
-    async renameSubmit() {
+    renameSubmit() {
       this.$refs.threadRename.resetValidation();
-      const { valid } = await this.$refs.threadRename.validate();
-      console.log(valid);
-      if (valid) {
-        try {
-          const response = await axios.patch(`threads/${this.id}/`, {'name': this.newName});
-          console.log(response.data);
-          this.changeThreadName(response.data.thread.display_name);
-          this.addNewMessage(response.data.message);
-          this.isOpen = false;
-        } catch(error) {
-          console.error(error);
-        }
-      }
+      this.$store.dispatch('threadStore/updateThread', {'name': this.newName});
     },
+
     validateRequired(value) {
       return value.trim().length > 0 || "Thread name can't be empty";
     },
+
     validateMaxLength(value) {
       return value.length <= 25 || "Thread name must be 25 characters or less";
     },
+
     emitMenuState() {
       let newState = this.isOpen
       this.$emit('menuStateChange', newState);

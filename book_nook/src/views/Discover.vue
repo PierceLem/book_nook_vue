@@ -58,6 +58,7 @@ export default {
 
   mounted() {
     this.fetchBooks("bestsellers", true);
+    this.$store.dispatch('threadStore/fetchThreads');
   },
 
   methods: {

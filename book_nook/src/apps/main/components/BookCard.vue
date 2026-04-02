@@ -209,8 +209,6 @@ export default {
     }
   },
 
-  inject: ['showSnackbar'],
-
   mounted() {
     this.checkOverflow();
     window.addEventListener('resize', this.checkOverflow);
@@ -292,7 +290,7 @@ export default {
 
     async sendBook({ threadId, threadName }) {
       try {
-        const response = await axios.post(`/thread/${threadId}/`, 
+        await axios.post(`/thread/${threadId}/`, 
           {
             book_data: {
               book_id: this.bookId,
@@ -303,8 +301,8 @@ export default {
             }
           }
         );
-        this.showSnackbar({
-          subject: 'Message Sent',
+        this.$store.dispatch('ui/showSnackbar', {
+          subject: 'Message Sent Successfully',
           content: 'Your book was went to ' + threadName,
           icon: 'mdi-check',
           color: 'green',

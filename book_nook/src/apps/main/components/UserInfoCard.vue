@@ -13,7 +13,7 @@
 
       <span class="text-subtitle-2 text-indigo">{{ owner.username }}</span>
 
-      <div class="d-flex flex-row justify-space-around w-100 pt-1">
+      <div class="d-flex flex-row justify-space-evenly w-100 pt-1">
         <v-card class="d-flex flex-column align-center px-1 mr-1" variant="outlined" color="indigo">
           <span class="text-h6" style="line-height: 20px;">44</span>
           <span class="text-caption" style="line-height: 12px;">friends</span>
@@ -43,7 +43,6 @@
 
 <script>
 import { mapState } from 'vuex';
-import axios from 'axios';
 
 export default {
   name: "UserInfoCard",
@@ -57,44 +56,13 @@ export default {
     }
   },
 
-  inject: ['showSnackbar'],
-
   computed: {
     ...mapState('auth', ['user']),
   },
 
   methods: {
     async sendFriendRequest() {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.post(
-          "/friend-request/",
-          {
-            from_user_id: this.user.id,
-            to_user_id: this.owner.id,
-          },
-          {
-            headers: {
-              Authorization: `Token ${token}`,
-            },
-          }
-        );
-
-        this.showSnackbar({
-          subject: 'Friend request sent to ' + response.data.to_user.username,
-          content: 'You can view friend request data in the profile page',
-          icon: 'mdi-check',
-          color: 'green',
-        })
-      } catch (error) {
-        console.log(error);
-        this.showSnackbar({
-          subject: error.response.data.non_field_errors[0],
-          content: 'You can view friend request data in the profile page',
-          icon: 'mdi-alpha-x',
-          color: 'red',
-        })
-      }
+      this.$store.dispatch("social/sendFriendRequest", { "to_user_id": this.owner.id, "from_user_id": this.user.id})
     }
   }
 };

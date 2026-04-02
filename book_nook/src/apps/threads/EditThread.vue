@@ -57,7 +57,7 @@
               class="px-0 pb-2 mt-1"
             ></v-text-field>
 
-            <template v-for="friend in friends">
+            <template v-for="friend in addableFriends">
               <ListUsers
                 :name="friend.other_user.username"
                 :email="friend.other_user.email"
@@ -151,7 +151,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import ConfirmOverlay from './components/ConfirmOverlay.vue';
 import ListUsers from '@/apps/main/components/ListUsers.vue';
 import { mapState } from 'vuex';
@@ -206,20 +205,15 @@ export default {
       addOverlay: false,
       kickOverlay: false,
       searchQuery: "",
-      friends: [],
       addedParticipant: {},
       kickedParticipant: {},
     }
   },
 
-  inject: ['editThreadParticipants', 'addNewMessage', 'showSnackbar', 'removeThread'],
-
-  mounted() {
-    this.fetchUsers();
-  },
-
   computed: {
     ...mapState('auth', ['user']),
+
+    ...mapState("social", ["friends"]),
 
     kickableParticipants() {
       const currentUserId = this.user.id
@@ -227,19 +221,15 @@ export default {
       return this.participants.filter(
         participant => participant.id !== currentUserId
       )
+    },
+
+    addableFriends() {
+      const existingIds = this.participants.map(p => p.id)
+      return this.friends.filter(friend => !existingIds.includes(friend.other_user.id))
     }
   },
 
   methods: {
-    async fetchUsers() {
-      try {
-        const response = await axios.get('/my-friends/');
-        this.friends = response.data.friends;
-      } catch(error) {
-        console.error(error);
-      }
-    },
-
     toggleSection(section) {
       if (this.activeSection === section) {
         this.activeSection = null;
@@ -288,37 +278,13 @@ export default {
       this.editParticipants(ids, action);
     },
 
-    async editParticipants(ids, action) {
-      try {
-        const response = await axios.patch(`threads/${this.threadId}/`, {'participants': ids});
-        if (action != 'leave') {
-          this.editThreadParticipants(response.data.thread);
-          this.addNewMessage(response.data.message);
-          this.showSnackbar({
-            subject: 'Thread Updated Successfully',
-            content: '',
-            icon: 'mdi-check',
-            color: 'green',
-          });
-          this.kickOverlay = false;
-          this.addOverlay = false;
-        }
-        this.menu = false;
-      } catch(error) {
-        console.error(error);
-        this.showSnackbar({
-          subject: error.response?.data?.participants?.[0],
-          content: '',
-          icon: 'mdi-close',
-          color: 'red',
-        })
-      }
+    editParticipants(ids) {
+      this.$store.dispatch('threadStore/updateThread', {'participants': ids});
     },
 
     async deleteThread() {
       try {
-        await axios.delete(`threads/${this.threadId}/`);
-        this.removeThread(this.threadId);
+        this.$store.dispatch('threadStore/removeThread', this.threadId);
       } catch(error) {
         console.error(error);
       }

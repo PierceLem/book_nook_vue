@@ -36,7 +36,7 @@
             <span class="text-caption">Create Thread</span>
           </v-tooltip>
 
-          <CreateThread @menu-state-change="toggleMenu" @new-thread="newThread" />
+          <CreateThread @menu-state-change="toggleMenu" />
         </v-btn>
       </div>
 
@@ -51,7 +51,6 @@
         prepend-inner-icon="mdi-magnify" 
         rounded="lg"
         class="px-1"
-        @click:prepend-inner="$emit('query', searchQuery)"
       ></v-text-field>
 
       <v-list
@@ -67,7 +66,7 @@
           slim
           subtitle="Insert last received message here."
           class="thread-item py-1 pr-2 pl-1 my-1"
-          @click="$emit('fetchThread', thread)"
+          @click="threadSelect(thread)"
         >
           <template v-slot:prepend>
             <v-badge
@@ -107,16 +106,9 @@ export default {
     }
   },
 
-  props: {
-    threads: {
-      type: Array,
-    }
-  },
-
-  emits: ['fetchThread'],
-
   computed: {
     ...mapGetters("ui", ["isChatDrawerOpen"]),
+
     drawer: {
       get() {
         return this.isChatDrawerOpen;
@@ -125,15 +117,19 @@ export default {
         this.setChatDrawer(value);
       },
     },
+
+    threads() {
+      return this.$store.state.threadStore.threads;
+    }
   },
 
   methods: {
-    toggleMenu(newState) {
-      this.menuState = newState
+    threadSelect(thread) {
+      this.$store.dispatch('threadStore/selectThread', thread)
     },
 
-    newThread(threadData) {
-      this.$emit('newThread', threadData)
+    toggleMenu(newState) {
+      this.menuState = newState
     },
 
     ...mapActions("ui", ["setChatDrawer"]),

@@ -68,7 +68,6 @@
 
 <script>
 import { mapState } from 'vuex';
-import axios from 'axios';
 import _ from "lodash";
 import UserInfoCard from '@/apps/main/components/UserInfoCard.vue';
 
@@ -86,71 +85,31 @@ export default {
     }
   },
 
-  inject: ['showSnackbar'],
-
-  emits: ["friend-request-sent"],
-
   computed: {
     ...mapState('auth', ['user']),
   },
 
   watch: {
     searchQuery: {
-      handler: _.debounce(function (newQuery) {
+      handler: _.debounce(async function (newQuery) {
+
         if (!newQuery) {
-          this.users = [];
-          return;
+          this.users = []
+          return
         }
-        this.fetchUsers(newQuery);
-      }, 400),
-      immediate: false,
+
+        this.users = await this.$store.dispatch(
+          "social/searchUsers",
+          newQuery
+        )
+
+      }, 400)
     }
   },
 
   methods: {
-    async sendFriendRequest(id) {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.post(
-          "/friend-request/",
-          {
-            from_user_id: this.user.id,
-            to_user_id: id,
-          },
-          {
-            headers: {
-              Authorization: `Token ${token}`,
-            },
-          }
-        );
-        this.$emit("friend-request-sent", response.data);
-        this.showSnackbar({
-          subject: 'Friend request sent to ' + response.data.to_user.username,
-          content: 'You can view friend request data in the profile page',
-          icon: 'mdi-check',
-          color: 'green',
-        })
-      } catch (error) {
-        console.log(error);
-        this.showSnackbar({
-          subject: error.response.data.non_field_errors[0],
-          content: 'You can view friend request data in the profile page',
-          icon: 'mdi-alpha-x',
-          color: 'red',
-        })
-      }
-    },
-
-    async fetchUsers(query) {
-      try {
-        const response = await axios.get("/search-users/", {
-          params: { q: query }
-        });
-        console.log(response.data);
-        this.users = response.data.users;
-      } catch (err) {
-        console.error("Error fetching users:", err);
-      }
+    sendFriendRequest(userId) {
+      this.$store.dispatch("social/sendFriendRequest", {"from_user_id": this.$store.state.auth.user.id, "to_user_id": userId})
     }
   }
 }

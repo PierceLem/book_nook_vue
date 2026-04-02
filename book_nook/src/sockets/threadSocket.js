@@ -1,7 +1,10 @@
+import store from "@/store";
+
 export function connectToThread(threadId, onMessage) {
-  const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+  const token = localStorage.getItem('token');
+
   const socket = new WebSocket(
-    `${protocol}://${window.location.host}/ws/threads/${threadId}/`
+    `ws://localhost:8000/ws/threads/${threadId}/?token=${token}`
   );
 
   socket.onopen = () => {
@@ -9,8 +12,15 @@ export function connectToThread(threadId, onMessage) {
   };
 
   socket.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    onMessage(data);
+    const payload = JSON.parse(event.data);
+
+    if (payload.thread) {
+      store.commit("threadStore/UPDATE_THREAD", payload.thread);
+    }
+
+    if (payload.message) {
+      store.commit("threadStore/ADD_MESSAGE", payload.message);
+    }
   };
 
   socket.onerror = (error) => {

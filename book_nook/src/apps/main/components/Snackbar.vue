@@ -1,10 +1,9 @@
 <template>
   <v-snackbar
-    v-model="visible"
+    v-model="snackbar.visible"
     vertical
-    timeout="5000"
     location="bottom end"
-    :color="color"
+    :color="snackbar.color"
   >
     <v-list-item
       density="compact"
@@ -13,15 +12,15 @@
     >
       <template v-slot:prepend>
         <v-icon
-          :icon="icon"
+          :icon="snackbar.icon"
           size="40px"
           class="opacity-100"
         ></v-icon>
       </template>
 
-      <v-list-item-title>{{ subject }}</v-list-item-title>
+      <v-list-item-title>{{ snackbar.subject }}</v-list-item-title>
 
-      <v-list-item-subtitle>{{ content }}</v-list-item-subtitle>
+      <v-list-item-subtitle>{{ snackbar.content }}</v-list-item-subtitle>
     </v-list-item>
   </v-snackbar>
 </template>
@@ -30,24 +29,10 @@
 export default {
   name: "Snackbar",
 
-  data() {
-    return {
-      visible: false,
-      subject: '',
-      content: '',
-      icon: '',
-      color: '',
+  computed: {
+    snackbar() {
+      return this.$store.state.ui.snackbar;
     }
   },
-
-  methods: {
-    show(snackbarData) {
-      this.subject = snackbarData.subject;
-      this.content = snackbarData.content;
-      this.icon = snackbarData.icon;
-      this.color = snackbarData.color;
-      this.visible = true;
-    }
-  }
 };
 </script>

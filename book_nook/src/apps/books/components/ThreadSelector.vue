@@ -57,8 +57,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
   name: "ThreadSelector",
 
@@ -66,31 +64,14 @@ export default {
     return {
       menu: false,
       searchQuery: '',
-      threads: [],
-    }
-  },
-
-  mounted() {
-    this.fetchThreads();
-  },
-
-  methods: {
-    async fetchThreads() {
-      try {
-        const response = await axios.get('/threads/');
-        this.threads = response.data;
-      } catch (error) {
-        console.error(error);
-      }
-    },
-
-    sendBook(threadId, threadName) {
-      this.$emit('selected-book', { threadId, threadName })
-      this.menu = false;
     }
   },
 
   computed: {
+    threads() {
+      return this.$store.state.threadStore.threads;
+    },
+
     filteredThreads() {
       if (!this.searchQuery) return this.threads;
 
@@ -103,7 +84,14 @@ export default {
         )
       );
     }
-  }
+  },
+
+  methods: {
+    sendBook(threadId, threadName) {
+      this.$emit('selected-book', { threadId, threadName })
+      this.menu = false;
+    }
+  },
 }
 </script>
 

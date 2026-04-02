@@ -1,15 +1,15 @@
 <template>
   <v-container 
     class="bubble-container px-2 py-0" 
-    :class="message.is_owner ? 'align-end' : 'align-start'"
+    :class="is_owner ? 'align-end' : 'align-start'"
   >
     <v-card 
       v-if="message.content"
       rounded="lg" 
       variant="tonal"
-      :color="message.is_owner ? 'indigo' : 'teal'"
+      :color="is_owner ? 'indigo' : 'teal'"
       class="pa-0 message-card" 
-      :class="message.is_owner ? 'ml-0' : 'ml-2 pl-3'"
+      :class="is_owner ? 'ml-0' : 'ml-2 pl-3'"
       position="relative"
       max-width="75%"
     >
@@ -18,14 +18,14 @@
       </v-card-text>
 
       <v-avatar 
-        v-if="!message.is_owner"
+        v-if="!is_owner"
         class="text-message-avatar custom-avatar" 
         size="40px" 
         :image="message.sender.avatar"
       >
       </v-avatar>
 
-      <div class="sender-username" v-if="!message.is_owner">
+      <div class="sender-username" v-if="!is_owner">
         <span class="text-teal username-text">{{ message.sender.username }}</span>
       </div>
     </v-card>
@@ -37,28 +37,28 @@
       rounded="lg" 
       variant="flat"
       class="d-flex flex-row book-card-border message-card"
-      :class="message.is_owner ? 'ml-0 sent-color-scheme' : 'ml-2 received-color-scheme'"
+      :class="is_owner ? 'ml-0 sent-color-scheme' : 'ml-2 received-color-scheme'"
       position="relative"
     >
       <v-avatar 
-        v-if="!message.is_owner"
+        v-if="!is_owner"
         class="book-message-avatar custom-avatar" 
         size="40px" 
         :image="message.sender.avatar"
       >
       </v-avatar>
 
-      <div class="sender-username" v-if="!message.is_owner">
+      <div class="sender-username" v-if="!is_owner">
         <span class="text-teal username-text">{{ message.sender.username }}</span>
       </div>
 
-      <img :src="message.book.thumbnail" alt="" min-height="100%" :class="message.is_owner ? 'indigo-book-thumbnail' : 'teal-book-thumbnail'">
+      <img :src="message.book.thumbnail" alt="" min-height="100%" :class="is_owner ? 'indigo-book-thumbnail' : 'teal-book-thumbnail'">
 
       <div class="d-flex flex-column align-start flex-grow-1 pl-1 pt-1">
-        <h4 :class="message.is_owner ? 'text-indigo' : 'text-teal'">{{ message.book.title }}</h4>
-        <h5 :class="message.is_owner ? 'text-indigo' : 'text-teal'" style="opacity: 0.75;">{{ message.book.authors.join(', ') }}</h5>
-        <v-divider :color="message.is_owner ? 'indigo' : 'teal'" opacity="0.25" class="w-100 mt-1"></v-divider>
-        <p class="book-desc" :class="message.is_owner ? 'indigo-scroll' : 'teal-scroll'">{{ message.book.description }}</p>
+        <h4 :class="is_owner ? 'text-indigo' : 'text-teal'">{{ message.book.title }}</h4>
+        <h5 :class="is_owner ? 'text-indigo' : 'text-teal'" style="opacity: 0.75;">{{ message.book.authors.join(', ') }}</h5>
+        <v-divider :color="is_owner ? 'indigo' : 'teal'" opacity="0.25" class="w-100 mt-1"></v-divider>
+        <p class="book-desc" :class="is_owner ? 'indigo-scroll' : 'teal-scroll'">{{ message.book.description }}</p>
       </div>
     </v-card>
 
@@ -73,7 +73,7 @@
 
     <span 
       class="message-date mb-1" 
-      :class="message.is_owner ? 'ml-0' : 'ml-2'"
+      :class="is_owner ? 'ml-0' : 'ml-2'"
     >
       {{ message.created_at }}
     </span>
@@ -96,6 +96,13 @@ export default {
     const { smAndDown } = useDisplay();
     return { smAndDown };
   },
+
+  computed: {
+    is_owner() {
+      const currentUser = this.$store.state.auth.user;
+      return currentUser?.id === this.message.sender?.id;
+    }
+  }
 };
 </script>
 

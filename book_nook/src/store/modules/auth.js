@@ -2,11 +2,13 @@ import axios from 'axios';
 
 export default {
   namespaced: true,
+
   state: {
     user: {},
     isAuthenticated: false,
     token: "",
   },
+
   mutations: {
     setToken(state, token) {
       state.token = token;
@@ -26,15 +28,10 @@ export default {
     removeUser(state) {
       state.user = {};
     },
-    updateAvatar(state, newAvatarUrl) {
-      state.user = {
-        ...state.user,
-        avatar: newAvatarUrl,
-      };
-    },
   },
+
   actions: {
-    async initializeStore({ commit }) {
+    async initializeStore({ commit, dispatch }) {
       const token = localStorage.getItem("token");
       if (token) {
         console.log('token exists');
@@ -44,6 +41,8 @@ export default {
         try {
           const response = await axios.get("/api/v1/users/me/");
           commit("setUser", response.data);
+          dispatch("social/setSocket", response.data.id, { root: true })
+          dispatch("social/fetchFriends", response.data.id, { root: true })
         } catch (error) {
           commit("removeToken");
           commit("removeUser");
@@ -89,6 +88,7 @@ export default {
       }
     },
   },
+  
   getters: {
     isAuthenticated(state) {
       return state.isAuthenticated;

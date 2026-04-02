@@ -94,7 +94,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { mapState } from 'vuex';
 import UserInfoCard from '@/apps/main/components/UserInfoCard.vue';
 
 export default {
@@ -104,24 +104,17 @@ export default {
     UserInfoCard,
   },
 
-  props: {
-    friends: {
-      type: Array,
-      default: () => [],
-    }
-  },
-
   data() {
     return {
       searchQuery: '',
     }
   },
 
-  emits: ["delete-friendship"],
-
-  inject: ['showSnackbar'],
-
   computed: {
+    ...mapState('social', [
+      'friends'
+    ]),
+
     filteredFriends() {
       if (!this.searchQuery) return this.friends;
 
@@ -138,20 +131,7 @@ export default {
 
   methods: {
     async unfriend(id, username) {
-      try {
-        const response = await axios.delete('/friend-request/', {data: {'id': id}});
-
-        this.showSnackbar({
-          subject: 'Unfriended ' + username,
-          content: 'You can view friendship data in the profile page',
-          icon: 'mdi-check',
-          color: 'green',
-        });
-
-        this.$emit('delete-friendship', id)
-      } catch (error) {
-        console.log("error deleting frindship", error);
-      }
+      this.$store.dispatch('social/unfriend', {"friendshipId": id, "username": username})
     }
   }
 }

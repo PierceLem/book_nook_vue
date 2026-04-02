@@ -17,36 +17,26 @@
         :value="1"
         class="px-1"
       >
-        <ManageFriends 
-          :friends="friends"
-          @delete-friendship="removeFriend"
-        />
+        <ManageFriends />
       </v-tabs-window-item>
 
       <v-tabs-window-item
         :value="2"
         class="px-1"
       >
-        <SearchUsers
-          @friend-request-sent="addNewRequest"
-        />
+        <SearchUsers />
       </v-tabs-window-item>
 
       <v-tabs-window-item
         :value="3"
       >
-        <ManageRequests
-          :sent-requests="sentRequests"
-          :received-requests="receivedRequests"
-          @accept-request="addFriend"
-        />
+        <ManageRequests />
       </v-tabs-window-item>
     </v-tabs-window>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
 import ManageFriends from './ManageFriends.vue';
 import SearchUsers from './components/SearchUsers.vue';
 import ManageRequests from './ManageRequests.vue';
@@ -63,44 +53,8 @@ export default {
   data() {
     return {
       friendsTabs: 1,
-      friends: [],
-      sentRequests: [],
-      receivedRequests: [],
     }
   },
-
-  mounted() {
-    this.fetchFriends();
-  },
-
-  methods: {
-    async fetchFriends() {
-      try {
-        const response = await axios.get('/my-friends/');
-        console.log(response.data);
-        this.friends = response.data.friends;
-        this.sentRequests = response.data.sent_requests;
-        this.receivedRequests = response.data.received_requests;
-      } catch {
-        console.error()
-      }
-    },
-
-    addNewRequest(newRequest) {
-      this.sentRequests.push(newRequest);
-    },
-
-    addFriend(friend) {
-      this.friends.push(friend);
-    },
-
-    removeFriend(id) {
-      const index = this.friends.findIndex(friend => friend.id === id);
-      if (index !== -1) {
-        this.friends.splice(index, 1);
-      }
-    }
-  }
 };
 </script>
 
