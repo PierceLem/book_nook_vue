@@ -3,16 +3,6 @@
     <ThreadAppBar />
     
     <div class="messages-container" ref="messagesContainer">
-      <v-alert
-        v-if="renameAlert"
-        density="compact"
-        closable
-        text="Consider naming this thread."
-        class="rename-alert"
-        type="warning"
-      >
-      </v-alert>
-
       <MessageBubble
         v-for="message in messages"
         :message="message"
@@ -83,13 +73,6 @@ export default {
 
   computed: {
     ...mapState('threadStore', ['messages', 'activeThread']),
-
-    renameAlert() {
-      return (
-        this.activeThread.participants_detail.length > 2 && 
-        this.activeThread.display_name === "Group chat"
-      )
-    }
   },
 
   watch: {

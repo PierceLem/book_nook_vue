@@ -257,37 +257,33 @@ export default {
 
     leaveThread() {
       this.kickedParticipant = this.user;
-      this.kickParticipant('leave');
-      this.removeThread(this.threadId);
+      this.kickParticipant();
     },
 
     addParticipant() {
-      const action = 'added';
       const ids = this.participants.map(participant => participant.id);
       ids.push(this.addedParticipant.id);
-      this.editParticipants(ids, action);
+      this.editParticipants(ids);
     },
 
-    kickParticipant(type = null) {
-      const action = type ? type : 'kicked';
+    kickParticipant() {
       const ids = this.participants.map(participant => participant.id);
       const index = ids.findIndex(id => id === this.kickedParticipant.id);
       if (index !== -1) {
         ids.splice(index, 1);
       }
-      this.editParticipants(ids, action);
+      this.editParticipants(ids);
     },
 
     editParticipants(ids) {
       this.$store.dispatch('threadStore/updateThread', {'participants': ids});
+      this.addOverlay = false;
+      this.kickOverlay = false;
+      this.activeSection = null;
     },
 
     async deleteThread() {
-      try {
-        this.$store.dispatch('threadStore/removeThread', this.threadId);
-      } catch(error) {
-        console.error(error);
-      }
+      this.$store.dispatch('threadStore/deleteThread', this.threadId);
     },
 
     emitMenuState(val) {

@@ -47,7 +47,7 @@
           <template v-slot:title>
             <div class="d-flex flex-column">
               <span class="text-end date-text pr-1">date</span>
-              <span>{{ thread.name }}</span>
+              <span>{{ getThreadDisplayName(thread) }}</span>
             </div>
           </template>
         </v-list-item>
@@ -57,6 +57,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   name: "ThreadSelector",
 
@@ -68,21 +70,24 @@ export default {
   },
 
   computed: {
+    ...mapGetters("threadStore", ["getThreadDisplayName"]),
+
     threads() {
       return this.$store.state.threadStore.threads;
     },
 
     filteredThreads() {
-      if (!this.searchQuery) return this.threads;
+      if (!this.searchQuery) {
+        return this.threads;
+      }
 
-      const query = this.searchQuery.toLowerCase();
+      return this.threads.filter(thread => {
+        const query = this.searchQuery.toLowerCase();
 
-      return this.threads.filter(thread =>
-        thread.name.toLowerCase().includes(query) ||
-        thread.participants_detail.some(
-          participant => participant.username.toLowerCase().includes(query)
-        )
-      );
+        return (
+          this.getThreadDisplayName(thread).toLowerCase().includes(query)
+        );
+      });
     }
   },
 

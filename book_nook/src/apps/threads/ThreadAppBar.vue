@@ -37,11 +37,11 @@
             <div>
               <v-tooltip 
                 v-if="threadDetail.participants_detail.length > 2"
-                location="bottom" 
+                v-model="showRenameHint"
+                location="top" 
+                offset="3"
                 open-delay="800"
                 max-width="300px"
-                open-on-hover
-                :disabled="renameMenuState"
               >
                 <template v-slot:activator="{ props }">
                   <v-btn 
@@ -64,12 +64,12 @@
                 </template>
 
                 <span class="text-caption text-center d-block">
-                  Rename thread
+                  Consider renaming this thread
                 </span>
               </v-tooltip>
 
               <span class="text-body-1 text-indigo ml-1">
-                {{ threadDetail.display_name }}
+                {{ getThreadDisplayName(threadDetail) }}
               </span>
             </div>
 
@@ -115,7 +115,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import EditThread from './EditThread.vue';
 import ThreadRename from './ThreadRename.vue';
 import ThreadParticipants from './components/ThreadParticipants.vue';
@@ -139,7 +139,14 @@ export default {
   computed: {
     threadDetail() {
       return this.$store.state.threadStore.activeThread;
-    }
+    },
+
+    showRenameHint() {
+      const name = this.getThreadDisplayName(this.threadDetail);
+      return name == 'Group chat';
+    },
+
+    ...mapGetters("threadStore", ["getThreadDisplayName"])
   },
 
   methods: {

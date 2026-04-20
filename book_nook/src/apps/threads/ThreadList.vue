@@ -60,7 +60,7 @@
         class="thread-list py-0 px-1"
       >
         <v-list-item 
-          v-for="thread in threads"
+          v-for="thread in filteredThreads"
           :key="thread.id"
           color="indigo"
           slim
@@ -80,7 +80,7 @@
           <template v-slot:title>
             <div class="d-flex flex-column">
               <span class="text-end date-text pr-1">date</span>
-              <span>{{ thread.display_name }}</span>
+              <span>{{ getThreadDisplayName(thread) }}</span>
             </div>
           </template>
         </v-list-item>
@@ -109,6 +109,8 @@ export default {
   computed: {
     ...mapGetters("ui", ["isChatDrawerOpen"]),
 
+    ...mapGetters('threadStore', ['getThreadDisplayName']),
+
     drawer: {
       get() {
         return this.isChatDrawerOpen;
@@ -120,6 +122,20 @@ export default {
 
     threads() {
       return this.$store.state.threadStore.threads;
+    }, 
+
+    filteredThreads() {
+      if (!this.searchQuery) {
+        return this.threads;
+      }
+
+      return this.threads.filter(thread => {
+        const query = this.searchQuery.toLowerCase();
+
+        return (
+          this.getThreadDisplayName(thread).toLowerCase().includes(query)
+        );
+      });
     }
   },
 

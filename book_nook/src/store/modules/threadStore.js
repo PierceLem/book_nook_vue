@@ -1,5 +1,5 @@
 import axios from "axios";
-import { connectToThread } from "@/sockets/threadSocket";
+import { connectToThread } from "@/sockets/messageSocket";
 
 export default {
   namespaced: true,
@@ -86,9 +86,8 @@ export default {
       commit("SET_THREADS", response.data);
     },
 
-    async addNewThread({ commit }, participants) {
-      const response  = await axios.post('/threads/', {'participants': participants});
-      commit("ADD_THREAD", response.data);
+    async addNewThread(_, participants) {
+      await axios.post('/threads/', {'participants': participants});
     },
 
     /* ------------------------------
@@ -120,21 +119,20 @@ export default {
        MESSAGING
     ------------------------------ */ 
 
-    async sendMessage({ state }, payload) {
-      await axios.post(`/thread/${state.activeThread.id}/`, payload);
+    async sendMessage({ state }, message) {
+      await axios.post(`/thread/${state.activeThread.id}/`, message);
     },
 
     /* ------------------------------
        THREAD UPDATES
     ------------------------------ */
 
-    async updateThread({ state, commit }, updatedThread) {
-      const response = await axios.patch(`/threads/${state.activeThread.id}/`, updatedThread);
-      commit("UPDATE_THREAD", response.data);
+    async updateThread({ state }, updatedThread) {
+      await axios.patch(`/threads/${state.activeThread.id}/`, updatedThread);
     },
 
-    removeThread({ commit }, threadId) {
-      commit("REMOVE_THREAD", threadId);
+    async deleteThread(_, threadId) {
+      await axios.delete(`/threads/${threadId}/`);
     },
 
     /* ------------------------------
@@ -147,4 +145,19 @@ export default {
       commit("SET_ACTIVE_THREAD", null);
     },
   },
+
+  getters: {
+    getThreadDisplayName: (state, getters, rootState) => (thread) => {
+      const currentUserId = rootState.auth.user.id
+
+      if (thread.name) return thread.name
+
+      if (thread.participants_detail.length === 2) {
+          const other = thread.participants_detail.find(p => p.id !== currentUserId)
+          return other ? other.username : "Group Chat"
+      }
+
+      return "Group Chat"
+    }
+  }
 };

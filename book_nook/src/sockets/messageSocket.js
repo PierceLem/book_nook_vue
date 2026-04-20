@@ -13,22 +13,9 @@ export function connectToThread(threadId, onMessage) {
 
   socket.onmessage = (event) => {
     const payload = JSON.parse(event.data);
-
-    if (payload.thread) {
-      store.commit("threadStore/UPDATE_THREAD", payload.thread);
-    }
-
     if (payload.message) {
       store.commit("threadStore/ADD_MESSAGE", payload.message);
     }
-  };
-
-  socket.onerror = (error) => {
-    console.error("WebSocket error", error);
-  };
-
-  socket.onclose = () => {
-    console.log("WebSocket closed");
   };
 
   return socket;

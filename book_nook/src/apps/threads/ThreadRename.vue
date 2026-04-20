@@ -50,9 +50,16 @@ export default {
   },
 
   methods: {
-    renameSubmit() {
-      this.$refs.threadRename.resetValidation();
-      this.$store.dispatch('threadStore/updateThread', {'name': this.newName});
+    async renameSubmit() {
+      const { valid } = await this.$refs.threadRename.validate();
+
+      if (!valid) return;
+
+      this.$store.dispatch('threadStore/updateThread', {
+        name: this.newName
+      });
+
+      this.isOpen = false;
     },
 
     validateRequired(value) {

@@ -4,6 +4,7 @@ import { shapeRequest } from "@/store/modules/social";
 const getCurrentUserId = () => store.state.auth.user.id;
 
 const socketEventHandlers = {
+  /*Friendship related updates*/ 
   incoming_request: (data) => {
     const shaped = shapeRequest(data, getCurrentUserId())
     store.commit('social/ADD_INCOMING_REQUEST', shaped)
@@ -22,6 +23,17 @@ const socketEventHandlers = {
   request_cancelled: (data) => {
     store.commit('social/REMOVE_INCOMING_REQUEST', data)
   },
+
+  /*Thread related updates*/ 
+  remove_thread: (data) => {
+    store.commit('threadStore/REMOVE_THREAD', data)
+  },
+  add_thread: (data) => {
+    store.commit('threadStore/ADD_THREAD', data)
+  },
+  update_thread: (data) => {
+    store.commit("threadStore/UPDATE_THREAD", data)
+  }
 }
 
 export function connectUserSocket() {

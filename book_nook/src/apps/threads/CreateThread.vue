@@ -158,6 +158,8 @@ export default {
       const participantIds = this.selectedUsers.map((participant) => participant.other_user.id);
       participantIds.push(this.$store.state.auth.user.id);
       this.$store.dispatch("threadStore/addNewThread", participantIds);
+      this.selectedUsers = [];
+      this.isOpen = false;
     }
   },
 
