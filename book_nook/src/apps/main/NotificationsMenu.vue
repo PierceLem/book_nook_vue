@@ -37,7 +37,7 @@
             class="py-2"
           >
             <template v-slot:prepend>
-              <v-icon color="indigo">{{ notification.icon }}</v-icon>
+              <v-icon color="indigo">{{ icon(notification.type) }}</v-icon>
             </template>
 
             <template v-slot:subtitle>
@@ -46,7 +46,7 @@
 
             <template v-slot:append>
               <div class="d-flex flex-column align-center pl-2">
-                <span class="text-caption text-medium-emphasis">{{ notification.date }}</span>
+                <span class="text-caption text-medium-emphasis">{{ notification.created_at }}</span>
 
                 <v-btn
                   icon="mdi-delete-variant"
@@ -74,40 +74,25 @@ export default {
   data() {
     return {
       menu: false,
-      notifications: [
-        {
-          icon: "mdi-message-alert",
-          title: "New Message from Jane",
-          content: "Hey! Are we still on for tomorrow?",
-          date: "10s"
-        },
-        {
-          icon: "mdi-account-multiple-plus-outline",
-          title: "Friend Request",
-          content: "Alex Johnson sent you a friend request.",
-          date: "1hr"
-        },
-        {
-          icon: "mdi-message-alert",
-          title: "New Message from Chris",
-          content: "Hey! Did you get to reading that book I sent you? I wanted to talk to you about it when you got the chance.",
-          date: "1d"
-        },
-        {
-          icon: "mdi-message-alert",
-          title: "New Message from Emma",
-          content: "Thanks for the recommendation!",
-          date: "1w"
-        },
-        {
-          icon: "mdi-account-multiple-check-outline",
-          title: "Friend Request Accepted",
-          content: "Sophia accepted your friend request.",
-          date: "3w"
-        },
-      ]
     }
-  }
+  },
+
+  computed: {
+    notifications() {
+      return this.$store.state.notificationStore.notifications;
+    },
+
+    icon() {
+      return (type) => {
+        const icons = {
+          success: 'mdi-account-check',
+          info: 'mdi-message-outline',
+          warning: 'mdi-account-remove',
+        }
+        return icons[type] || "mdi-bell"
+      }
+    }
+  },
 };
 </script>
 
