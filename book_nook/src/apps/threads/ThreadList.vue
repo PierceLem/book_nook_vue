@@ -79,7 +79,7 @@
 
           <template v-slot:title>
             <div class="d-flex flex-column">
-              <span class="text-end date-text pr-1">date</span>
+              <span class="text-end date-text pr-1">{{ formatDate(thread.last_active, now) }}</span>
               <span>{{ getThreadDisplayName(thread) }}</span>
             </div>
           </template>
@@ -90,8 +90,9 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions, mapState } from "vuex";
 import CreateThread from './CreateThread.vue';
+import { formatDate } from '@/utils/dateUtils';
 
 export default {
   name: "ChatList",
@@ -107,6 +108,8 @@ export default {
   },
 
   computed: {
+    ...mapState('ui', ['now']),
+
     ...mapGetters("ui", ["isChatDrawerOpen"]),
 
     ...mapGetters('threadStore', ['getThreadDisplayName']),
@@ -140,6 +143,8 @@ export default {
   },
 
   methods: {
+    formatDate,
+
     threadSelect(thread) {
       this.$store.dispatch('threadStore/selectThread', thread)
     },

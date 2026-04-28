@@ -41,23 +41,25 @@
             </template>
 
             <template v-slot:subtitle>
-              {{ notification.content }}
+                {{ notification.content }}
             </template>
 
             <template v-slot:append>
-              <div class="d-flex flex-column align-center pl-2">
-                <span class="text-caption text-medium-emphasis">{{ notification.created_at }}</span>
+              <v-divider vertical opacity="20%" color="indigo"></v-divider>
 
+              <div class="d-flex flex-column align-center pl-2">
                 <v-btn
-                  icon="mdi-delete-variant"
+                  icon="mdi-trash-can-outline"
                   color="red"
-                  size="x-small"
+                  size="small"
                   height="25px"
                   width="25px"
                   variant="text"
                 ></v-btn>
               </div>
             </template>
+
+            <span class="notification-date">{{ formatDate(notification.created_at, now) }}</span>
           </v-list-item>
 
           <v-divider class="ml-15" color="indigo"></v-divider>
@@ -68,6 +70,9 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+import { formatDate } from '@/utils/dateUtils';
+
 export default {
   name: "NotificationsMenu",
 
@@ -77,10 +82,14 @@ export default {
     }
   },
 
+  methods: {
+    formatDate,
+  },
+
   computed: {
-    notifications() {
-      return this.$store.state.notificationStore.notifications;
-    },
+    ...mapState('notificationStore', ['notifications']),
+
+    ...mapState('ui', ['now']),
 
     icon() {
       return (type) => {
@@ -97,4 +106,11 @@ export default {
 </script>
 
 <style scoped>
+.notification-date {
+  position: absolute;
+  right: 55px;
+  bottom: 0px;
+  font-size: xx-small;
+  opacity: 50%;
+}
 </style>

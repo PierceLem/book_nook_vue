@@ -74,7 +74,7 @@
             </div>
 
             <span class="text-caption text-indigo opacity-70 pl-2">
-              Last active 3 hrs ago
+              Last active: {{ formatDate(threadDetail.last_active, now) }}
             </span>
           </v-container>
         </div>
@@ -115,7 +115,8 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
+import { formatDate } from '@/utils/dateUtils';
 import EditThread from './EditThread.vue';
 import ThreadRename from './ThreadRename.vue';
 import ThreadParticipants from './components/ThreadParticipants.vue';
@@ -146,11 +147,15 @@ export default {
       return name == 'Group chat';
     },
 
-    ...mapGetters("threadStore", ["getThreadDisplayName"])
+    ...mapGetters("threadStore", ["getThreadDisplayName"]),
+
+    ...mapState('ui', ['now']),
   },
 
   methods: {
     ...mapActions("ui", ["toggleChatDrawer"]),
+
+    formatDate,
   },
 };
 </script>

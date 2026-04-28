@@ -24,7 +24,7 @@
 
       <v-spacer></v-spacer>
 
-      <span class="date">{{ createdAt }}</span>
+      <span class="date">{{ formatDate(createdAt, now) }}</span>
     </v-list-item-title>
 
     <div class="d-flex justify-start align-top">
@@ -51,7 +51,7 @@
       </div>
     </div>
 
-    <v-overlay 
+    <v-overlay
       v-if="isOwner"
       activator="parent"
       open-on-hover
@@ -86,7 +86,9 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import UserInfoCard from '@/apps/main/components/UserInfoCard.vue';
+import { formatDate } from '@/utils/dateUtils';
 
 export default {
   name: "Review",
@@ -128,6 +130,14 @@ export default {
       required: true,
     },
   },
+
+  methods: {
+    formatDate
+  },
+
+  computed: {
+    ...mapState('ui', ['now']),
+  }
 }
 </script>
 

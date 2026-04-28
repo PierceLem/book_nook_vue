@@ -2,6 +2,7 @@ export default {
   namespaced: true,
   
   state: {
+    now: new Date(),
     navDrawer: true,
     chatDrawer: true,
     snackbar: {
@@ -14,6 +15,9 @@ export default {
   },
 
   mutations: {
+    UPDATE_NOW(state) {
+      state.now = new Date()
+    },
     TOGGLE_DRAWER(state) {
       state.navDrawer = !state.navDrawer;
     },
@@ -45,6 +49,12 @@ export default {
   },
 
   actions: {
+    startClock({ commit }) {
+      setInterval(() => {
+        commit("UPDATE_NOW")
+      }, 60000)
+    },
+
     toggleDrawer({ commit }) {
       commit("TOGGLE_DRAWER");
     },

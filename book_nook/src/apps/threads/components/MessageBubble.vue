@@ -75,13 +75,15 @@
       class="message-date mb-1" 
       :class="is_owner ? 'ml-0' : 'ml-2'"
     >
-      {{ message.created_at }}
+      {{ formatDate(message.created_at, now) }}
     </span>
   </v-container>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import { useDisplay } from 'vuetify/lib/framework.mjs';
+import { formatDate } from '@/utils/dateUtils';
 
 export default {
   name: "MessageBubble",
@@ -97,7 +99,13 @@ export default {
     return { smAndDown };
   },
 
+  methods: {
+    formatDate
+  },
+
   computed: {
+    ...mapState('ui', ['now']),
+
     is_owner() {
       const currentUser = this.$store.state.auth.user;
       return currentUser?.id === this.message.sender?.id;

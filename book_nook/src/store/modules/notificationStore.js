@@ -26,6 +26,7 @@ export default {
     async fetchNotifications({ commit }) {
       const response = await axios.get(`/notifications/`);
       commit('SET_NOTIFICATIONS', response.data);
-    }
+    },
+    
   },
 }
