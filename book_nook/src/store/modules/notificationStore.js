@@ -18,15 +18,25 @@ export default {
       state.notifications.push(notif);
     },
     CLEAR_NOTIFICATIONS(state) {
-      state.notifications = null;
+      state.notifications = [];
     }
   },
 
   actions: {
     async fetchNotifications({ commit }) {
+      commit('CLEAR_NOTIFICATIONS');
       const response = await axios.get(`/notifications/`);
       commit('SET_NOTIFICATIONS', response.data);
     },
-    
+
+    async deleteNotification({commit}, notifId) {
+      await axios.delete('/notifications/', { data: { 'id': notifId } });
+      commit('REMOVE_NOTIFICATION', notifId);
+    },
+
+    async clearNotifications({commit}) {
+      await axios.delete('notifications/');
+      commit('CLEAR_NOTIFICATIONS');
+    }
   },
 }

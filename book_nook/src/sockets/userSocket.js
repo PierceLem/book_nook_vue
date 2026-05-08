@@ -33,6 +33,11 @@ const socketEventHandlers = {
   },
   update_thread: (data) => {
     store.commit("threadStore/UPDATE_THREAD", data)
+  },
+
+  /*Notification related updates*/ 
+  new_notification: (data) => {
+    store.commit("notificationStore/ADD_NOTIFICATION", data)
   }
 }
 
