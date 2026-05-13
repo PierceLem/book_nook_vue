@@ -19,12 +19,16 @@ export default {
     },
     CLEAR_NOTIFICATIONS(state) {
       state.notifications = [];
-    }
+    },
+    REMOVE_FRIENDSHIP_NOTIFICATION(state, friendshipId) {
+      state.notifications = state.notifications.filter(
+        n => n.friendship !== friendshipId
+      )
+    },
   },
 
   actions: {
     async fetchNotifications({ commit }) {
-      commit('CLEAR_NOTIFICATIONS');
       const response = await axios.get(`/notifications/`);
       commit('SET_NOTIFICATIONS', response.data);
     },

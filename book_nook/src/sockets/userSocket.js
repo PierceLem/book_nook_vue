@@ -22,6 +22,7 @@ const socketEventHandlers = {
   },
   request_cancelled: (data) => {
     store.commit('social/REMOVE_INCOMING_REQUEST', data)
+    store.commit('notificationStore/REMOVE_FRIENDSHIP_NOTIFICATION', data)
   },
 
   /*Thread related updates*/ 

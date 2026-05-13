@@ -177,6 +177,8 @@ export default {
 
     async acceptFriendRequest({ dispatch, commit, rootState }, { requestId, username}) {
       try {
+        commit("notificationStore/REMOVE_FRIENDSHIP_NOTIFICATION", requestId, { root: true })
+
         const response = await axios.put('/friend-request/', {"id": requestId})
         const currentUserId = rootState.auth.user.id
         const shaped = shapeRequest(response.data, currentUserId)
