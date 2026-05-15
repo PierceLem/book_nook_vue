@@ -67,6 +67,19 @@ export default {
       }
     },
 
+    RECONCILE_THREAD(state, data) {
+      const threadIndex = state.threads.findIndex(t => t.id === data.thread_id)
+
+      if (threadIndex !== -1) {
+        const thread = state.threads.splice(threadIndex, 1)[0]
+        state.threads.unshift({ ...thread, last_active: data.last_active, hint: data.message_hint })
+
+        if (state.activeThread && data.thread_id === state.activeThread.id) {
+          state.activeThread.last_active = data.last_active
+        }
+      }
+    },
+
     REMOVE_THREAD(state, threadId) {
       state.threads = state.threads.filter((t) => t.id !== threadId);
       if (state.activeThread?.id === threadId) {

@@ -64,7 +64,7 @@
           :key="thread.id"
           color="indigo"
           slim
-          subtitle="Insert last received message here."
+          :subtitle='thread.hint'
           class="thread-item py-1 pr-2 pl-1 my-1"
           @click="threadSelect(thread)"
         >

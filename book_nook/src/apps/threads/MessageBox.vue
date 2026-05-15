@@ -102,6 +102,7 @@ export default {
   methods: {
     sendMessage() {
       this.$store.dispatch('threadStore/sendMessage', {'content': this.message});
+      this.message = '';
     }
   }
 }
