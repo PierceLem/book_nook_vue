@@ -135,7 +135,7 @@ export default {
 }
 
 .message-card:hover .sender-username {
-  opacity: 0.5;
+  opacity: 1;
 }
 
 .message-date {
@@ -146,7 +146,7 @@ export default {
 }
 
 .sender-username {
-  background: white;
+  background-color: white;
   padding-inline: 4px;
   border-radius: 4px;
   border: solid 2px #E0F2F1;

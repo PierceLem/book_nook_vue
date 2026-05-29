@@ -7,6 +7,7 @@ export default {
   state: () => ({
     threads: [],
     activeThread: null,
+    activeUsers: [],
     messages: [],
     socket: null,
   }),
@@ -30,6 +31,11 @@ export default {
       state.activeThread = thread;
     },
 
+    SET_ACTIVE_USERS(state, users) {
+      state.activeUsers = users;
+      console.log(state.activeUsers);
+    },
+
     SET_MESSAGES(state, messages) {
       state.messages = messages;
     },
@@ -38,8 +44,9 @@ export default {
       state.messages.push(message);
     },
 
-    CLEAR_MESSAGES(state) {
+    CLEAR_MESSAGE_DATA(state) {
       state.messages = [];
+      state.activeUsers = [];
     },
 
     SET_SOCKET(state, socket) {
@@ -86,7 +93,7 @@ export default {
         state.activeThread = null;
         state.messages = [];
       }
-    },
+    }
   },
 
   actions: {
@@ -113,7 +120,7 @@ export default {
         state.socket.close();
       }
 
-      commit("CLEAR_MESSAGES");
+      commit("CLEAR_MESSAGE_DATA");
       commit("SET_ACTIVE_THREAD", thread);
 
       // Fetch message history
@@ -154,7 +161,7 @@ export default {
 
     cleanup({ commit }) {
       commit("CLEAR_SOCKET");
-      commit("CLEAR_MESSAGES");
+      commit("CLEAR_MESSAGE_DATA");
       commit("SET_ACTIVE_THREAD", null);
     },
   },

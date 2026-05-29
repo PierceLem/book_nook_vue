@@ -1,5 +1,14 @@
 import store from "@/store";
 
+const messageSocketEventHandlers = {
+  new_message: (data) => {
+    store.commit('threadStore/ADD_MESSAGE', data)
+  },
+  active_users: (data) => {
+    store.commit('threadStore/SET_ACTIVE_USERS', data)
+  },
+}
+
 export function connectToThread(threadId, onMessage) {
   const token = localStorage.getItem('token');
 
@@ -7,14 +16,14 @@ export function connectToThread(threadId, onMessage) {
     `ws://localhost:8000/ws/threads/${threadId}/?token=${token}`
   );
 
-  socket.onopen = () => {
-    console.log("WebSocket connected");
-  };
-
   socket.onmessage = (event) => {
-    const payload = JSON.parse(event.data);
-    if (payload.message) {
-      store.commit("threadStore/ADD_MESSAGE", payload.message);
+    const { event: eventType, data } = JSON.parse(event.data)
+    const handler = messageSocketEventHandlers[eventType]
+
+    if (handler) {
+      handler(data)
+    } else {
+      console.warn(`Unhandled socket event: ${eventType}`)
     }
   };
 

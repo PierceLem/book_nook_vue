@@ -7,9 +7,26 @@
         v-for="message in messages"
         :message="message"
       />
+
       <div class="d-flex align-center justify-center w-100 h-100" v-if="!messages || messages.length === 0">
         <span class="text-indigo">no data</span>
       </div>
+    </div>
+
+    <div class="active-users" v-if="activeUsersFiltered">
+      <v-badge
+        v-for="user in activeUsersFiltered"
+        location="top right"
+        color="success"
+        offset-x="4"
+        dot
+      >
+        <v-avatar 
+          :image="user.avatar"
+          size="25"
+          class="mx-2"
+        ></v-avatar>
+      </v-badge>
     </div>
 
     <div class="message-field-container">
@@ -72,7 +89,12 @@ export default {
   },
 
   computed: {
-    ...mapState('threadStore', ['messages', 'activeThread']),
+    ...mapState('threadStore', ['messages', 'activeThread', 'activeUsers']),
+
+    activeUsersFiltered() {
+      const currentUserId = this.$store.state.auth.user.id
+      return this.activeUsers.filter(u => u.id !== currentUserId)
+    }
   },
 
   watch: {
@@ -132,7 +154,8 @@ export default {
   scrollbar-color: rgba(63, 81, 181, 0.5) transparent;
   padding: 12px 0px 10px 10px;
   margin: 0;
-  border-radius: 8px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
   background-color: white;
   position: relative;
 }
@@ -167,6 +190,15 @@ export default {
 .placeholder-img {
   width: 90%;
   max-width: 400px;
+}
+
+.active-users {
+  width: 100%;
+  text-align: end;
+  padding: 8px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  background-color: white;
 }
 
 :deep(.v-field) {
