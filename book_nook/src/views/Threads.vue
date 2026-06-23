@@ -8,7 +8,7 @@ import ThreadList from '@/apps/threads/ThreadList.vue';
 import MessageBox from '@/apps/threads/MessageBox.vue';
 
 export default {
-  name: "Chat",
+  name: "Threads",
 
   components: {
     ThreadList,

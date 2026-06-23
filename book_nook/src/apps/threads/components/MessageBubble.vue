@@ -77,6 +77,27 @@
     >
       {{ formatDate(message.created_at, now) }}
     </span>
+
+    <div
+      v-if="filteredBookmarks.length"
+      class="d-flex flex-row align-self-end"
+    >
+      <div
+        v-for="bookmark in filteredBookmarks"
+        :key="bookmark.user.id"
+        class="bookmark-avatar mr-1 mb-2"
+      >
+        <img :src="bookmark.user.avatar" :alt="bookmark.user.username" />
+        <v-tooltip
+          activator="parent"
+          open-delay="100"
+          location="left"
+          open-on-hover
+        >
+          {{ bookmark.user.username }}
+        </v-tooltip>
+      </div>
+    </div>
   </v-container>
 </template>
 
@@ -99,6 +120,24 @@ export default {
     return { smAndDown };
   },
 
+  mounted() {
+    this.observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            this.$emit('message-read', this.message.id);
+            this.observer.disconnect();
+          }
+        });
+      },
+      {
+        threshold: 0.9
+      }
+    );
+
+    this.observer.observe(this.$el);
+  },
+
   methods: {
     formatDate
   },
@@ -109,6 +148,11 @@ export default {
     is_owner() {
       const currentUser = this.$store.state.auth.user;
       return currentUser?.id === this.message.sender?.id;
+    },
+
+    filteredBookmarks() {
+      const currentUserId = this.$store.state.auth.user.id;
+      return this.message.bookmarks?.filter(b => b.user.id !== currentUserId) || [];
     }
   }
 };
@@ -233,5 +277,19 @@ export default {
 
 .indigo-scroll {
   scrollbar-color: rgba(26, 35, 126, 0.5) transparent;
+}
+
+.bookmark-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+}
+
+.bookmark-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 </style>

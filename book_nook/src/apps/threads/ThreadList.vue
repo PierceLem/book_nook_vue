@@ -196,7 +196,7 @@ export default {
 }
 
 .thread-list {
-  height: calc(100vh - 172px);
+  height: 100%;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: rgba(63, 81, 181, 0.5) transparent;

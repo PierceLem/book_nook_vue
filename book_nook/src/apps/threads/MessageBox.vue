@@ -2,31 +2,40 @@
   <div class="chat-container" v-if="activeThread">
     <ThreadAppBar />
     
-    <div class="messages-container" ref="messagesContainer">
-      <MessageBubble
-        v-for="message in messages"
-        :message="message"
-      />
-
-      <div class="d-flex align-center justify-center w-100 h-100" v-if="!messages || messages.length === 0">
-        <span class="text-indigo">no data</span>
-      </div>
-    </div>
-
-    <div class="active-users" v-if="activeUsersFiltered">
-      <v-badge
-        v-for="user in activeUsersFiltered"
-        location="top right"
-        color="success"
-        offset-x="4"
-        dot
+    <div class="messages-wrapper">
+      <div 
+        class="messages-container" 
+        ref="messagesContainer"
+        @scroll="onScroll"
       >
-        <v-avatar 
-          :image="user.avatar"
-          size="25"
-          class="mx-2"
-        ></v-avatar>
-      </v-badge>
+        <MessageBubble
+          v-for="message in messages"
+          :key="message.id"
+          :ref="`message-${message.id}`"
+          :message="message"
+          @message-read="onMessageRead"
+        />
+        
+        <div class="d-flex align-center justify-center w-100 h-100" v-if="!messages || messages.length === 0">
+          <span class="text-indigo">no data</span>
+        </div>
+      </div>
+
+      <div class="active-users" v-if="activeUsersFiltered?.length">
+        <v-badge
+          v-for="user in activeUsersFiltered"
+          location="top right"
+          color="success"
+          offset-y="5"
+          dot
+        >
+          <v-avatar
+            :image="user.avatar"
+            size="25"
+            class="my-2"
+          ></v-avatar>
+        </v-badge>
+      </div>
     </div>
 
     <div class="message-field-container">
@@ -82,9 +91,40 @@ export default {
     ThreadAppBar,
   },
 
-  data (){
+  data() {
     return {
+      savedScrollTop: 0,
+      messageRefs: {},
       message: '',
+      hasScrolled: false,
+    }
+  },
+
+  activated() {
+    this.$nextTick(() => {
+      const el = this.$refs.messagesContainer
+      if (!el) return
+
+      el.scrollTop = this.savedScrollTop
+    })
+  },
+
+  watch: {
+    activeThread: {
+      handler() {
+        this.hasScrolled = false;
+      }
+    },
+
+    'messages.length': {
+      handler(newLength) {
+        if (newLength && !this.hasScrolled) {
+          this.$nextTick(() => {
+            this.scrollToBookmark();
+            this.hasScrolled = true;
+          });
+        }
+      }
     }
   },
 
@@ -97,35 +137,34 @@ export default {
     }
   },
 
-  watch: {
-    messages: {
-      handler() {
-        this.$nextTick(() => {
-          const container = this.$refs.messagesContainer;
-          if (container) {
-            container.scrollTop = container.scrollHeight;
-          }
-        });
-      },
-      deep: true,
-      immediate: true,
+  methods: {
+    onScroll() {
+      this.savedScrollTop =
+        this.$refs.messagesContainer.scrollTop
     },
 
-    threadDetail() {
-      this.$nextTick(() => {
-        const container = this.$refs.messagesContainer;
-        if (container) {
-          container.scrollTop = container.scrollHeight;
-        }
-      });
-    }
-  },
-
-  methods: {
     sendMessage() {
       this.$store.dispatch('threadStore/sendMessage', {'content': this.message});
       this.message = '';
-    }
+    },
+
+    onMessageRead(messageId) {
+      this.$store.dispatch('threadStore/updateReadPosition', messageId);
+    },
+
+    scrollToBookmark() {
+      const bookmarkedMessage = this.$store.getters['threadStore/getBookmark'];
+
+      if (bookmarkedMessage) {
+        const el = this.$refs[`message-${bookmarkedMessage.id}`]?.[0]?.$el;
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      } else {
+        const container = this.$refs.messagesContainer;
+        if (container) container.scrollTop = container.scrollHeight;
+      }
+    },
   }
 }
 </script>
@@ -145,6 +184,14 @@ export default {
   border-bottom-right-radius: 8px;
 }
 
+.messages-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
 .messages-container {
   display: flex;
   flex-direction: column;
@@ -153,11 +200,24 @@ export default {
   scrollbar-width: thin;
   scrollbar-color: rgba(63, 81, 181, 0.5) transparent;
   padding: 12px 0px 10px 10px;
-  margin: 0;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
   background-color: white;
   position: relative;
+  border-radius: 8px;
+}
+
+.active-users {
+  display: flex;
+  margin-left: 4px;
+  flex-direction: column;
+  align-items: center;
+  width: 44px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+  background-color: white;
+  border-left: 1px solid #E8EAF6;
+  padding: 8px 0;
+  border-radius: 8px;
 }
 
 .rename-alert {
@@ -190,15 +250,6 @@ export default {
 .placeholder-img {
   width: 90%;
   max-width: 400px;
-}
-
-.active-users {
-  width: 100%;
-  text-align: end;
-  padding: 8px;
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
-  background-color: white;
 }
 
 :deep(.v-field) {

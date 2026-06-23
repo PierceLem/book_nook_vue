@@ -1,5 +1,5 @@
 import axios from "axios";
-import { connectToThread } from "@/sockets/messageSocket";
+import { connectToThread, disconnectFromThread } from "@/sockets/messageSocket";
 
 export default {
   namespaced: true,
@@ -9,22 +9,17 @@ export default {
     activeThread: null,
     activeUsers: [],
     messages: [],
+    lastReadMessageId: null,
     socket: null,
   }),
-
-  getters: {
-    hasActiveThread(state) {
-      return !!state.activeThread;
-    },
-  },
 
   mutations: {
     SET_THREADS(state, threads) {
       state.threads = threads;
     },
 
-    ADD_THREAD(state, thread) {
-      state.threads.push(thread);
+    SET_SOCKET(state, socket) {
+      state.socket = socket;
     },
 
     SET_ACTIVE_THREAD(state, thread) {
@@ -33,7 +28,6 @@ export default {
 
     SET_ACTIVE_USERS(state, users) {
       state.activeUsers = users;
-      console.log(state.activeUsers);
     },
 
     SET_MESSAGES(state, messages) {
@@ -44,20 +38,28 @@ export default {
       state.messages.push(message);
     },
 
-    CLEAR_MESSAGE_DATA(state) {
-      state.messages = [];
-      state.activeUsers = [];
+    ADD_THREAD(state, thread) {
+      state.threads.push(thread);
     },
 
-    SET_SOCKET(state, socket) {
-      state.socket = socket;
-    },
+    UPDATE_BOOKMARK(state, data) {
+      if (data.old_message) {
+        const oldIndex = state.messages.findIndex(
+          (m) => m.id === data.old_message.id
+        );
 
-    CLEAR_SOCKET(state) {
-      if (state.socket) {
-        state.socket.close();
+        if (oldIndex !== -1) {
+          state.messages.splice(oldIndex, 1, data.old_message);
+        };
       }
-      state.socket = null;
+
+      const newIndex = state.messages.findIndex(
+        (m) => m.id === data.new_message.id
+      );
+
+      if (newIndex !== -1) {
+        state.messages.splice(newIndex, 1, data.new_message);
+      };
     },
 
     UPDATE_THREAD(state, updatedThread) {
@@ -93,12 +95,22 @@ export default {
         state.activeThread = null;
         state.messages = [];
       }
+    },
+
+    SET_LAST_READ_MESSAGE(state, messageId) {
+      const messages = state.messages;
+      const newIndex = messages.findIndex(m => m.id === messageId);
+      const currentIndex = messages.findIndex(m => m.id === state.lastReadMessageId);
+
+      if (newIndex > currentIndex) {
+        state.lastReadMessageId = messageId;
+      }
     }
   },
 
   actions: {
     /* ------------------------------
-       THREAD LIST
+      THREAD LIST
     ------------------------------ */
 
     async fetchThreads({ commit }) {
@@ -111,40 +123,35 @@ export default {
     },
 
     /* ------------------------------
-       THREAD SELECTION
+      THREAD SELECTION
     ------------------------------ */
 
-    async selectThread({ state, commit }, thread) {
-      // Close previous socket
-      if (state.socket) {
-        state.socket.close();
-      }
+    async selectThread({ commit, dispatch, rootState }, thread) {
+      await dispatch('cleanup');
 
-      commit("CLEAR_MESSAGE_DATA");
       commit("SET_ACTIVE_THREAD", thread);
 
-      // Fetch message history
       const response = await axios.get(`/thread/${thread.id}`);
       commit("SET_MESSAGES", response.data);
 
-      // Open WebSocket for this thread
-      const socket = connectToThread(thread.id, (message) => {
-        commit("ADD_MESSAGE", message);
-      });
-
+      const socket = connectToThread(thread.id);
       commit("SET_SOCKET", socket);
     },
 
     /* ------------------------------
-       MESSAGING
+      MESSAGING
     ------------------------------ */ 
 
     async sendMessage({ state }, message) {
       await axios.post(`/thread/${state.activeThread.id}/`, message);
     },
 
+    updateReadPosition({ commit }, messageId) {
+      commit('SET_LAST_READ_MESSAGE', messageId);
+    },
+
     /* ------------------------------
-       THREAD UPDATES
+      THREAD UPDATES
     ------------------------------ */
 
     async updateThread({ state }, updatedThread) {
@@ -156,12 +163,14 @@ export default {
     },
 
     /* ------------------------------
-       CLEANUP
+      CLEANUP
     ------------------------------ */
 
-    cleanup({ commit }) {
-      commit("CLEAR_SOCKET");
-      commit("CLEAR_MESSAGE_DATA");
+    cleanup({ state, commit }) {
+      disconnectFromThread(state.socket);
+      commit("SET_SOCKET", null);
+      commit("SET_MESSAGES", []);
+      commit("SET_ACTIVE_USERS", []);
       commit("SET_ACTIVE_THREAD", null);
     },
   },
@@ -178,6 +187,17 @@ export default {
       }
 
       return "Group Chat"
-    }
+    },
+
+    hasActiveThread(state) {
+      return !!state.activeThread;
+    },
+
+    getBookmark(state, getters, rootState) {
+      const currentUserId = rootState.auth.user.id;
+      return state.messages.find(m => 
+        m.bookmarks?.some(b => b.user.id === currentUserId)
+      );
+    },
   }
 };
