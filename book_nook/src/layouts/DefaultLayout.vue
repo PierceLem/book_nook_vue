@@ -61,4 +61,15 @@ export default {
   scrollbar-width: thin;
   scrollbar-color: rgba(26, 35, 126, 0.5) transparent;
 }
+
+.v-application {
+  height: 100vh;
+  display: flex;
+}
+
+.v-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+}
 </style>

@@ -14,7 +14,7 @@
 
       <template v-slot:append>
         <v-btn 
-          variant="text"
+          variant="tonal"
           color="indigo"
           min-height="35px"
           min-width="35px"
@@ -164,7 +164,8 @@ export default {
   width: calc(100% - 198px);
   height: 100%;
   background-color: white;
-  border-left: solid 2px #E8EAF6;
+  border-left: solid 1px #E8EAF6;
+  border-radius: 8px;
   position: absolute;
   top: 0;
   right: 0;
@@ -172,7 +173,8 @@ export default {
 }
 
 .toolbar-border {
-  border-bottom: solid 1px #C5CAE9;
+  border: solid 1px #C5CAE9;
+  border-top-left-radius: 8px;
 }
 
 .review-list-wrapper {

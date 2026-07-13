@@ -2,7 +2,11 @@
   <div class="page-wrapper">
     <DiscoverDrawer @setGenre="genreSelection($event)" @query="customQuery($event)" />
 
-    <v-card elevation="4" color="indigo" class="search-query py-1 px-2 rounded-lg text-h6">{{ searched }}</v-card>
+    <v-card 
+      elevation="4" 
+      color="indigo" 
+      class="search-query py-1 px-2 text-h6"
+    >{{ searched }}</v-card>
 
     <div class="books-container">
       <div v-for="book in books" class="book-card-wrapper">
@@ -121,6 +125,8 @@ export default {
 .page-wrapper {
   position: relative;
   height: calc(100vh - 64px);
+  width: 100%;
+  padding: 8px;
 }
 
 .search-query {
@@ -128,6 +134,10 @@ export default {
   top: 8px;
   left: 8px;
   z-index: 1000;
+  border-top-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-top-right-radius: 0px;
+  border-bottom-left-radius: 0px;
 }
 
 .books-container {
@@ -135,7 +145,10 @@ export default {
   flex-wrap: wrap;
   height: 100%;
   width: 100%;
-  padding: 56px 0px 0px 8px;
+  padding: 48px 0px 0px 8px;
+  border-radius: 8px;
+  border: solid 2px #E8EAF6;
+  background-color: #E8EAF6;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: rgba(63, 81, 181, 0.5) transparent;

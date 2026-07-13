@@ -1,26 +1,26 @@
 <template>
   <div
     ref="pageContainer" 
-    class="h-100 w-100 pt-1 px-2"
+    class="page-wrapper"
   >
     <div class="bookshelf-toolbar">
       <span class="text-h5 text-indigo">My Bookshelf</span>
     </div>
 
-    <div class="d-flex tabs-wrapper" :class="containerClass">
+    <div class="tabs-wrapper">
       <v-tabs
         v-model="tab"
+        align-tabs="center"
         color="indigo"
-        :direction="tabDirection"
-        :class="tabsClass"
+        direction="horizontal"
       >
         <v-tab prepend-icon="mdi-playlist-edit" text="Reviewed" value="option-1"></v-tab>
         <v-tab prepend-icon="mdi-download" text="Saved" value="option-2"></v-tab>
       </v-tabs>
 
-      <v-tabs-window v-model="tab" class="w-100 h-100">
-        <v-tabs-window-item value="option-1" :class="windowClass" class="pb-4 h-100">
-          <div class="page-wrapper">
+      <v-tabs-window v-model="tab" class="bookshelf-wrapper">
+        <v-tabs-window-item value="option-1" class="bookshelf-window">
+          <div class="window-wrapper">
             <div v-for="book in reviewedBooks" class="book-card-wrapper">
               <BookCard
                 :key="book.id"
@@ -36,11 +36,16 @@
             </div>
             
             <div v-if="reviewedBooks.length % 2 !== 0" class="book-card-spacer"></div>
+
+            <div v-if="reviewedBooks.length === 0" class="placeholder-img-box">
+              <img :src="require('@/assets/undraw_reviews.svg')" class="placeholder-img"></img>
+              <span class="text-h5 text-indigo mt-4">No Reviews</span>
+            </div>
           </div>
         </v-tabs-window-item>
 
-        <v-tabs-window-item value="option-2" :class="windowClass" class="pb-4 h-100">
-          <div class="page-wrapper">
+        <v-tabs-window-item value="option-2" class="bookshelf-window">
+          <div class="window-wrapper">
             <div v-for="book in savedBooks" class="book-card-wrapper">
               <BookCard
                 :key="book.id"
@@ -56,6 +61,11 @@
             </div>
             
             <div v-if="savedBooks.length % 2 !== 0" class="book-card-spacer"></div>
+
+            <div v-if="savedBooks.length === 0" class="placeholder-img-box">
+              <img :src="require('@/assets/undraw_saved.svg')" class="placeholder-img"></img>
+              <span class="text-h5 text-indigo mt-4">No Saved Books</span>
+            </div>
           </div>
         </v-tabs-window-item>
       </v-tabs-window>
@@ -76,48 +86,16 @@ export default {
 
   data: () => ({
     tab: 'option-1',
-    tabDirection: null,
-    containerClass: null,
-    windowClass: null,
-    tabsClass: null,
     reviewedBooks: [],
     savedBooks: [],
-    containerWidth: 0,
   }),
 
-  watch: {
-    containerWidth(newWidth) {
-      this.updateTabOrientation(newWidth);
-    }
-  },
-
   mounted() {
-    this.containerWidth = this.$refs.pageContainer.clientWidth;
-    window.addEventListener("resize", this.onResize);
     this.fetchUserBooks();
   },
 
-  beforeUnmount() {
-    window.removeEventListener("resize", this.onResize);
-  },
-
   methods: {
-    onResize() {
-      this.containerWidth = this.$refs.pageContainer.clientWidth;
-    },
-    updateTabOrientation(containerWidth) {
-      if (containerWidth <= 1000) {
-        this.tabDirection = "horizontal"
-        this.containerClass = "flex-column"
-        this.windowClass = "bookshelf-window-sm"
-      } else {
-        this.tabDirection = "vertical"
-        this.containerClass = "flex-row"
-        this.windowClass = "bookshelf-window"
-      }
-    },
     async fetchUserBooks() {
-      console.log("fetching books");
       try {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -145,18 +123,32 @@ export default {
 </script>
 
 <style scoped>
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 64px);
+  max-height: calc(100vh - 64px);
+  width: 100%;
+  padding: 8px;
+}
+
 .bookshelf-window {
-  max-height: calc(100vh - 112.8px);
+  height: 100%;
+  width: 100%;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: rgba(63, 81, 181, 0.5) transparent;
 }
 
-.bookshelf-window-sm {
-  max-height: calc(100vh - 160.8px);
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(63, 81, 181, 0.5) transparent;
+.bookshelf-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  border-radius: 8px;
+  background-color: #E8EAF6;
+  border: 2px solid #E8EAF6;
 }
 
 .bookshelf-toolbar {
@@ -165,7 +157,7 @@ export default {
   width: 100%;
 }
 
-.page-wrapper {
+.window-wrapper {
   padding: 8px 0px 0px 8px;
   display: flex;
   flex-wrap: wrap;
@@ -174,8 +166,11 @@ export default {
 }
 
 .tabs-wrapper {
-  height: calc(100vh - 112.8px);
-  width: 100%;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .book-card-wrapper {
@@ -195,5 +190,22 @@ export default {
   height: 1px;
   min-width: 500px;
   max-width: 100%;
+}
+
+.placeholder-img-box {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.placeholder-img {
+  height: 35%;
+}
+
+:deep(.v-window__container) {
+  width: 100%;
 }
 </style>

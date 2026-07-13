@@ -171,31 +171,29 @@ export default {
 
 <style scoped>
 .chat-container {
-  height: calc(100vh - 136px);
-  width: calc(100% - 16px);
-  min-width: 450px;
+  height: 100%;
+  width: 100%;
+  min-height: 0;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  padding-inline: 12px;
-  margin-inline: 8px;
-  background-color: #E8EAF6;
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
+  padding: 8px;
+  border-radius: 8px;
 }
 
 .messages-wrapper {
   display: flex;
   flex-direction: row;
-  flex-grow: 1;
+  flex: 1;
   overflow: hidden;
-  border-radius: 8px;
+  padding-inline: 12px;
+  background-color: #E8EAF6;
 }
 
 .messages-container {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
+  flex: 1;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: rgba(63, 81, 181, 0.5) transparent;
@@ -231,6 +229,8 @@ export default {
 .message-field-container {
   width: 100%;
   padding: 8px;
+  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 8px;
   background-color: #E8EAF6;
 }
 

@@ -1,9 +1,6 @@
 <template>
-  <v-app-bar 
-    elevation="0"
-    style="min-width: 466px;"
-  >
-    <div class="w-100 h-100 pt-2 px-2">
+  <div class="thread-app-bar">
+    <div class="w-100 h-100">
       <div class="nav-wrapper">
         <div class="d-flex flex-row align-center">
           <v-btn 
@@ -111,7 +108,7 @@
         </div>
       </div>
     </div>
-  </v-app-bar>
+  </div>
 </template>
 
 <script>
@@ -161,6 +158,11 @@ export default {
 </script>
 
 <style scoped>
+.thread-app-bar {
+  height: 54px;
+  flex-shrink: 0;
+}
+
 .nav-wrapper {
   display: flex;
   align-content: center;
