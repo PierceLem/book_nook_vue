@@ -38,7 +38,7 @@
           hide-details 
           prepend-inner-icon="mdi-magnify"
           rounded="lg"
-          @click:prepend-inner="$emit('query', searchQuery)"
+          @click:prepend-inner="searchBooks"
         ></v-text-field>
       </v-list-item>
 
@@ -50,57 +50,35 @@
           <v-divider class="title-divider" color="indigo"></v-divider>
           <span class="text-caption text-indigo px-2">Genres</span>
           <v-divider class="title-divider" color="indigo"></v-divider>
+          <v-btn
+            color="indigo"
+            size="x-small"
+            :disabled="!selectedGenres.length"
+            @click="filterBooks"
+          >
+            apply
+          </v-btn>
         </v-container>
       </v-expand-transition>
 
-      <v-list 
-        density="compact" 
+      <v-list
+        v-model:selected="selectedGenres"
+        density="compact"
         color="indigo"
-        nav 
+        nav
         class="genre-list"
+        :class="{ 'rail-list': rail }"
+        select-strategy="classic"
       >
         <v-list-item
-          base-color="indigo"
-          prepend-icon="mdi-star-shooting"
+          v-for="genre in genres"
+          :key="genre.value"
+          :value="genre.value"
+          :title="genre.title"
+          :prepend-icon="genre.icon"
           :disabled="rail"
-          :key="defaultGenre.value" 
-          :title="defaultGenre.title" 
-          :value="defaultGenre.value"
-          @click="$emit('setGenre', defaultGenre)"
-          ref="genreRefs"
-        ></v-list-item>
-
-        <template 
-          v-for="(category, index) in categories" 
-          :key="index"
-        >
-          <v-list-group 
-            ref="categoryRefs"
-            base-color="indigo"
-          >
-            <template v-slot:activator="{ props }">
-              <v-list-item 
-                v-bind="props" 
-                :prepend-icon="category.icon" 
-                :title="category.name" 
-                :disabled="rail"
-                @click="openGroup(index, category)"
-                ref="activatorRefs"
-                class="pl-2 activator"
-              ></v-list-item>
-            </template>
-
-            <v-list-item 
-              v-for="genre in category.genres" 
-              base-color="indigo"
-              :key="genre.value" 
-              :title="genre.title" 
-              :value="genre.value"
-              @click="$emit('setGenre', genre)"
-              ref="genreRefs"
-            ></v-list-item>
-          </v-list-group>
-        </template>
+          base-color="indigo"
+        />
       </v-list>
     </div>
   </v-navigation-drawer>
@@ -123,93 +101,56 @@ export default {
       drawer: true,
       rail: true,
       searchQuery: "",
-      titleState: false,
       screenWidth: window.innerWidth,
-      defaultGenre: {
-        title: 'Popular on Book Nook',
-        value: 'bestsellers',
-      },
-      categories: [
-        {
-          name: "Fiction",
-          icon: "mdi-book-open-page-variant",
-          open: false,
-          genres: [
-            { title: "Fantasy", value: "fantasy" },
-            { title: "Science Fiction", value: "science-fiction" },
-            { title: "Mystery & Thriller", value: "mystery-thriller" },
-            { title: "Historical Fiction", value: "historical-fiction" },
-            { title: "Horror", value: "horror" },
-            { title: "Romance", value: "romance" },
-            { title: "Adventure", value: "adventure" },
-            { title: "Contemporary Fiction", value: "contemporary-fiction" },
-            { title: "Dystopian", value: "dystopian" },
-            { title: "Literary Fiction", value: "literary-fiction" },
-          ],
-        },
-        {
-          name: "Non-Fiction",
-          icon: "mdi-book",
-          open: false,
-          genres: [
-            { title: "Biography & Memoir", value: "biography-memoir" },
-            { title: "Self-Help", value: "self-help" },
-            { title: "Psychology", value: "psychology" },
-            { title: "Philosophy", value: "philosophy" },
-            { title: "Business & Economics", value: "business-economics" },
-            { title: "Politics & Government", value: "politics-government" },
-            { title: "History", value: "history" },
-            { title: "Science & Technology", value: "science-technology" },
-            { title: "Health & Wellness", value: "health-wellness" },
-            { title: "True Crime", value: "true-crime" },
-          ],
-        },
-        {
-          name: "Academic & Reference",
-          icon: "mdi-school",
-          open: false,
-          genres: [
-            { title: "Textbooks", value: "textbooks" },
-            { title: "Law", value: "law" },
-            { title: "Medicine", value: "medicine" },
-            { title: "Engineering", value: "engineering" },
-            { title: "Mathematics", value: "mathematics" },
-            { title: "Social Sciences", value: "social-sciences" },
-            { title: "Education", value: "education" },
-            { title: "Computer Science", value: "computer-science" },
-            { title: "Linguistics", value: "linguistics" },
-            { title: "Art & Design", value: "art-design" },
-          ],
-        },
-        {
-          name: "Children & Young Adult",
-          icon: "mdi-book-variant",
-          open: false,
-          genres: [
-            { title: "Young Adult Fiction", value: "young-adult-fiction" },
-            { title: "Young Adult Fantasy", value: "young-adult-fantasy" },
-            { title: "Children's Picture Books", value: "children-picture-books" },
-            { title: "Middle Grade Fiction", value: "middle-grade-fiction" },
-            { title: "Fairy Tales & Folklore", value: "fairy-tales-folklore" },
-          ],
-        },
-        {
-          name: "Miscellaneous",
-          icon: "mdi-bookshelf",
-          open: false,
-          genres: [
-            { title: "Graphic Novels & Comics", value: "graphic-novels-comics" },
-            { title: "Poetry", value: "poetry" },
-            { title: "Travel", value: "travel" },
-            { title: "Cooking & Food", value: "cooking-food" },
-            { title: "Religion & Spirituality", value: "religion-spirituality" },
-          ],
-        },
+      selectedGenres: [],
+      genres: [
+        { title: "Adventure", value: "Adventure", icon: "mdi-compass" },
+        { title: "Aliens", value: "Aliens", icon: "mdi-alien" },
+        { title: "American poetry", value: "American poetry", icon: "mdi-feather" },
+        { title: "Biography & Autobiography", value: "Biography & Autobiography", icon: "mdi-card-account-details" },
+        { title: "Business & Economics", value: "Business & Economics", icon: "mdi-briefcase" },
+        { title: "Classics", value: "Classics", icon: "mdi-book-open-page-variant" },
+        { title: "Comics", value: "Comics", icon: "mdi-view-dashboard-edit" },
+        { title: "Dark", value: "Dark", icon: "mdi-emoticon-frown" },
+        { title: "Dystopian", value: "Dystopian", icon: "mdi-factory" },
+        { title: "Emotional", value: "Emotional", icon: "mdi-heart" },
+        { title: "Family", value: "Family", icon: "mdi-account-group" },
+        { title: "Fantasy", value: "Fantasy", icon: "mdi-magic-staff" },
+        { title: "Fiction", value: "Fiction", icon: "mdi-thought-bubble" },
+        { title: "First-Person POV", value: "First-Person POV", icon: "mdi-account" },
+        { title: "Graphic Novels", value: "Graphic Novels", icon: "mdi-image-multiple" },
+        { title: "Historical Fiction", value: "Historical Fiction", icon: "mdi-fountain-pen" },
+        { title: "History", value: "History", icon: "mdi-history" },
+        { title: "Home Economics", value: "Home Economics", icon: "mdi-home" },
+        { title: "Horror", value: "Horror", icon: "mdi-skull" },
+        { title: "Humor", value: "Humor", icon: "mdi-emoticon-happy" },
+        { title: "Informative", value: "Informative", icon: "mdi-information" },
+        { title: "Inspiring", value: "Inspiring", icon: "mdi-lightbulb-on" },
+        { title: "Juvenile Fiction", value: "Juvenile Fiction", icon: "mdi-account-child" },
+        { title: "LGBTQ", value: "LGBTQ", icon: "mdi-looks" },
+        { title: "Magic", value: "Magic", icon: "mdi-auto-fix" },
+        { title: "Mathematics", value: "Mathematics", icon: "mdi-calculator" },
+        { title: "Medical", value: "Medical", icon: "mdi-hospital-box" },
+        { title: "Murder", value: "Murder", icon: "mdi-pistol" },
+        { title: "Mystery", value: "Mystery", icon: "mdi-magnify" },
+        { title: "Nonfiction", value: "Nonfiction", icon: "mdi-file-document" },
+        { title: "Philosophy", value: "Philosophy", icon: "mdi-head-question" },
+        { title: "Poetry", value: "Poetry", icon: "mdi-feather" },
+        { title: "Politics", value: "Politics", icon: "mdi-account-tie" },
+        { title: "Psychology", value: "Psychology", icon: "mdi-brain" },
+        { title: "Religion", value: "Religion", icon: "mdi-church" },
+        { title: "Romance", value: "Romance", icon: "mdi-dance-ballroom" },
+        { title: "Sad", value: "Sad", icon: "mdi-emoticon-cry-outline" },
+        { title: "Science", value: "Science", icon: "mdi-flask" },
+        { title: "Science Fiction", value: "Science Fiction", icon: "mdi-rocket" },
+        { title: "Space", value: "Space", icon: "mdi-weather-night" },
+        { title: "Suspense", value: "Suspense", icon: "mdi-head-alert" },
+        { title: "Thriller", value: "Thriller", icon: "mdi-knife" },
+        { title: "War", value: "War", icon: "mdi-shield-cross" },
+        { title: "Young Adult", value: "Young Adult", icon: "mdi-account-school" },
       ],
     }
   },
-
-  emits: ['setGenre', 'query'],
 
   computed: {
     showScrim() {
@@ -226,55 +167,32 @@ export default {
   },
 
   methods: {
-    railClose() {
-      this.$refs.categoryRefs.forEach((category, index) => {
-        if (category.isOpen) {
-          this.$nextTick(() => {
-            const activator = this.$refs.activatorRefs?.[index]?.$el;
-            if (activator) {
-              activator.click();
-            }
-          })
-        }
+    searchBooks() {
+      this.$store.dispatch("bookStore/searchBooks", {
+        query: this.searchQuery,
+        reset: true,
       });
-      this.titleState = false;
-      this.searchQuery = '';
+    },
+
+    filterBooks() {
+      this.$store.dispatch("bookStore/filterBooks", {
+        genres: this.selectedGenres,
+        reset: true,
+      });
+    },
+
+    railClose() {
       this.rail = true;
     },
 
     railOpen() {
-      if (this.rail) {
-        this.$refs.genreRefs.forEach((genre) => {
-          if (genre.isSelected) {
-            this.$nextTick(() => {
-              const group = genre.$el.closest(".v-list-group");
-              const activator = group.querySelector(".activator");
-
-              activator.click();
-            })
-          }
-        });
-        this.titleState = true;
-        this.rail = false;
-      }
-    },
-
-    openGroup(groupIndex, openedCategory) {
-      this.$refs.categoryRefs.forEach((category, index) => {
-        if (category.isOpen && index != groupIndex && !openedCategory.open) {
-          const activator = this.$refs.activatorRefs?.[index]?.$el;
-          if (activator) {
-            activator.click();
-          }
-        }
-      });
-      openedCategory.open = !openedCategory.open;
+      this.rail = false;
     },
 
     onResize() {
       this.screenWidth = window.innerWidth;
     },
-  },
+  }
 }
 </script>
 
@@ -345,5 +263,11 @@ export default {
   border-radius: 8px;
   background-color: #E8EAF6;
   overflow: hidden;
+  transform: translateZ(0);
+}
+
+.rail-list {
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;
 }
 </style>

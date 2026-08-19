@@ -62,16 +62,11 @@
       @review-submitted="addNewReview"
       :myReview="myReview"
       :bookId="bookId" 
-      :title="title"
-      :authors="authors"
-      :description="description"
-      :thumbnail="thumbnail"
     />
   </div>
 </template>
 
 <script>
-import axios from 'axios';
 import ReviewCard from './ReviewCard.vue';
 import Review from './Review.vue';
 
@@ -85,75 +80,35 @@ export default {
 
   data() {
     return {
-      reviews: [],
-      myReview: {},
       overlayValue: false,
     }
   },
-  
+
   props: {
-    bookId: {
-      type: String,
-      required: true,
+    bookId: { 
+      type: String, 
+      required: true 
+    }
+  },
+
+  computed: {
+    reviews() {
+      return this.$store.state.bookStore.reviews;
     },
-    title: {
-      type: String,
-      required: true,
-    },
-    authors: {
-      type: Array,
-      required: true,
-      default: () => [],
-    },
-    description: {
-      type: String,
-      required: false,
-    },
-    thumbnail: {
-      type: String,
-      required: true,
+    myReview() {
+      return this.$store.state.bookStore.myReview;
     },
   },
 
   methods: {
-    async fetchReviews() {
-      try {
-        const response = await axios.get(`/reviews/${this.bookId}`);
-        this.reviews = response.data;
-        this.myReview = this.reviews.find(r => r.is_owner) || null;
-      } catch (error) {
-        console.error("Error fetching reviews:", error);
-        this.reviews = [];
-      }
-    },
-
     async deleteReview(reviewId) {
       try {
-        const token = localStorage.getItem("token");
-        await axios.delete("/review-options/", {
-          data: { id: reviewId },
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        });
-        this.reviews = this.reviews.filter(review => review.id !== reviewId);
-        this.myReview = null;
-        console.log('review deleted');
+        await this.$store.dispatch("bookStore/deleteReview", reviewId);
       } catch (error) {
         console.error("Error deleting review:", error);
       }
     },
-
-    addNewReview(newReview) {
-      if (this.reviews.length > 0 && this.reviews[0].is_owner) {
-        this.reviews[0] = newReview;
-        this.myReview = newReview;
-      } else {
-        this.reviews.unshift(newReview);
-        this.myReview = newReview;
-      }
-    }
-  }
+  },
 }
 </script>
 

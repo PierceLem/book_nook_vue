@@ -146,6 +146,30 @@ export default {
       await axios.post(`/thread/${state.activeThread.id}/`, message);
     },
 
+    async sendBook({ threadId, threadName }) {
+      try {
+        await axios.post(`/thread/${threadId}/`, 
+          {
+            book_data: {
+              book_id: this.bookId,
+              title: this.title,
+              thumbnail: this.thumbnail,
+              description: this.description,
+              authors: this.authors,
+            }
+          }
+        );
+        this.$store.dispatch('ui/showSnackbar', {
+          subject: 'Message Sent Successfully',
+          content: 'Your book was went to ' + threadName,
+          icon: 'mdi-check',
+          color: 'green',
+        })
+      } catch(error) {
+        console.error(error);
+      }
+    },
+
     updateReadPosition({ commit }, messageId) {
       commit('SET_LAST_READ_MESSAGE', messageId);
     },

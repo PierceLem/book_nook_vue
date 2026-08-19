@@ -37,7 +37,7 @@
         </v-btn>
 
         <v-btn 
-          :color="localIsSaved ? 'green-accent-4' : 'indigo'"
+          :color="isSaved ? 'green-accent-4' : 'indigo'"
           variant="text"
           min-height="35px"
           min-width="35px"
@@ -57,7 +57,7 @@
             </span>
           </v-tooltip>
 
-          <v-icon :icon="localIsSaved ? 'mdi-book-check-outline' : 'mdi-book-plus-outline'"></v-icon>
+          <v-icon :icon="isSaved ? 'mdi-book-check-outline' : 'mdi-book-plus-outline'"></v-icon>
         </v-btn>
       </div>
 
@@ -138,11 +138,6 @@
           v-show="openReviews" 
           @close="openReviews = false" 
           :bookId="bookId" 
-          :title="title"
-          :authors="authors"
-          :description="description"
-          :thumbnail="thumbnail"
-          :reviewsCount="reviewsCount"
           ref="reviewList"
         />
       </v-expand-x-transition>
@@ -151,7 +146,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import ThreadSelector from '@/apps/books/components/ThreadSelector.vue';
 import Reviews from '@/apps/books/components/Reviews.vue';
 
@@ -165,7 +159,6 @@ export default {
 
   data() {
     return {
-      localIsSaved: this.isSaved,
       openReviews: false,
       isTitleOverflowing: false,
       isAuthorOverflowing: false,
@@ -257,65 +250,17 @@ export default {
       }
     },
 
-    async saveBook() {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("User is not authenticated. No token found.");
-        }
-
-        const response = await axios.post(
-          `/toggle-save-book/`,
-          {
-            book_data: {
-              book_id: this.bookId,
-              title: this.title,
-              thumbnail: this.thumbnail,
-              description: this.description,
-              authors: this.authors,
-            }
-          },
-          {
-            headers: {
-              Authorization: `Token ${token}`,
-            },
-          }
-        );
-        
-        this.localIsSaved = response.data.is_saved;
-      } catch (error) {
-        console.error("Error liking/unliking book:", error);
-      }
-    },
-
-    async sendBook({ threadId, threadName }) {
-      try {
-        await axios.post(`/thread/${threadId}/`, 
-          {
-            book_data: {
-              book_id: this.bookId,
-              title: this.title,
-              thumbnail: this.thumbnail,
-              description: this.description,
-              authors: this.authors,
-            }
-          }
-        );
-        this.$store.dispatch('ui/showSnackbar', {
-          subject: 'Message Sent Successfully',
-          content: 'Your book was went to ' + threadName,
-          icon: 'mdi-check',
-          color: 'green',
-        })
-      } catch(error) {
-        console.error(error);
-      }
-    },
-
     loadReviews() {
+      this.$store.dispatch("bookStore/fetchReviews", this.bookId);
       this.openReviews = true;
-      this.$refs.reviewList.fetchReviews();
-    }
+    },
+
+    saveBook() {
+      this.$store.dispatch("bookStore/saveBook", {
+        bookId: this.bookId,
+        title: this.title,
+      });
+    },
   }
 };
 </script>

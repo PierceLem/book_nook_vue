@@ -14,45 +14,45 @@
     >
       <h5>{{ myReview ? 'Edit my review' : 'Leave a review' }}</h5>
 
-      <v-rating 
-        v-model="rating"
-        active-color="yellow-accent-4"
-        half-increments
-        hover  
-      ></v-rating>
+      <v-form ref="form" class="w-100 d-flex flex-column align-center">
+        <v-rating 
+          v-model="rating"
+          active-color="yellow-accent-4"
+          half-increments
+          hover  
+        ></v-rating>
+        <span v-if="ratingError" class="text-error text-caption">{{ ratingError }}</span>
 
-      <v-textarea 
-        v-model="review"
-        variant="underlined" 
-        density="compact"
-        min-width="330"
-        rows="1" 
-        auto-grow 
-        clearable 
-        hide-details="auto"
-        max-rows="4"
-        :error-messages="errors"
-        @update:focused="errors = ''"
-      >
-        <template v-slot:append>
-          <v-btn
-            icon="mdi-send"
-            tile
-            size="35px"
-            rounded="lg"
-            variant="tonal"
-            color="indigo"
-            @click="submitReview"
-          ></v-btn>
-        </template>
-      </v-textarea>
+        <v-textarea 
+          v-model="review"
+          variant="underlined" 
+          density="compact"
+          min-width="330"
+          rows="1" 
+          auto-grow 
+          clearable 
+          hide-details="auto"
+          max-rows="4"
+          :rules="reviewRules"
+        >
+          <template v-slot:append>
+            <v-btn
+              icon="mdi-send"
+              tile
+              size="35px"
+              rounded="lg"
+              variant="tonal"
+              color="indigo"
+              :loading="submitting"
+              @click="submitReview"
+            ></v-btn>
+          </template>
+        </v-textarea>
+      </v-form>
     </v-card>
   </v-overlay>
 </template>
-
 <script>
-import axios from 'axios';
-
 export default {
   name: "ReviewCard",
 
@@ -63,28 +63,11 @@ export default {
     },
     myReview: {
       type: Object,
-      default: {},
+      default: () => ({}),
     },
     bookId: {
       type: String,
       required: true,
-    },
-    title: {
-      type: String,
-      required: true,
-    },
-    authors: {
-      type: Array,
-      required: true,
-      default: () => [],
-    },
-    description: {
-      type: String,
-      required: false,
-    },
-    thumbnail: {
-      type: String,
-      required: false,
     },
   },
 
@@ -92,70 +75,59 @@ export default {
     return {
       review: '',
       rating: null,
-      errors: '',
+      ratingError: '',
+      submitting: false,
     }
+  },
+
+  computed: {
+    reviewRules() {
+      return [(v) => !!v || 'Review is required'];
+    },
   },
 
   watch: {
     myReview: {
       immediate: true,
-      handler(newReview) {
-        this.review = newReview?.review || '';
-        this.rating = newReview?.rating || 0;
+      handler() {
+        this.resetFields();
       }
     }
   },
 
   methods: {
+    resetFields() {
+      this.review = this.myReview?.review || '';
+      this.rating = this.myReview?.rating || 0;
+      this.ratingError = '';
+    },
+
     async submitReview() {
+      const { valid } = await this.$refs.form.validate();
+
+      this.ratingError = this.rating ? '' : 'Rating is required';
+
+      if (!valid || this.ratingError) return;
+
+      this.submitting = true;
       try {
-        const token = localStorage.getItem("token");
-
-        if (!this.rating) {
-          this.errors = 'Rating is required';
-          return;
-        } else if (!this.review) {
-          this.errors = 'Review is required';
-          return;
-        } else {
-          this.errors = '';
-        }
-
-        const response = await axios.post(
-          "/review-options/",
-          {
-            book_data: {
-              book_id: this.bookId,
-              title: this.title,
-              thumbnail: this.thumbnail,
-              description: this.description,
-              authors: this.authors,
-            },
-            review: this.review,
-            rating: Math.round(this.rating * 2),
-            id: this.myReview ? this.myReview.id : '',
-          },
-          {
-            headers: {
-              Authorization: `Token ${token}`,
-            },
-          }
-        );
-        this.$emit('update:modelValue', false);
-        this.$emit('review-submitted', response.data);
+        await this.$store.dispatch("bookStore/submitReview", {
+          bookData: { id: this.bookId, title: this.title },
+          review: this.review,
+          rating: this.rating,
+        });
       } catch (error) {
         console.error("Error submitting review:", error);
+      } finally {
+        this.submitting = false;
+        this.$emit('update:modelValue', false);
       }
     },
 
     closeForm() {
+      this.resetFields();
       this.$emit('update:modelValue', false);
-      this.review = this.myReview ? this.myReview.review : '';
-      this.rating = this.myReview ? this.myReview.rating : 0;
-    }
-  }
+    },
+  },
 };
 </script>
-
-<style scoped>
-</style>

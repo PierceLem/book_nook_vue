@@ -4,6 +4,7 @@ import auth from './modules/auth';
 import threadStore from './modules/threadStore';
 import social from './modules/social';
 import notificationStore from './modules/notificationStore';
+import bookStore from './modules/bookStore';
 
 export default createStore({
   modules: {
@@ -12,5 +13,6 @@ export default createStore({
     threadStore,
     social,
     notificationStore,
+    bookStore,
   },
 })

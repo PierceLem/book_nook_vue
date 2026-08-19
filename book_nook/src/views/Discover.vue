@@ -6,7 +6,7 @@
       elevation="4" 
       color="indigo" 
       class="search-query py-1 px-2 text-h6"
-    >{{ searched }}</v-card>
+    >{{ query? query : filter }}</v-card>
 
     <div class="books-container">
       <div v-for="book in books" class="book-card-wrapper">
@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { mapState } from 'vuex';
 import BookCard from '@/apps/main/components/BookCard.vue';
 import DiscoverDrawer from '@/apps/books/DiscoverDrawer.vue';
 
@@ -50,73 +50,18 @@ export default {
     BookCard,
   },
 
-  data() {
-    return {
-      searched: "Popular on Book Nook",
-      books: [],
-      startIndex: 0,
-      maxResults: 20,
-      totalBooks: 0,
-    };
-  },
+  computed: {
+    ...mapState("bookStore", ["books", "query", "filter"]),
+  },  
 
   mounted() {
-    this.fetchBooks("bestsellers", true);
-    this.$store.dispatch('threadStore/fetchThreads');
+    this.$store.dispatch("bookStore/searchBooks", {
+      query: "Harry Potter",
+      reset: true,
+    });
   },
 
   methods: {
-    async fetchBooks(query, reset=false) {
-      if (reset) {
-        this.startIndex = 0;
-        this.totalBooks = 0;
-        this.books = [];
-      }
-
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("User is not authenticated. No token found.");
-        }
-
-        const response = await axios.get(
-          "/search-books/",
-          {
-            params: { 
-              q: query,
-              startIndex: this.startIndex,
-              maxResults: this.maxResults
-             },
-            headers: {
-              Authorization: `Token ${token}`, 
-            },
-          }
-        );
-        
-        this.books = [...this.books, ...response.data.books];
-        this.totalBooks = response.data.totalBooks;
-        console.log(this.totalBooks);
-      } catch (err) {
-        this.error = "Failed to fetch books.";
-      }
-    },
-
-    loadMoreBooks() {
-      this.startIndex += this.maxResults;
-      this.fetchBooks(this.searched);
-    },
-
-    genreSelection(selectedGenre) {
-      this.searched = selectedGenre.title;
-      this.fetchBooks(selectedGenre.value, true);
-    },
-
-    customQuery(query) {
-      if(query) {
-        this.searched = query;
-        this.fetchBooks(query, true);
-      }
-    }
   }
 };
 </script>
