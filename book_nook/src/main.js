@@ -12,6 +12,7 @@ axios.defaults.baseURL = 'http://127.0.0.1:8000';
 
 store.dispatch('auth/initializeStore');
 store.dispatch('notificationStore/fetchNotifications');
+store.dispatch('bookStore/fetchUserBooks');
 store.dispatch('ui/startClock');
 
 createApp(App)

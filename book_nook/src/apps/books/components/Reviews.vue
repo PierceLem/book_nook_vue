@@ -61,7 +61,7 @@
       v-model="overlayValue"
       @review-submitted="addNewReview"
       :myReview="myReview"
-      :bookId="bookId" 
+      :book="book" 
     />
   </div>
 </template>
@@ -85,8 +85,8 @@ export default {
   },
 
   props: {
-    bookId: { 
-      type: String, 
+    book: { 
+      type: Object, 
       required: true 
     }
   },
@@ -101,12 +101,8 @@ export default {
   },
 
   methods: {
-    async deleteReview(reviewId) {
-      try {
-        await this.$store.dispatch("bookStore/deleteReview", reviewId);
-      } catch (error) {
-        console.error("Error deleting review:", error);
-      }
+    async deleteReview() {
+      await this.$store.dispatch("bookStore/deleteReview", { reviewId: this.myReview.id, bookId: this.book.id });
     },
   },
 }

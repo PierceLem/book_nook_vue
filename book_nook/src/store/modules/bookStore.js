@@ -32,6 +32,11 @@ export default {
       state.total = total;
     },
 
+    SET_USER_BOOKS(state, { reviewedBooks, savedBooks }) {
+      state.reviewedBooks = reviewedBooks;
+      state.savedBooks = savedBooks;
+    },
+
     APPEND_BOOKS(state, { books, total }) {
       state.books.push(...books);
       state.total = total;
@@ -42,9 +47,23 @@ export default {
     },
 
     TOGGLE_SAVE_BOOK(state, book) {
-      const index = state.books.findIndex((b) => b.id === book.id);
-      if (index !== -1) {
-        state.books[index].is_saved = book.isSaved;
+      const bookIndex = state.books.findIndex((b) => b.id === book.id);
+      if (bookIndex !== -1) {
+        state.books[bookIndex] = book;
+      }
+
+      const reviewedIndex = state.reviewedBooks.findIndex((b) => b.id === book.id);
+      if (reviewedIndex !== -1) {
+        state.reviewedBooks[reviewedIndex] = book;
+      }
+
+      if (!book.is_saved) {
+        state.savedBooks = state.savedBooks.filter((b) => b.id !== book.id);
+      } else {
+        const alreadySaved = state.savedBooks.some((b) => b.id === book.id);
+        if (!alreadySaved) {
+          state.savedBooks.push(book);
+        }
       }
     },
 
@@ -53,7 +72,7 @@ export default {
       state.myReview = reviews.find((r) => r.is_owner) || null;
     },
 
-    UPSERT_REVIEW(state, review) {
+    UPSERT_REVIEW(state, { review, book }) {
       const index = state.reviews.findIndex((r) => r.is_owner);
       if (index !== -1) {
         state.reviews.splice(index, 1, review);
@@ -61,11 +80,13 @@ export default {
         state.reviews.unshift(review);
       }
       state.myReview = review;
+      state.reviewedBooks.push(book);
     },
 
-    REMOVE_REVIEW(state, reviewId) {
+    REMOVE_REVIEW(state, { reviewId, bookId }) {
       state.reviews = state.reviews.filter((r) => r.id !== reviewId);
       state.myReview = null;
+      state.reviewedBooks = state.reviewedBooks.filter((b) => b.id !== bookId);
     },
   },
 
@@ -129,7 +150,7 @@ export default {
       commit("INCREMENT_OFFSET");
     },
 
-    async saveBook({ commit }, { bookId, title }) {
+    async saveBook({ commit }, { book }) {
       try {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -140,8 +161,8 @@ export default {
           `/toggle-save-book/`,
           {
             book_data: {
-              title: title,
-              id: bookId,
+              title: book.title,
+              id: book.id,
             }
           },
           {
@@ -151,10 +172,9 @@ export default {
           }
         );
 
-        commit("TOGGLE_SAVE_BOOK", {
-          id: bookId,
-          isSaved: response.data.is_saved,
-        });
+        const updatedBook = { ...book, is_saved: response.data.is_saved };
+
+        commit("TOGGLE_SAVE_BOOK", updatedBook);
       } catch (error) {
         console.error("Error liking/unliking book:", error);
         throw error;
@@ -172,7 +192,7 @@ export default {
       }
     },
 
-    async submitReview({ commit }, { bookData, review, rating }) {
+    async submitReview({ commit }, { book, review, rating }) {
       const token = localStorage.getItem("token");
       if (!token) {
         throw new Error("User is not authenticated. No token found.");
@@ -181,7 +201,10 @@ export default {
       const response = await axios.post(
         "/review-options/",
         {
-          book_data: bookData,
+          book_data: {
+            title: book.title,
+            id: book.id,
+          },
           review: review,
           rating: Math.round(rating * 2),
         },
@@ -192,11 +215,11 @@ export default {
         }
       );
 
-      commit("UPSERT_REVIEW", response.data);
+      commit("UPSERT_REVIEW", { review: response.data, book });
       return response.data;
     },
 
-    async deleteReview({ commit }, reviewId) {
+    async deleteReview({ commit }, { reviewId, bookId }) {
       const token = localStorage.getItem("token");
       if (!token) {
         throw new Error("User is not authenticated. No token found.");
@@ -209,7 +232,34 @@ export default {
         },
       });
 
-      commit("REMOVE_REVIEW", reviewId);
+      commit("REMOVE_REVIEW", { reviewId, bookId });
+    },
+
+    async fetchUserBooks({ commit }) {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("User is not authenticated. No token found.");
+        }
+
+        const response = await axios.get(
+          "/bookshelf/",
+          {
+            headers: {
+              Authorization: `Token ${token}`, 
+            },
+          }
+        );
+
+        commit("SET_USER_BOOKS", {
+          reviewedBooks: response.data.reviewed_books,
+          savedBooks: response.data.saved_books
+        });
+      } catch (err) {
+        this.error = "Failed to fetch books.";
+      } finally {
+        this.loading = false;
+      }
     },
   },
 

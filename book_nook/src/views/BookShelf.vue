@@ -24,14 +24,7 @@
             <div v-for="book in reviewedBooks" class="book-card-wrapper">
               <BookCard
                 :key="book.id"
-                :bookId="book.id"
-                :title="book.title" 
-                :authors="book.authors" 
-                :description="book.description" 
-                :thumbnail="book.thumbnail"
-                :reviewsCount="book.reviews_count"
-                :rating="book.rating"
-                :isSaved="book.is_saved"
+                :book="book"
               />
             </div>
             
@@ -49,14 +42,7 @@
             <div v-for="book in savedBooks" class="book-card-wrapper">
               <BookCard
                 :key="book.id"
-                :bookId="book.id"
-                :title="book.title" 
-                :authors="book.authors" 
-                :description="book.description" 
-                :thumbnail="book.thumbnail"
-                :reviewsCount="book.reviews_count"
-                :rating="book.rating"
-                :isSaved="book.is_saved"
+                :book="book"
               />
             </div>
             
@@ -74,7 +60,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import BookCard from '@/apps/main/components/BookCard.vue';
 
 export default {
@@ -86,39 +71,16 @@ export default {
 
   data: () => ({
     tab: 'option-1',
-    reviewedBooks: [],
-    savedBooks: [],
   }),
 
-  mounted() {
-    this.fetchUserBooks();
-  },
-
-  methods: {
-    async fetchUserBooks() {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("User is not authenticated. No token found.");
-        }
-
-        const response = await axios.get(
-          "/bookshelf/",
-          {
-            headers: {
-              Authorization: `Token ${token}`, 
-            },
-          }
-        );
-        this.reviewedBooks = response.data.reviewed_books;
-        this.savedBooks = response.data.saved_books;
-      } catch (err) {
-        this.error = "Failed to fetch books.";
-      } finally {
-        this.loading = false;
-      }
+  computed: {
+    reviewedBooks() {
+      return this.$store.state.bookStore.reviewedBooks;
     },
-  }
+    savedBooks() {
+      return this.$store.state.bookStore.savedBooks;
+    },
+  },
 };
 </script>
 

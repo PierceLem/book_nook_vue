@@ -65,8 +65,8 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    bookId: {
-      type: String,
+    book: {
+      type: Object,
       required: true,
     },
   },
@@ -103,25 +103,11 @@ export default {
     },
 
     async submitReview() {
-      const { valid } = await this.$refs.form.validate();
-
-      this.ratingError = this.rating ? '' : 'Rating is required';
-
-      if (!valid || this.ratingError) return;
-
-      this.submitting = true;
-      try {
-        await this.$store.dispatch("bookStore/submitReview", {
-          bookData: { id: this.bookId, title: this.title },
-          review: this.review,
-          rating: this.rating,
-        });
-      } catch (error) {
-        console.error("Error submitting review:", error);
-      } finally {
-        this.submitting = false;
-        this.$emit('update:modelValue', false);
-      }
+      this.$store.dispatch('bookStore/submitReview', {
+        book: this.book,
+        review: this.review,
+        rating: this.rating,
+      })
     },
 
     closeForm() {

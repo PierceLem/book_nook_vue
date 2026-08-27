@@ -12,14 +12,7 @@
       <div v-for="book in books" class="book-card-wrapper">
         <BookCard
           :key="book.id"
-          :bookId="book.id"
-          :title="book.title" 
-          :authors="book.authors" 
-          :description="book.description" 
-          :thumbnail="book.thumbnail"
-          :reviewsCount="book.reviews_count"
-          :rating="book.rating"
-          :isSaved="book.is_saved"
+          :book="book"
         />
       </div>
 

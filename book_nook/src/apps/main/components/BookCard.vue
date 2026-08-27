@@ -37,7 +37,7 @@
         </v-btn>
 
         <v-btn 
-          :color="isSaved ? 'green-accent-4' : 'indigo'"
+          :color="book.is_saved ? 'green-accent-4' : 'indigo'"
           variant="text"
           min-height="35px"
           min-width="35px"
@@ -57,19 +57,19 @@
             </span>
           </v-tooltip>
 
-          <v-icon :icon="isSaved ? 'mdi-book-check-outline' : 'mdi-book-plus-outline'"></v-icon>
+          <v-icon :icon="book.is_saved ? 'mdi-book-check-outline' : 'mdi-book-plus-outline'"></v-icon>
         </v-btn>
       </div>
 
       <div class="ratings-container">
-        <template v-if="rating">
+        <template v-if="book.rating">
           <div class="text-h6 mb-1 text-indigo" style="height: 23px;">
-            {{ rating }}
+            {{ book.rating }}
             <span class="text-caption text-indigo">/5</span>
           </div>
 
           <v-rating
-            :model-value="rating"
+            :model-value="book.rating"
             color="indigo"
             active-color="yellow-darken-3"
             size="x-small"
@@ -80,7 +80,7 @@
           ></v-rating>
         </template>
 
-        <div v-if="!rating" class="text-h6 my-2 text-indigo" style="height: 23px;">
+        <div v-if="!book.rating" class="text-h6 my-2 text-indigo" style="height: 23px;">
           0
           <span class="text-caption text-indigo">ratings</span>
         </div>
@@ -93,14 +93,14 @@
           class="px-1 my-1"
           @click="loadReviews"
         >
-          <span v-if="reviewsCount > 0" class="text-caption">{{ reviewsCount }} ratings</span>
+          <span v-if="book.reviews_count > 0" class="text-caption">{{ book.reviews_count }} ratings</span>
           <span v-else class="text-caption">Write a review</span>
         </v-btn>
       </div>
 
       <div class="cover-img-container">
         <img 
-          :src="thumbnail" 
+          :src="book.thumbnail" 
           class="book-cover"
           alt="Book Cover"
         />
@@ -113,7 +113,7 @@
             class="text-indigo book-title"
             :class="{ 'scrolling': isTitleOverflowing }"
           >
-            <span class="scroll-inner">{{ title }}</span>
+            <span class="scroll-inner">{{ book.title }}</span>
           </h3>
 
           <h5
@@ -123,13 +123,13 @@
             :class="{ 'scrolling': isAuthorOverflowing }"
           >
             <span class="scroll-inner">
-              {{ authors.length ? authors.join(", ") : "Unknown Author" }}
+              {{ book.authors.length ? book.authors.join(", ") : "Unknown Author" }}
             </span>
           </h5>
         </div>
 
         <p class="book-desc pl-3">
-          {{ description ? description : "No description available" }}
+          {{ book.description ? book.description : "No description available" }}
         </p>
       </div>
 
@@ -137,7 +137,7 @@
         <Reviews 
           v-show="openReviews" 
           @close="openReviews = false" 
-          :bookId="bookId" 
+          :book="book" 
           ref="reviewList"
         />
       </v-expand-x-transition>
@@ -166,40 +166,10 @@ export default {
   },
 
   props: {
-    bookId: {
-      type: String,
+    book: {
+      type: Object,
       required: true,
     },
-    title: {
-      type: String,
-      required: true,
-    },
-    authors: {
-      type: Array,
-      required: true,
-      default: () => [],
-    },
-    description: {
-      type: String,
-      required: false,
-    },
-    thumbnail: {
-      type: String,
-      required: true,
-    },
-    reviewsCount: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
-    rating: {
-      type: Number,
-      required: false,
-    },
-    isSaved: {
-      type: Boolean,
-      required: true,
-    }
   },
 
   mounted() {
@@ -251,15 +221,12 @@ export default {
     },
 
     loadReviews() {
-      this.$store.dispatch("bookStore/fetchReviews", this.bookId);
+      this.$store.dispatch("bookStore/fetchReviews", this.book.id);
       this.openReviews = true;
     },
 
     saveBook() {
-      this.$store.dispatch("bookStore/saveBook", {
-        bookId: this.bookId,
-        title: this.title,
-      });
+      this.$store.dispatch("bookStore/saveBook", { book: this.book });
     },
   }
 };
