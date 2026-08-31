@@ -29,32 +29,41 @@ export default {
     SET_SOCKET(state, socket) {
       state.socket = socket
     },
+
     SET_FRIENDS(state, friends) {
       state.friends = friends
     },
+
     SET_INCOMING_REQUESTS(state, incoming_requests) {
       state.incomingRequests = incoming_requests
     },
+    
     SET_OUTGOING_REQUESTS(state, outgoing_requests) {
       state.outgoingRequests = outgoing_requests
     },
+
     ADD_FRIEND(state, friend) {
       state.friends.push(friend)
     },
+
     REMOVE_FRIEND(state, friendId) {
       state.friends = state.friends
         .filter(f => f.id !== friendId)
     },
+
     ADD_INCOMING_REQUEST(state, request) {
       state.incomingRequests.push(request)
     },
+
     REMOVE_INCOMING_REQUEST(state, userId) {
       state.incomingRequests = state.incomingRequests
         .filter(r => r.id !== userId)
     },
+
     ADD_OUTGOING_REQUEST(state, request) {
       state.outgoingRequests.push(request)
     },
+    
     REMOVE_OUTGOING_REQUEST(state, requestId) {
       state.outgoingRequests = state.outgoingRequests
         .filter(r => r.id !== requestId)

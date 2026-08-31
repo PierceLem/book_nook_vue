@@ -62,14 +62,14 @@
       </div>
 
       <div class="ratings-container">
-        <template v-if="book.rating">
+        <template v-if="book.average_rating">
           <div class="text-h6 mb-1 text-indigo" style="height: 23px;">
-            {{ book.rating }}
+            {{ book.average_rating }}
             <span class="text-caption text-indigo">/5</span>
           </div>
 
           <v-rating
-            :model-value="book.rating"
+            :model-value="book.average_rating"
             color="indigo"
             active-color="yellow-darken-3"
             size="x-small"
@@ -80,7 +80,7 @@
           ></v-rating>
         </template>
 
-        <div v-if="!book.rating" class="text-h6 my-2 text-indigo" style="height: 23px;">
+        <div v-if="!book.average_rating" class="text-h6 my-2 text-indigo" style="height: 23px;">
           0
           <span class="text-caption text-indigo">ratings</span>
         </div>
@@ -93,7 +93,7 @@
           class="px-1 my-1"
           @click="loadReviews"
         >
-          <span v-if="book.reviews_count > 0" class="text-caption">{{ book.reviews_count }} ratings</span>
+          <span v-if="book.review_count > 0" class="text-caption">{{ book.review_count }} ratings</span>
           <span v-else class="text-caption">Write a review</span>
         </v-btn>
       </div>

@@ -109,10 +109,6 @@ export default {
   },
 
   actions: {
-    /* ------------------------------
-      THREAD LIST
-    ------------------------------ */
-
     async fetchThreads({ commit }) {
       const response = await axios.get("/threads/");
       commit("SET_THREADS", response.data);
@@ -121,10 +117,6 @@ export default {
     async addNewThread(_, participants) {
       await axios.post('/threads/', {'participants': participants});
     },
-
-    /* ------------------------------
-      THREAD SELECTION
-    ------------------------------ */
 
     async selectThread({ commit, dispatch, rootState }, thread) {
       await dispatch('cleanup');
@@ -137,10 +129,6 @@ export default {
       const socket = connectToThread(thread.id);
       commit("SET_SOCKET", socket);
     },
-
-    /* ------------------------------
-      MESSAGING
-    ------------------------------ */ 
 
     async sendMessage({ state }, message) {
       await axios.post(`/thread/${state.activeThread.id}/`, message);
@@ -174,9 +162,6 @@ export default {
       commit('SET_LAST_READ_MESSAGE', messageId);
     },
 
-    /* ------------------------------
-      THREAD UPDATES
-    ------------------------------ */
 
     async updateThread({ state }, updatedThread) {
       await axios.patch(`/threads/${state.activeThread.id}/`, updatedThread);
@@ -185,10 +170,6 @@ export default {
     async deleteThread(_, threadId) {
       await axios.delete(`/threads/${threadId}/`);
     },
-
-    /* ------------------------------
-      CLEANUP
-    ------------------------------ */
 
     cleanup({ state, commit }) {
       disconnectFromThread(state.socket);

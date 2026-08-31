@@ -2,18 +2,18 @@
   <v-list-item 
     density="compact"
     class="py-1 px-2"
-    :variant="isOwner ? 'tonal' : 'text'"
+    :variant="review.is_owner ? 'tonal' : 'text'"
     base-color="indigo"
   >
     <template v-slot:prepend>
       <v-avatar size="40" class="my-2">
-        <v-img :src=owner.avatar />
+        <v-img :src=review.user.avatar />
       </v-avatar>
     </template>
 
     <v-list-item-title class="d-flex flex-row align-start">
       <v-rating
-        :model-value="rating"
+        :model-value="review.rating"
         half-increments
         size="x-small"
         density="comfortable"
@@ -24,7 +24,7 @@
 
       <v-spacer></v-spacer>
 
-      <span class="date">{{ formatDate(createdAt, now) }}</span>
+      <span class="date">{{ formatDate(review.created_at, now) }}</span>
     </v-list-item-title>
 
     <div class="d-flex justify-start align-top">
@@ -32,27 +32,27 @@
         <v-btn 
           variant="text" 
           color="indigo" 
-          :readonly="isOwner"
-          :disabled="isOwner"
+          :readonly="review.is_owner"
+          :disabled="review.is_owner"
           density="compact"
           size="small"
           slim
           class="text-none"
         >
           <UserInfoCard
-            :owner="owner"
+            :owner="review.user"
             :isFriend="false"
           />
 
-          <span class="text-user">{{ isOwner ? 'you' : owner.username }}</span>
+          <span class="text-user">{{ review.is_owner ? 'you' : review.user.username }}</span>
         </v-btn>
 
-        <span class="text-review"> - {{ text }}</span>
+        <span class="text-review"> - {{ review.review }}</span>
       </div>
     </div>
 
     <v-overlay
-      v-if="isOwner"
+      v-if="review.is_owner"
       activator="parent"
       open-on-hover
       open-delay="500"
@@ -68,7 +68,7 @@
         icon="mdi-delete" 
         color="red" 
         class="mr-2" 
-        @click="$emit('delete-review', reviewId)"
+        @click="$emit('delete-review', review.id)"
       />
       <v-btn 
         tile 
@@ -82,7 +82,7 @@
     </v-overlay>
   </v-list-item>
 
-  <v-divider v-if="!isOwner" class="ml-16" color="indigo" />
+  <v-divider v-if="!review.is_owner" class="ml-16" color="indigo" />
 </template>
 
 <script>
@@ -105,28 +105,8 @@ export default {
   emits: ['edit-review', 'delete-review'], 
 
   props: {
-    reviewId: {
-      type: Number,
-      required: true,
-    },
-    owner: {
+    review: {
       type: Object,
-      required: true,
-    },
-    isOwner: {
-      type: Boolean,
-      required: true,
-    },
-    text: {
-      type: String,
-      required: true,
-    },
-    rating: {
-      type: Number,
-      required: true,
-    },
-    createdAt: {
-      type: String,
       required: true,
     },
   },

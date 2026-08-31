@@ -33,12 +33,7 @@
         <Review
           v-if="reviews.length > 0"
           v-for="review in reviews"
-          :reviewId="review.id"
-          :owner="review.user"
-          :isOwner="review.is_owner"
-          :text="review.review"
-          :rating="review.rating"
-          :createdAt="review.created_at"
+          :review="review"
           @edit-review="overlayValue = true"
           @delete-review="deleteReview"
         />
@@ -93,10 +88,10 @@ export default {
 
   computed: {
     reviews() {
-      return this.$store.state.bookStore.reviews;
+      return this.$store.state.bookStore.reviews[this.book.id]?.items || [];
     },
     myReview() {
-      return this.$store.state.bookStore.myReview;
+      return this.$store.state.bookStore.reviews[this.book.id]?.myReview || null;
     },
   },
 

@@ -34,7 +34,6 @@ export default {
     async initializeStore({ commit, dispatch }) {
       const token = localStorage.getItem("token");
       if (token) {
-        console.log('token exists');
         commit("setToken", token);
         axios.defaults.headers.common["Authorization"] = "Token " + token;
 
