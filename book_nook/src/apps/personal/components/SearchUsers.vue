@@ -98,10 +98,7 @@ export default {
           return
         }
 
-        this.users = await this.$store.dispatch(
-          "social/searchUsers",
-          newQuery
-        )
+        this.users = await this.$store.dispatch("social/searchUsers", newQuery)
 
       }, 400)
     }

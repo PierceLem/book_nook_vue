@@ -35,33 +35,6 @@ export default {
     AboutProfile,
     ProfileSettings,
     FriendsManager,
-  },
-  
-  data() {
-    return {
-      bio: "Hi, I’m Alec Thompson, Decisions: If you can’t decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality).",
-      newBio: "",
-      instagramHandle: '',
-      isEditing: false,
-      searchQuery: "",
-      rules: {
-        bio: [
-          value => !!value || "Bio cannot be empty",
-          value => value.length <= 400 || `Maximum 200 characters allowed).`
-        ]
-      },
-    }
-  },
-
-  methods: {
-    submitBio() {
-      this.bio = this.newBio;
-      this.isEditing = false;
-    },
   }
 };
 </script>
-
-<style scoped>
-
-</style>

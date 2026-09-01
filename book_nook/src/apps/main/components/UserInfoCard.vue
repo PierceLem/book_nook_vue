@@ -13,14 +13,27 @@
 
       <span class="text-subtitle-2 text-indigo">{{ owner.username }}</span>
 
+      <v-card
+        color="indigo"
+        variant="tonal"
+        rounded="lg"
+        class="my-2"
+      >
+        <v-card-text
+          class="py-1 px-2"
+        >
+          <span class="text-caption">{{ owner.bio || "No bio" }}</span>
+        </v-card-text>
+      </v-card>
+
       <div class="d-flex flex-row justify-space-evenly w-100 pt-1">
         <v-card class="d-flex flex-column align-center px-1 mr-1" variant="outlined" color="indigo">
-          <span class="text-h6" style="line-height: 20px;">44</span>
+          <span class="text-h6" style="line-height: 20px;">{{ owner.friends_count || 0 }}</span>
           <span class="text-caption" style="line-height: 12px;">friends</span>
         </v-card>
 
         <v-card class="d-flex flex-column align-center px-1" variant="outlined" color="indigo">
-          <span class="text-h6" style="line-height: 20px;">25</span>
+          <span class="text-h6" style="line-height: 20px;">{{ owner.reviews_count || 0 }}</span>
           <span class="text-caption" style="line-height: 12px;">reviews</span>
         </v-card>
       </div>
@@ -37,6 +50,15 @@
       >
         Friend Request
       </v-btn>
+      
+      <v-chip 
+        v-else
+        color="green"
+        append-icon="mdi-account-check-outline"
+        class="mt-2"
+      >
+        Friends
+      </v-chip>
     </v-card>
   </v-menu>
 </template>
@@ -51,13 +73,16 @@ export default {
     owner: {
       type: Object,
     },
-    isFriend: {
-      type: Boolean,
-    }
   },
 
   computed: {
     ...mapState('auth', ['user']),
+
+    ...mapState('social', ['friends']),
+
+    isFriend() {
+      return this.friends.some(friend => friend.other_user.id === this.owner.id);
+    }
   },
 
   methods: {

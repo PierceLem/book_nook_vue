@@ -26,7 +26,7 @@
       class="pl-0 pr-2 py-2"
       v-if="!isEditing" 
     >
-      <p class="text-caption">{{ bio }}</p>
+      <p class="text-caption">{{ user.bio || "No bio" }}</p>
     </v-card>
 
     <div v-if="isEditing" class="pa-0">
@@ -36,7 +36,7 @@
         variant="outlined" 
         color="indigo"
         base-color="indigo"
-        counter="200"
+        counter="400"
         rounded="lg"
         rows="4" 
         auto-grow 
@@ -60,165 +60,69 @@
       </v-textarea>
     </div>
 
-    <span class="text-indigo text-caption font-weight-black mt-4">Socials: </span>
-
-    <div class="d-flex flex-column pl-2">
-      <div class="d-block mb-1">
-        <v-icon color="indigo" class="mr-1">mdi-instagram</v-icon>
-
-        <v-btn
-          append-icon="mdi-plus"
-          variant="tonal"
-          color="indigo"
-          size="x-small"
-        >
-          Add Account
-          <v-menu 
-            activator="parent"
-            :close-on-content-click="false"
-            location="bottom"
-          >
-            <v-card class="px-1 pb-1 pt-2">
-              <v-text-field 
-                label="Account Username" 
-                density="compact"
-                variant="underlined" 
-                hide-details="auto"
-                width="200px"
-                v-model="instagramHandle"
-              >
-                <template v-slot:append-inner>
-                  <v-btn 
-                    height="20px" 
-                    width="20px" 
-                    size="x-small" 
-                    icon="mdi-check" 
-                    variant="tonal"
-                  >
-                  </v-btn>
-                </template>
-              </v-text-field>
-            </v-card>
-          </v-menu>
-        </v-btn>
-      </div>
-
-      <div class="d-block mb-1">
-        <v-icon color="indigo" class="mr-1">mdi-facebook</v-icon>
-
-        <v-btn
-          append-icon="mdi-plus"
-          variant="tonal"
-          color="indigo"
-          size="x-small"
-          text="add account"
-        >
-          Add Account
-          <v-menu 
-            activator="parent"
-            :close-on-content-click="false"
-            location="bottom"
-          >
-            <v-card class="px-1 pb-1 pt-2">
-              <v-text-field 
-                label="Account Username" 
-                density="compact"
-                variant="underlined" 
-                hide-details="auto"
-                width="200px"
-                v-model="facebookHandle"
-              >
-                <template v-slot:append-inner>
-                  <v-btn 
-                    height="20px" 
-                    width="20px" 
-                    size="x-small" 
-                    icon="mdi-check" 
-                    variant="tonal"
-                  >
-                  </v-btn>
-                </template>
-              </v-text-field>
-            </v-card>
-          </v-menu>
-        </v-btn>
-      </div>
-
-      <div class="d-block">
-        <v-icon color="indigo" class="mr-1">mdi-github</v-icon>
-
-        <v-btn
-          append-icon="mdi-plus"
-          variant="tonal"
-          color="indigo"
-          size="x-small"
-          text="add account"
-        >
-          Add Account
-          <v-menu 
-            activator="parent"
-            :close-on-content-click="false"
-            location="bottom"
-          >
-            <v-card class="px-1 pb-1 pt-2">
-              <v-text-field 
-                label="Account Username" 
-                density="compact"
-                variant="underlined" 
-                hide-details="auto"
-                width="200px"
-                v-model="githubHandle"
-              >
-                <template v-slot:append-inner>
-                  <v-btn 
-                    height="20px" 
-                    width="20px" 
-                    size="x-small" 
-                    icon="mdi-check" 
-                    variant="tonal"
-                  >
-                  </v-btn>
-                </template>
-              </v-text-field>
-            </v-card>
-          </v-menu>
-        </v-btn>
-      </div>
-    </div>
     <div class="d-block mt-4">
       <span class="text-indigo text-caption font-weight-black">date joined: </span>
-      <span class="text-indigo text-caption">Today</span>
+      <span class="text-indigo text-caption">{{ formatDate(user.date_joined) }}</span>
     </div>
   </div>
 </template>
 
 <script>
+import { formatDate } from '@/utils/dateUtils';
+
 export default {
   name: "AboutProfile",
 
   data() {
     return {
-      bio: "Hi, I’m Alec Thompson, Decisions: If you can’t decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality).",
       newBio: "",
-      instagramHandle: '',
-      facebookHandle: '',
-      githubHandle: '',
       isEditing: false,
-      searchQuery: "",
       rules: {
         bio: [
-          value => !!value || "Bio cannot be empty",
-          value => value.length <= 400 || `Maximum 200 characters allowed).`
+          value => value.length <= 400 || "Maximum 400 characters allowed."
         ]
       },
-    }
+    };
+  },
+
+  computed: {
+    user() {
+      return this.$store.state.auth.user;
+    },
+  },
+
+  watch: {
+    "user.bio": {
+      immediate: true,
+      handler(newBio) {
+        this.newBio = newBio || "";
+      },
+    },
   },
 
   methods: {
     submitBio() {
-      this.bio = this.newBio;
-      this.isEditing = false;
+      const newBio = this.newBio.trim();
+      const currentBio = (this.user.bio || "").trim();
+
+      if (!newBio) {
+        return;
+      }
+
+      if (newBio === currentBio) {
+        return;
+      }
+
+      this.$store.dispatch("auth/updateProfile", { bio: newBio })
+        .then(() => {
+          this.isEditing = false;
+        })
+        .catch(error => {
+          console.error("Error updating bio:", error);
+        });
     },
+
+    formatDate
   }
 };
 </script>

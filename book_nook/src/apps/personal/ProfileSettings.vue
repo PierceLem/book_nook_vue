@@ -8,33 +8,109 @@
 
     <div class="d-flex flex-row justify-space-between align-center">
       <span class="text-indigo text-caption">Friend Requests</span>
-      <v-switch color="indigo" density="compact" hide-details></v-switch>
+
+      <v-switch
+        v-model="localSettings.friend_request_notifications"
+        color="indigo" 
+        density="compact" 
+        hide-details
+      ></v-switch>
     </div>
+
     <div class="d-flex flex-row justify-space-between align-center">
       <span class="text-indigo text-caption">Thread Messages</span>
-      <v-switch color="indigo" density="compact" hide-details></v-switch>
-    </div>
-    <div class="d-flex flex-row justify-space-between align-center mb-4">
-      <span class="text-indigo text-caption">Book Recommendations</span>
-      <v-switch color="indigo" density="compact" hide-details></v-switch>
+
+      <v-switch
+        v-model="localSettings.message_notifications"
+        color="indigo" 
+        density="compact" 
+        hide-details
+      ></v-switch>
     </div>
 
     <span class="text-h6 text-indigo font-weight-medium ml-2 mb-1">Personal</span>
 
     <div class="d-flex flex-row justify-space-between align-center">
       <span class="text-indigo text-caption">Auto-accept friend requests</span>
-      <v-switch color="indigo" density="compact" hide-details></v-switch>
+
+      <v-switch
+        v-model="localSettings.auto_accept_friend_requests"
+        color="indigo" 
+        density="compact" 
+        hide-details
+      ></v-switch>
     </div>
+
+    <v-expand-transition>
+      <div v-if="hasChanges" class="d-flex justify-end mt-4">
+        <v-btn
+          color="indigo"
+          variant="elevated"
+          @click="saveSettings"
+        >
+          Save Changes
+        </v-btn>
+      </div>
+    </v-expand-transition>
   </div>
 </template>
 
 <script>
 export default {
   name: "ProfileSettings",
-  
+
   data() {
     return {
+      localSettings: {
+        friend_request_notifications: false,
+        message_notifications: false,
+        auto_accept_friend_requests: false,
+      },
     };
+  },
+
+  computed: {
+    user() {
+      return this.$store.state.auth.user;
+    },
+
+    hasChanges() {
+      return (
+        this.localSettings.friend_request_notifications !== this.user.friend_request_notifications ||
+        this.localSettings.message_notifications !== this.user.message_notifications ||
+        this.localSettings.auto_accept_friend_requests !== this.user.auto_accept_friend_requests
+      );
+    },
+  },
+
+  created() {
+    this.syncLocalSettings();
+  },
+
+  watch: {
+    "user.friend_request_notifications"() {
+      this.syncLocalSettings();
+    },
+    "user.message_notifications"() {
+      this.syncLocalSettings();
+    },
+    "user.auto_accept_friend_requests"() {
+      this.syncLocalSettings();
+    },
+  },
+
+  methods: {
+    syncLocalSettings() {
+      this.localSettings = {
+        friend_request_notifications: this.user.friend_request_notifications,
+        message_notifications: this.user.message_notifications,
+        auto_accept_friend_requests: this.user.auto_accept_friend_requests,
+      };
+    },
+
+    saveSettings() {
+      this.$store.dispatch('auth/updateProfile', this.localSettings)
+    },
   },
 };
 </script>

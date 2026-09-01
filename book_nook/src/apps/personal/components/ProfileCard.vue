@@ -30,31 +30,35 @@
       >
         <v-icon size="25px">mdi-swap-horizontal-bold</v-icon>
 
-        <v-menu activator="parent">
-          <v-list density="compact" :lines="false" color="indigo" slim base-color="indigo" class="pa-0">
+        <v-menu
+          v-model="menu"
+          activator="parent"
+          location="bottom"
+          :close-on-content-click="false"
+        >
+          <v-list
+            density="compact"
+            :lines="false"
+            color="indigo"
+            slim
+            base-color="indigo"
+            class="pa-0"
+          >
             <v-list-item
               v-if="user.avatar != 'http://127.0.0.1:8000/media/avatars/default-avatar.jpg'"
               value="delete"
-              key="delete"
               subtitle="Delete"
               prepend-icon="mdi-delete"
               @click="deleteAvatar"
-            >
-            </v-list-item>
-            <v-list-item
-              key="delete"
-              value="upload"
-              subtitle="Upload"
-              prepend-icon="mdi-upload"
-              @click="$refs.avatarInput.click()"
-            >
-            </v-list-item>
+            />
             <v-file-input 
-              v-model="avatar"
-              ref="avatarInput" 
-              style="display: none;"
+              v-model="selectedAvatar"
+              hide-details
+              density="compact"
+              color="indigo"
+              variant="outlined"
               accept="image/*"
-              @change="validateFile"
+              class="pr-3 pl-4 pb-2"
             ></v-file-input>
           </v-list>
         </v-menu>
@@ -79,7 +83,7 @@
             Reviews
           </span>
           <span class="text-h6 text-white align-self-center">
-            24
+            {{ user.reviews_count || 0 }}
           </span>
         </div>
 
@@ -91,7 +95,7 @@
             Friends
           </span>
           <span class="text-h6 text-white align-self-center">
-            432
+            {{ user.friends_count || 0 }}
           </span>
         </div>
 
@@ -106,7 +110,7 @@
             Books
           </span>
           <span class="text-h6 text-white align-self-center">
-            25
+            {{ user.saved_books_count || 0 }}
           </span>
         </div>
       </div>
@@ -115,7 +119,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import { mapState } from 'vuex';
 
 export default {
@@ -123,6 +126,7 @@ export default {
   
   data() {
     return {
+      menu: false,
       selectedAvatar: null,
     }
   },
@@ -131,68 +135,39 @@ export default {
     ...mapState('auth', ['user']),
   },
 
-  methods: {
-    validateFile(event) {
-      const selectedFile = event.target?.files?.[0];
-      this.validateAvatar(selectedFile);
-    },
+  watch: {
+    selectedAvatar(newAvatar) {
+      console.log("Selected avatar changed:", newAvatar);
+      if (newAvatar) {
+        this.updateProfilePic(newAvatar);
+      }
+    }
+  },
 
-    async validateAvatar(file) {
-      console.log(file.type);
-      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-      const maxSize = 2 * 1024 * 1024;
+  methods: {
+    async updateProfilePic(file) {
+      console.log("update profile pic called");
+      file = Array.isArray(file) ? file[0] : file;
+
+      console.log("Selected file:", file);
 
       if (!file) {
-        console.log('No file selected.');
-        this.selectedAvatar = null;
-        return;
-      }
-
-      if (!allowedTypes.includes(file.type)) {
-        console.log('Only JPG and PNG files are allowed.');
-        this.selectedAvatar = null;
-        return;
-      }
-
-      if (file.size > maxSize) {
-        console.log('File size must be under 2MB.');
-        this.selectedAvatar = null;
         return;
       }
 
       const formData = new FormData();
-      formData.append('avatar', file);
+      formData.append("avatar", file);
 
       try {
-        const token = localStorage.getItem("token");
-        const response = await axios.post('/upload-avatar/', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Token ${token}`,
-          },
-        });
+        await this.$store.dispatch(
+          "auth/updateProfile",
+          formData
+        );
 
-        console.log('Upload successful:', response.data);
         this.selectedAvatar = null;
-        this.$store.commit('auth/updateAvatar', response.data.avatar_url);
+        this.menu = false;
       } catch (error) {
-        console.error('Upload failed:', error.response?.data || error.message);
-        this.selectedAvatar = null;
-      }
-    },
-
-    async deleteAvatar() {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.delete('/upload-avatar/', {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        });
-        console.log(response.data);
-        this.$store.commit('auth/updateAvatar', response.data.avatar_url);
-      } catch (error) {
-        console.error('Delete failed:', error.response?.data || error.message);
+        console.error("Error uploading avatar:", error);
       }
     }
   }

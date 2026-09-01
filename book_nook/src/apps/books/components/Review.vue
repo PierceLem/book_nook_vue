@@ -41,7 +41,6 @@
         >
           <UserInfoCard
             :owner="review.user"
-            :isFriend="false"
           />
 
           <span class="text-user">{{ review.is_owner ? 'you' : review.user.username }}</span>
